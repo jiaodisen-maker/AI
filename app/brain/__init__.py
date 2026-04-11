@@ -1,5 +1,4 @@
-from app.brain.intent import IntentRecognizer
-from app.brain.planner import TaskPlanner
-from app.brain.router import SkillRouter
+from app.brain.agent import BrainAgent
+from app.brain.tools import register_skills_as_tools
 
-__all__ = ["IntentRecognizer", "SkillRouter", "TaskPlanner"]
+__all__ = ["BrainAgent", "register_skills_as_tools"]

@@ -30,11 +30,15 @@ class FeishuBot:
 
     def __init__(self) -> None:
         self._tenant_token: str = ""
+        self._token_expires_at: float = 0.0
         self._http = httpx.AsyncClient(timeout=10)
 
     async def get_tenant_token(self) -> str:
-        """Obtain or refresh the tenant access token."""
-        if self._tenant_token:
+        """Obtain or refresh the tenant access token (expires every 2 hours)."""
+        import time
+
+        # Return cached token if still valid (with 5 min buffer)
+        if self._tenant_token and time.time() < self._token_expires_at - 300:
             return self._tenant_token
 
         if not settings.feishu_app_id:
@@ -48,8 +52,13 @@ class FeishuBot:
                 "app_secret": settings.feishu_app_secret,
             },
         )
+        import time
+
         data = resp.json()
         self._tenant_token = data.get("tenant_access_token", "")
+        # Token expires in ~2 hours (7200s), cache with expiry tracking
+        expire_in = data.get("expire", 7200)
+        self._token_expires_at = time.time() + expire_in
         return self._tenant_token
 
     def verify_event(self, body: dict[str, Any]) -> dict[str, Any] | None:

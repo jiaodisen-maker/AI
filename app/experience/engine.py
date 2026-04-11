@@ -196,17 +196,34 @@ class ExperienceEngine:
         }
 
     def _find_similar_pattern(self, skill_id: str, pattern_text: str) -> ExperiencePattern | None:
-        """Find an existing pattern that's similar to the new one."""
-        # Simple text similarity: if >60% of words overlap, consider similar
-        new_words = set(pattern_text.lower().split())
+        """Find an existing pattern that's similar to the new one.
+
+        Uses character n-gram similarity for Chinese text support.
+        Chinese has no spaces between words, so str.split() fails.
+        Character bigrams work as a universal tokenization strategy.
+        """
+        new_ngrams = self._text_to_ngrams(pattern_text)
         for existing in self.store.get_all_patterns(skill_id):
-            existing_words = set(existing.pattern.lower().split())
-            if not new_words or not existing_words:
+            existing_ngrams = self._text_to_ngrams(existing.pattern)
+            if not new_ngrams or not existing_ngrams:
                 continue
-            overlap = len(new_words & existing_words) / max(len(new_words), len(existing_words))
+            overlap = len(new_ngrams & existing_ngrams) / max(
+                len(new_ngrams), len(existing_ngrams)
+            )
             if overlap > 0.6:
                 return existing
         return None
+
+    @staticmethod
+    def _text_to_ngrams(text: str, n: int = 2) -> set[str]:
+        """Convert text to character n-grams (works for Chinese and English).
+
+        "抖音文案用口语化" → {"抖音", "音文", "文案", "案用", "用口", "口语", "语化"}
+        """
+        text = text.lower().strip()
+        if len(text) < n:
+            return {text} if text else set()
+        return {text[i : i + n] for i in range(len(text) - n + 1)}
 
     def _parse_patterns(self, content: str) -> list[dict]:
         """Parse LLM response into pattern dicts."""

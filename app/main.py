@@ -1,7 +1,7 @@
 """FastAPI application entry point.
 
 Wires together all layers:
-  Channel → Brain → Skill → LLM
+  Channel → AgentScope Brain → Skill (as tools) → LLM
   with Experience Engine recording every interaction.
 """
 
@@ -16,8 +16,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.brain.intent import IntentRecognizer
-from app.brain.router import SkillRouter
+from app.brain.agent import BrainAgent
+from app.brain.tools import register_skills_as_tools
 from app.channels.feishu import FeishuBot
 from app.channels.message import MessageRouter
 from app.config import settings
@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 # Application State: holds all initialized components
 # ============================================================
 
+
 @dataclass
 class AppState:
     """Global application state holding all initialized components."""
@@ -45,9 +46,8 @@ class AppState:
     model_router: ModelRouter = field(default_factory=ModelRouter)
     skill_registry: SkillRegistry = field(default_factory=SkillRegistry)
 
-    # Brain
-    intent_recognizer: IntentRecognizer | None = None
-    skill_router: SkillRouter | None = None
+    # Brain (AgentScope)
+    brain: BrainAgent = field(default_factory=BrainAgent)
 
     # Experience
     experience_store: ExperienceStore = field(default_factory=ExperienceStore)
@@ -80,6 +80,7 @@ def get_app_state() -> AppState:
 # Lifespan: startup and shutdown
 # ============================================================
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan: initialize all components on startup, cleanup on shutdown."""
@@ -93,7 +94,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     state.redis = RedisManager()
     await state.redis.connect()
 
-    # Initialize database tables (dev mode)
     if settings.debug:
         await state.db.init_db()
 
@@ -114,17 +114,20 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     state.skill_registry = SkillRegistry()
     _register_builtin_skills(state)
 
-    # --- Brain ---
-    state.intent_recognizer = IntentRecognizer(state.model_router)
-    state.skill_router = SkillRouter(state.skill_registry)
+    # --- Brain (AgentScope) ---
+    state.brain = BrainAgent()
+    register_skills_as_tools(
+        brain=state.brain,
+        registry=state.skill_registry,
+        experience_engine=state.experience_engine,
+    )
+    state.brain.initialize()
 
     # --- Channels ---
     state.feishu_bot = FeishuBot()
     state.message_router = MessageRouter(
-        intent_recognizer=state.intent_recognizer,
-        skill_router=state.skill_router,
+        brain=state.brain,
         experience_engine=state.experience_engine,
-        model_router=state.model_router,
     )
 
     # --- Patrol ---
@@ -135,7 +138,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     _app_state = state
 
     logger.info(
-        "AI 中台 ready: %d skills registered, patrol %s",
+        "AI 中台 ready: %d skills registered (AgentScope), patrol %s",
         state.skill_registry.count,
         "enabled" if settings.patrol_enabled else "disabled",
     )
@@ -158,26 +161,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 def _register_builtin_skills(state: AppState) -> None:
     """Register all built-in skills."""
     state.skill_registry.register(CompliantCopySkill(state.model_router))
-    # Future skills register here:
-    # state.skill_registry.register(DataQuerySkill(...))
-    # state.skill_registry.register(ReportGeneratorSkill(...))
-    # state.skill_registry.register(CompetitorAnalysisSkill(...))
 
 
 # ============================================================
 # FastAPI App Factory
 # ============================================================
 
+
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     app = FastAPI(
         title="AI 中台",
-        description="自进化企业 AI 操作系统 — Skills-centered middleware platform",
+        description="自进化企业 AI 操作系统 — AgentScope + Skills + Experience Engine",
         version=__version__,
         lifespan=lifespan,
     )
 
-    # CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"] if settings.debug else [],
@@ -186,7 +185,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Register routes
     from app.api import chat, experience, feishu, health, patrol, skills
 
     app.include_router(health.router, prefix="/api")

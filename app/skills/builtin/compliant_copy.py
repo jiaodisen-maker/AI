@@ -247,6 +247,9 @@ class CompliantCopySkill(BaseSkill):
         if not output.success:
             return output
 
+        # P0 修复：保存原始文案，Layer 3 审核必须看原始版本
+        original_content = output.content
+
         # Layer 1: Prohibited word scan
         violations = self._check_prohibited_words(output.content)
         if violations:
@@ -260,9 +263,13 @@ class CompliantCopySkill(BaseSkill):
         if rule_issues:
             output.metadata["rule_warnings"] = rule_issues
 
-        # Layer 3: LLM compliance review
-        review = await self._llm_compliance_review(output.content)
+        # Layer 3: LLM compliance review — 审核原始文案，不是修复后的版本
+        review = await self._llm_compliance_review(original_content)
         output.metadata["compliance_review"] = review
+
+        # 如果 LLM 审核不通过，标记输出
+        if not review.get("passed", False):
+            output.metadata["compliance_warning"] = "LLM 合规审核未通过，建议人工复核"
 
         return output
 
@@ -367,5 +374,10 @@ class CompliantCopySkill(BaseSkill):
             if content.endswith("```"):
                 content = content.rsplit("```", 1)[0]
             return json.loads(content.strip())
-        except Exception:
-            return {"passed": True, "issues": [], "suggestions": []}
+        except Exception as e:
+            # P0 修复：合规审核失败时必须返回不通过，不能默认放行
+            return {
+                "passed": False,
+                "issues": [f"合规审核系统异常，请人工复核: {e}"],
+                "suggestions": [],
+            }
