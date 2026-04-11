@@ -1,0 +1,60 @@
+# 组织本体：公司架构、角色、权限
+
+departments:
+  渠道运营部:
+    head: 渠道总监
+    teams:
+      - name: 抖音运营组
+        roles: [抖音运营专员, 抖音投手]
+      - name: 小红书运营组
+        roles: [小红书运营专员]
+      - name: 京东运营组
+        roles: [京东运营专员]
+
+  内容创作部:
+    head: 内容总监
+    teams:
+      - name: 文案组
+        roles: [资深文案, 初级文案]
+      - name: 合规组
+        roles: [合规专员]
+
+  产品部:
+    head: 产品总监
+    teams:
+      - name: 产品策划组
+        roles: [产品经理]
+      - name: 配方研发组
+        roles: [配方工程师]
+
+roles:
+  渠道总监:
+    permissions: [view_all_channel_data, approve_budget, manage_team]
+    tools: [data-query, report-gen, competitor-watch]
+    data_scope: [所有渠道数据, 投放预算]
+    reports_to: CEO
+    collaborates_with: [内容总监, 产品总监]
+
+  抖音运营专员:
+    permissions: [view_douyin_data, create_campaign]
+    tools: [data-query, compliant-copy]
+    data_scope: [抖音渠道数据]
+    reports_to: 渠道总监
+
+  资深文案:
+    permissions: [create_copy, edit_copy]
+    tools: [compliant-copy, compliance-check]
+    data_scope: [产品库, 合规知识库, 历史文案库]
+    reports_to: 内容总监
+
+  合规专员:
+    permissions: [review_copy, reject_copy, approve_copy]
+    tools: [compliance-check]
+    data_scope: [全部文案, 合规知识库]
+    reports_to: 内容总监
+
+  产品经理:
+    permissions: [view_product_data, create_product]
+    tools: [competitor-watch, data-query]
+    data_scope: [产品库, 竞品数据]
+    reports_to: 产品总监

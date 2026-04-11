@@ -1,0 +1,22 @@
+# 目标本体：OKR/KPI 驱动 Agent 行为
+
+company_goals:
+  2026_Q2:
+    objective: "抖音渠道 GMV 增长 30%"
+    key_results:
+      - kr: "抖音月 GMV 达到 500 万"
+        metric: GMV
+        target: 5000000
+        owner: 渠道总监
+        tracking: weekly
+        patrol_rule:
+          trigger: "周 GMV 环比下降超 10%"
+          action: "P1 告警渠道总监 + 数据分析"
+
+      - kr: "抖音 ROI 维持在 2.5 以上"
+        metric: ROI
+        target: 2.5
+        owner: 抖音运营组
+        patrol_rule:
+          trigger: "日 ROI < 2.0 持续 3 天"
+          action: "自动分析原因 + 推荐调整方案"

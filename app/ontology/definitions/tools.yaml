@@ -1,0 +1,22 @@
+# 工具本体：可用 Skill 和外部工具
+
+skills:
+  compliant-copy:
+    name: 合规文案生成
+    category: content
+    model_preference: overseas
+    permissions_required: [create_copy]
+
+  compliance-check:
+    name: 合规审核
+    category: content
+    model_preference: local
+    permissions_required: [review_copy]
+
+external_tools:
+  feishu_api:
+    name: 飞书开放平台
+    capabilities: [发消息, 创建审批, 读取文档]
+  mysql_db:
+    name: 业务数据库
+    capabilities: [查询产品, 查询订单, 查询用户]

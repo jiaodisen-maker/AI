@@ -1,0 +1,29 @@
+# 策略本体：合规规则、安全边界、预算约束
+
+compliance:
+  advertising_law: "详见 domain/health_supplements.yaml"
+  deep_synthesis: "AI 生成内容需显著标识"
+  data_privacy: "消费者健康数据属敏感信息，需单独同意"
+
+security:
+  data_classification:
+    public: "产品介绍、营销文案"
+    internal: "销售数据、运营报告"
+    confidential: "客户数据、配方、财务数据"
+  access_rules:
+    - "机密数据仅限部门负责人以上角色访问"
+    - "所有数据操作记录审计日志"
+
+cost_control:
+  token_budget:
+    per_task_max: 50000
+    per_user_daily_max: 500000
+    model_routing: "简单任务走本地模型，复杂任务走海外模型"
+  loop_detection:
+    max_iterations: 10
+    action: "超过上限自动终止并告警"
+
+approval_policies:
+  文案发布: "文案 → 合规审核 → 内容总监审批"
+  预算调整: "运营申请 → 渠道总监审批"
+  数据导出: "需部门负责人审批"

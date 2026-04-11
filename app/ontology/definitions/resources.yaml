@@ -1,0 +1,17 @@
+# 资源本体：预算、库存、物料
+
+budgets:
+  2026_Q2:
+    total_marketing: 2000000
+    by_channel:
+      抖音: 800000
+      小红书: 400000
+      京东: 500000
+      公众号: 100000
+      其他: 200000
+
+inventory_alerts:
+  low_stock_threshold: 30  # 天
+  rules:
+    - "库存低于 30 天销量预测时触发补货预警"
+    - "大促前 45 天检查库存充足性"

@@ -25,7 +25,11 @@ from app.data.database import DatabaseManager
 from app.data.redis import RedisManager
 from app.experience.engine import ExperienceEngine
 from app.experience.store import ExperienceStore
+from app.guardrails.safety import SafetyGuard
 from app.llm.router import ModelRouter
+from app.mcp.server import MCPServerManager
+from app.memory.session import SessionMemory
+from app.ontology.service import OntologyService
 from app.patrol.notifier import PatrolNotifier
 from app.patrol.scheduler import PatrolScheduler
 from app.skills.builtin import CompliantCopySkill
@@ -52,6 +56,18 @@ class AppState:
     # Experience
     experience_store: ExperienceStore = field(default_factory=ExperienceStore)
     experience_engine: ExperienceEngine | None = None
+
+    # Ontology
+    ontology_service: OntologyService | None = None
+
+    # Memory
+    session_memory: SessionMemory | None = None
+
+    # MCP
+    mcp_server: MCPServerManager = field(default_factory=MCPServerManager)
+
+    # Safety
+    safety_guard: SafetyGuard = field(default_factory=SafetyGuard)
 
     # Channels
     feishu_bot: FeishuBot = field(default_factory=FeishuBot)
@@ -110,6 +126,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         model_router=state.model_router,
     )
 
+    # --- Ontology ---
+    state.ontology_service = OntologyService()
+
+    # --- Memory ---
+    redis_client = state.redis.client if state.redis and state.redis.is_connected else None
+    state.session_memory = SessionMemory(redis_client=redis_client)
+
     # --- Skills ---
     state.skill_registry = SkillRegistry()
     _register_builtin_skills(state)
@@ -122,6 +145,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         experience_engine=state.experience_engine,
     )
     state.brain.initialize()
+
+    # --- MCP ---
+    state.mcp_server = MCPServerManager()
+    state.mcp_server.register_ontology_tools(state.ontology_service)
 
     # --- Channels ---
     state.feishu_bot = FeishuBot()
@@ -185,7 +212,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    from app.api import chat, experience, feishu, health, patrol, skills
+    from app.api import chat, experience, feishu, health, ontology, patrol, skills
 
     app.include_router(health.router, prefix="/api")
     app.include_router(chat.router, prefix="/api")
@@ -193,6 +220,7 @@ def create_app() -> FastAPI:
     app.include_router(experience.router, prefix="/api")
     app.include_router(feishu.router, prefix="/api")
     app.include_router(patrol.router, prefix="/api")
+    app.include_router(ontology.router, prefix="/api")
 
     return app
 

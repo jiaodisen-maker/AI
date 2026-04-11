@@ -1,0 +1,26 @@
+# 客户本体：用户画像和分群
+
+customer_segments:
+  核心女性用户:
+    age_range: "25-40"
+    gender: 女
+    interests: [美容, 养生, 健身]
+    channels: [小红书, 抖音]
+    preferred_products: [胶原蛋白, 益生菌]
+    content_tone: "亲切、分享体验、真实感"
+
+  中老年保健用户:
+    age_range: "45-65"
+    gender: 不限
+    interests: [健康管理, 慢病预防]
+    channels: [公众号, 京东]
+    preferred_products: [辅酶Q10, 鱼油]
+    content_tone: "专业、权威、温暖"
+
+  健身人群:
+    age_range: "20-35"
+    gender: 不限
+    interests: [健身, 增肌, 运动营养]
+    channels: [抖音, 小红书]
+    preferred_products: [蛋白粉, 胶原蛋白]
+    content_tone: "活力、数据化、效果导向"
