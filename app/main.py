@@ -17,7 +17,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app.brain.agent import BrainAgent
-from app.brain.tools import register_skills_as_tools
 from app.channels.feishu import FeishuBot
 from app.channels.message import MessageRouter
 from app.config import settings
@@ -32,7 +31,9 @@ from app.memory.session import SessionMemory
 from app.ontology.service import OntologyService
 from app.patrol.notifier import PatrolNotifier
 from app.patrol.scheduler import PatrolScheduler
+from app.skills.base import configure_skill_runtime
 from app.skills.builtin import CompliantCopySkill
+from app.skills.dispatcher import SkillDispatcher
 from app.skills.registry import SkillRegistry
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,10 @@ class AppState:
     model_router: ModelRouter = field(default_factory=ModelRouter)
     skill_registry: SkillRegistry = field(default_factory=SkillRegistry)
 
-    # Brain (AgentScope)
+    # Skill Dispatcher (the center of everything)
+    dispatcher: SkillDispatcher | None = None
+
+    # Brain (AgentScope, only for Tier 3 multi-step orchestration)
     brain: BrainAgent = field(default_factory=BrainAgent)
 
     # Experience
@@ -133,29 +137,34 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     redis_client = state.redis.client if state.redis and state.redis.is_connected else None
     state.session_memory = SessionMemory(redis_client=redis_client)
 
+    # --- Configure Skill Runtime (inject services into BaseSkill lifecycle) ---
+    configure_skill_runtime(
+        guardrail=state.safety_guard,
+        ontology_service=state.ontology_service,
+        experience_engine=state.experience_engine,
+    )
+
     # --- Skills ---
     state.skill_registry = SkillRegistry()
     _register_builtin_skills(state)
 
-    # --- Brain (AgentScope) ---
+    # --- Brain (AgentScope, only for Tier 3) ---
     state.brain = BrainAgent()
-    register_skills_as_tools(
-        brain=state.brain,
+
+    # --- Skill Dispatcher (the center of everything) ---
+    state.dispatcher = SkillDispatcher(
         registry=state.skill_registry,
-        experience_engine=state.experience_engine,
+        model_router=state.model_router,
+        brain=state.brain,
     )
-    state.brain.initialize()
 
     # --- MCP ---
     state.mcp_server = MCPServerManager()
     state.mcp_server.register_ontology_tools(state.ontology_service)
 
-    # --- Channels ---
+    # --- Channels (thin adapter to SkillDispatcher) ---
     state.feishu_bot = FeishuBot()
-    state.message_router = MessageRouter(
-        brain=state.brain,
-        experience_engine=state.experience_engine,
-    )
+    state.message_router = MessageRouter(dispatcher=state.dispatcher)
 
     # --- Patrol ---
     state.patrol_notifier = PatrolNotifier(feishu_bot=state.feishu_bot)
@@ -165,7 +174,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     _app_state = state
 
     logger.info(
-        "AI 中台 ready: %d skills registered (AgentScope), patrol %s",
+        "AI 中台 ready: %d skills registered (Skill-centered), patrol %s",
         state.skill_registry.count,
         "enabled" if settings.patrol_enabled else "disabled",
     )

@@ -7,8 +7,6 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.channels.models import IncomingMessage, MessageSource
-
 router = APIRouter(tags=["chat"])
 
 
@@ -21,35 +19,33 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     content: str
     skill_id: str | None = None
+    tier: int | None = None
     execution_time_ms: int | None = None
 
 
 @router.post("/chat")
 async def chat(req: ChatRequest) -> ChatResponse:
-    """Main chat endpoint: send a message, get AI response.
+    """Main chat endpoint — goes directly through SkillDispatcher.
 
-    The message goes through:
-    1. Intent recognition
-    2. Skill routing
-    3. Skill execution (with experience injection)
-    4. Response formatting
+    Three-tier routing:
+    1. Trigger word match (fast, no LLM)
+    2. LLM intent classification
+    3. Agent multi-step orchestration
     """
     from app.main import get_app_state
 
     state = get_app_state()
 
-    incoming = IncomingMessage(
-        message_id=uuid.uuid4().hex,
-        source=MessageSource.API,
+    result = await state.dispatcher.dispatch(
+        message=req.message,
         user_id=req.user_id,
-        content=req.message,
         session_id=req.session_id,
+        source="api",
     )
 
-    outgoing = await state.message_router.handle(incoming)
-
     return ChatResponse(
-        content=outgoing.content,
-        skill_id=outgoing.metadata.get("skill_id"),
-        execution_time_ms=outgoing.metadata.get("execution_time_ms"),
+        content=result["content"],
+        skill_id=result.get("skill_id"),
+        tier=result.get("tier"),
+        execution_time_ms=result.get("metadata", {}).get("execution_time_ms"),
     )

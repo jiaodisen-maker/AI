@@ -204,6 +204,10 @@ class CompliantCopySkill(BaseSkill):
             return "请描述您需要生成的文案内容"
         return None
 
+    def ontology_needs(self) -> list[str]:
+        """This skill needs product domain knowledge and compliance rules."""
+        return ["health_supplements"]
+
     async def execute(self, skill_input: SkillInput) -> SkillOutput:
         """Generate compliant copywriting."""
         # Determine platform
