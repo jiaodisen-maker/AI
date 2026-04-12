@@ -275,6 +275,20 @@ def create_app() -> FastAPI:
     app.include_router(patrol.router, prefix="/api")
     app.include_router(ontology.router, prefix="/api")
 
+    # Serve frontend static files
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    static_dir = Path(__file__).parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+        @app.get("/")
+        async def serve_frontend():
+            return FileResponse(str(static_dir / "index.html"))
+
     return app
 
 

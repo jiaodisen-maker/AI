@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 中台 — 自进化企业 AI 操作系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .chat-msg { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .sidebar-item:hover { background-color: rgba(59, 130, 246, 0.1); }
+    .sidebar-item.active { background-color: rgba(59, 130, 246, 0.15); border-right: 3px solid #3b82f6; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen flex" x-data="app()" x-cloak>
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div class="p-4 border-b border-gray-200">
+      <h1 class="text-lg font-bold text-blue-600">AI 中台</h1>
+      <p class="text-xs text-gray-400 mt-1">自进化企业 AI 操作系统</p>
+    </div>
+
+    <nav class="flex-1 py-2">
+      <template x-for="item in menuItems" :key="item.id">
+        <button
+          @click="currentPage = item.id; if(item.onEnter) item.onEnter()"
+          :class="{'active': currentPage === item.id}"
+          class="sidebar-item w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors"
+        >
+          <span x-text="item.icon" class="text-base"></span>
+          <span x-text="item.label"></span>
+        </button>
+      </template>
+    </nav>
+
+    <div class="p-4 border-t border-gray-200 text-xs text-gray-400">
+      <div x-show="health.status" class="flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full" :class="health.status === 'healthy' ? 'bg-green-400' : 'bg-red-400'"></span>
+        <span x-text="'v' + health.version"></span>
+        <span>·</span>
+        <span x-text="health.status"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Page: Dashboard -->
+    <div x-show="currentPage === 'dashboard'" class="flex-1 overflow-y-auto p-6">
+      <h2 class="text-xl font-bold mb-6">仪表盘</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-4 border">
+          <p class="text-sm text-gray-500">已注册技能</p>
+          <p class="text-3xl font-bold text-blue-600" x-text="skills.length"></p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-4 border">
+          <p class="text-sm text-gray-500">本体维度</p>
+          <p class="text-3xl font-bold text-green-600" x-text="ontologyDimensions.length"></p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-4 border">
+          <p class="text-sm text-gray-500">巡逻任务</p>
+          <p class="text-3xl font-bold text-orange-600" x-text="patrolTasks.length"></p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border p-4">
+        <h3 class="font-semibold mb-3">快速操作</h3>
+        <div class="flex flex-wrap gap-2">
+          <button @click="currentPage='chat'" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded text-sm hover:bg-blue-100">对话工作台</button>
+          <button @click="currentPage='ontology'" class="px-3 py-1.5 bg-green-50 text-green-600 rounded text-sm hover:bg-green-100">本体管理</button>
+          <button @click="currentPage='skills'" class="px-3 py-1.5 bg-purple-50 text-purple-600 rounded text-sm hover:bg-purple-100">技能管理</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Chat -->
+    <div x-show="currentPage === 'chat'" class="flex-1 flex flex-col">
+      <div class="border-b border-gray-200 px-6 py-3 bg-white">
+        <h2 class="text-lg font-semibold">对话工作台</h2>
+        <p class="text-xs text-gray-400">支持自然对话、/deep 深度分析、/workflow 工作流、/discuss 多Agent讨论</p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6 space-y-4" id="chatContainer">
+        <template x-for="msg in chatMessages" :key="msg.id">
+          <div class="chat-msg flex" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
+            <div class="max-w-2xl rounded-lg px-4 py-2.5 text-sm"
+                 :class="msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-800'">
+              <pre class="font-sans" x-text="msg.content"></pre>
+              <div x-show="msg.skill_id" class="mt-2 text-xs opacity-60">
+                <span x-show="msg.skill_id">技能: <span x-text="msg.skill_id"></span></span>
+                <span x-show="msg.mode"> · 模式: <span x-text="msg.mode"></span></span>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div x-show="chatLoading" class="flex justify-start">
+          <div class="bg-white border rounded-lg px-4 py-2.5 text-sm text-gray-400 animate-pulse">思考中...</div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 p-4 bg-white">
+        <form @submit.prevent="sendMessage()" class="flex gap-2">
+          <input
+            x-model="chatInput"
+            type="text"
+            placeholder="输入消息... (/deep 深度分析  /workflow 执行流程  /discuss 多Agent讨论)"
+            class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :disabled="chatLoading"
+          >
+          <button
+            type="submit"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+            :disabled="chatLoading || !chatInput.trim()"
+          >发送</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Page: Skills -->
+    <div x-show="currentPage === 'skills'" class="flex-1 overflow-y-auto p-6">
+      <h2 class="text-xl font-bold mb-4">技能管理</h2>
+      <div class="space-y-3">
+        <template x-for="skill in skills" :key="skill.id">
+          <div class="bg-white rounded-lg shadow-sm border p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold" x-text="skill.name"></h3>
+                <p class="text-sm text-gray-500 mt-1" x-text="skill.description"></p>
+                <div class="flex flex-wrap gap-1 mt-2">
+                  <template x-for="trigger in skill.triggers.slice(0,5)" :key="trigger">
+                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded" x-text="trigger"></span>
+                  </template>
+                </div>
+              </div>
+              <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded" x-text="skill.category"></span>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button @click="testSkill(skill.id)" class="px-3 py-1 bg-blue-50 text-blue-600 rounded text-xs hover:bg-blue-100">测试执行</button>
+              <button @click="viewExperience(skill.id)" class="px-3 py-1 bg-purple-50 text-purple-600 rounded text-xs hover:bg-purple-100">查看经验</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Page: Ontology -->
+    <div x-show="currentPage === 'ontology'" class="flex-1 overflow-y-auto p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">企业本体管理（12 维度）</h2>
+        <button @click="reloadOntology()" class="px-3 py-1.5 bg-green-50 text-green-600 rounded text-sm hover:bg-green-100">热重载</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+        <template x-for="dim in ontologyDimensions" :key="dim">
+          <button
+            @click="loadDimension(dim)"
+            class="bg-white rounded-lg shadow-sm border p-3 text-left hover:border-blue-300 transition-colors"
+            :class="selectedDimension === dim ? 'border-blue-500 ring-2 ring-blue-100' : ''"
+          >
+            <p class="font-semibold text-sm" x-text="dimensionLabels[dim] || dim"></p>
+            <p class="text-xs text-gray-400 mt-1" x-text="dim + '.yaml'"></p>
+          </button>
+        </template>
+      </div>
+
+      <div x-show="selectedDimension" class="bg-white rounded-lg shadow-sm border">
+        <div class="px-4 py-3 border-b bg-gray-50 flex justify-between items-center">
+          <h3 class="font-semibold" x-text="(dimensionLabels[selectedDimension] || selectedDimension) + ' 详情'"></h3>
+        </div>
+        <div class="p-4">
+          <pre class="text-xs bg-gray-50 rounded p-3 overflow-x-auto max-h-96 overflow-y-auto" x-text="JSON.stringify(dimensionData, null, 2)"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Compliance -->
+    <div x-show="currentPage === 'compliance'" class="flex-1 overflow-y-auto p-6">
+      <h2 class="text-xl font-bold mb-4">合规查询</h2>
+      <div class="bg-white rounded-lg shadow-sm border p-4 mb-4">
+        <form @submit.prevent="queryCompliance()" class="flex gap-2">
+          <input x-model="complianceQuery" placeholder="输入产品名称（如：胶原蛋白、辅酶Q10、益生菌）"
+                 class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">查询</button>
+        </form>
+      </div>
+
+      <div x-show="complianceResult" class="bg-white rounded-lg shadow-sm border p-4">
+        <h3 class="font-semibold mb-3" x-text="'产品: ' + (complianceResult.product || complianceQuery)"></h3>
+        <div class="space-y-3">
+          <div>
+            <p class="text-sm font-medium text-green-600">批准功效宣称</p>
+            <template x-for="claim in (complianceResult.approved_claims || [])">
+              <p class="text-sm ml-4 text-green-700">✓ <span x-text="claim"></span></p>
+            </template>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-red-600">禁止宣称</p>
+            <template x-for="claim in (complianceResult.prohibited_claims || [])">
+              <p class="text-sm ml-4 text-red-700">✗ <span x-text="claim"></span></p>
+            </template>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-orange-600">必须包含声明</p>
+            <template x-for="d in (complianceResult.required_disclaimers || [])">
+              <p class="text-sm ml-4 text-orange-700">! <span x-text="d"></span></p>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Experience -->
+    <div x-show="currentPage === 'experience'" class="flex-1 overflow-y-auto p-6">
+      <h2 class="text-xl font-bold mb-4">经验引擎</h2>
+      <div class="bg-white rounded-lg shadow-sm border p-4 mb-4">
+        <h3 class="font-semibold mb-2">经验 Pattern</h3>
+        <template x-for="p in experiencePatterns" :key="p.id">
+          <div class="border rounded p-3 mb-2">
+            <p class="text-sm font-medium" x-text="p.pattern"></p>
+            <p class="text-xs text-gray-500 mt-1" x-text="p.description"></p>
+            <div class="flex items-center gap-3 mt-2 text-xs text-gray-400">
+              <span>置信度: <span class="font-mono" x-text="p.confidence.toFixed(2)"></span></span>
+              <span>使用次数: <span x-text="p.usage_count"></span></span>
+              <button @click="confirmPattern(p.id)" class="text-green-600 hover:underline">确认</button>
+              <button @click="rejectPattern(p.id)" class="text-red-600 hover:underline">否决</button>
+            </div>
+          </div>
+        </template>
+        <p x-show="experiencePatterns.length === 0" class="text-sm text-gray-400">暂无经验 Pattern。使用 Skill 并提交人工修正后会自动学习。</p>
+      </div>
+    </div>
+
+    <!-- Page: Patrol -->
+    <div x-show="currentPage === 'patrol'" class="flex-1 overflow-y-auto p-6">
+      <h2 class="text-xl font-bold mb-4">巡逻监控</h2>
+      <template x-for="task in patrolTasks" :key="task.task_id">
+        <div class="bg-white rounded-lg shadow-sm border p-4 mb-3">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold" x-text="task.name"></h3>
+              <p class="text-xs text-gray-500 mt-1">Cron: <span x-text="task.cron"></span></p>
+            </div>
+            <button @click="runPatrol(task.task_id)" class="px-3 py-1 bg-orange-50 text-orange-600 rounded text-xs">手动触发</button>
+          </div>
+        </div>
+      </template>
+      <p x-show="patrolTasks.length === 0" class="text-sm text-gray-400">暂无巡逻任务。Phase 2 将添加渠道数据扫描、竞品监控等。</p>
+    </div>
+
+  </main>
+
+  <script>
+  const API = '';
+
+  function app() {
+    return {
+      currentPage: 'dashboard',
+      health: {},
+      skills: [],
+      ontologyDimensions: [],
+      patrolTasks: [],
+      chatMessages: [],
+      chatInput: '',
+      chatLoading: false,
+      selectedDimension: '',
+      dimensionData: null,
+      complianceQuery: '胶原蛋白',
+      complianceResult: null,
+      experiencePatterns: [],
+      dimensionLabels: {
+        organization: '组织本体', capabilities: '能力本体',
+        workflows: '流程本体', health_supplements: '领域本体',
+        data_definitions: '数据本体', goals: '目标本体',
+        events: '事件本体', policies: '策略本体',
+        tools: '工具本体', customers: '客户本体',
+        schedule: '时间本体', resources: '资源本体',
+        prohibited_words: '禁词库',
+      },
+      menuItems: [
+        { id: 'dashboard', icon: '📊', label: '仪表盘', onEnter: null },
+        { id: 'chat', icon: '💬', label: '对话工作台', onEnter: null },
+        { id: 'skills', icon: '⚡', label: '技能管理', onEnter: () => this.loadSkills?.() },
+        { id: 'ontology', icon: '🧠', label: '本体管理', onEnter: null },
+        { id: 'compliance', icon: '✅', label: '合规查询', onEnter: null },
+        { id: 'experience', icon: '📈', label: '经验引擎', onEnter: () => this.loadExperience?.() },
+        { id: 'patrol', icon: '🔍', label: '巡逻监控', onEnter: null },
+      ],
+
+      async init() {
+        await this.loadHealth();
+        await this.loadSkills();
+        await this.loadOntologyDimensions();
+        await this.loadPatrolTasks();
+      },
+
+      async loadHealth() {
+        try { this.health = await (await fetch(API + '/api/health')).json(); } catch(e) {}
+      },
+      async loadSkills() {
+        try { const d = await (await fetch(API + '/api/skills/')).json(); this.skills = d.skills || []; } catch(e) {}
+      },
+      async loadOntologyDimensions() {
+        try { const d = await (await fetch(API + '/api/ontology/dimensions')).json(); this.ontologyDimensions = d.dimensions || []; } catch(e) {}
+      },
+      async loadPatrolTasks() {
+        try { const d = await (await fetch(API + '/api/patrol/tasks')).json(); this.patrolTasks = d.tasks || []; } catch(e) {}
+      },
+
+      async sendMessage() {
+        if (!this.chatInput.trim()) return;
+        const msg = this.chatInput.trim();
+        this.chatMessages.push({ id: Date.now(), role: 'user', content: msg });
+        this.chatInput = '';
+        this.chatLoading = true;
+        this.$nextTick(() => { document.getElementById('chatContainer').scrollTop = 999999; });
+
+        try {
+          const res = await fetch(API + '/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg }),
+          });
+          const data = await res.json();
+          this.chatMessages.push({
+            id: Date.now() + 1, role: 'assistant',
+            content: data.content || '无响应',
+            skill_id: data.skill_id, mode: data.mode,
+          });
+        } catch(e) {
+          this.chatMessages.push({ id: Date.now() + 1, role: 'assistant', content: '连接失败: ' + e.message });
+        }
+        this.chatLoading = false;
+        this.$nextTick(() => { document.getElementById('chatContainer').scrollTop = 999999; });
+      },
+
+      async loadDimension(dim) {
+        this.selectedDimension = dim;
+        try { const d = await (await fetch(API + '/api/ontology/dimension/' + dim)).json(); this.dimensionData = d.data; } catch(e) {}
+      },
+
+      async reloadOntology() {
+        try {
+          await fetch(API + '/api/ontology/reload', { method: 'POST' });
+          await this.loadOntologyDimensions();
+          alert('本体已重载');
+        } catch(e) { alert('重载失败'); }
+      },
+
+      async queryCompliance() {
+        if (!this.complianceQuery.trim()) return;
+        try {
+          this.complianceResult = await (await fetch(API + '/api/ontology/compliance/' + encodeURIComponent(this.complianceQuery))).json();
+        } catch(e) {}
+      },
+
+      async testSkill(skillId) {
+        const msg = prompt('输入测试消息:', '写一篇胶原蛋白的小红书文案');
+        if (!msg) return;
+        this.currentPage = 'chat';
+        this.chatInput = msg;
+        await this.sendMessage();
+      },
+
+      async viewExperience(skillId) {
+        this.currentPage = 'experience';
+        await this.loadExperience(skillId);
+      },
+
+      async loadExperience(skillId) {
+        const sid = skillId || 'compliant-copy';
+        try {
+          const d = await (await fetch(API + '/api/experience/patterns/' + sid)).json();
+          this.experiencePatterns = d.patterns || [];
+        } catch(e) {}
+      },
+
+      async confirmPattern(id) {
+        try { await fetch(API + '/api/experience/patterns/' + id, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'confirm'}) }); await this.loadExperience(); } catch(e) {}
+      },
+
+      async rejectPattern(id) {
+        try { await fetch(API + '/api/experience/patterns/' + id, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'reject'}) }); await this.loadExperience(); } catch(e) {}
+      },
+
+      async runPatrol(taskId) {
+        try {
+          const res = await fetch(API + '/api/patrol/tasks/' + taskId + '/run', { method: 'POST' });
+          const data = await res.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch(e) { alert('执行失败'); }
+      },
+    };
+  }
+  </script>
+</body>
+</html>
