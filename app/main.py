@@ -278,9 +278,25 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    from app.api import chat, experience, feishu, health, ontology, patrol, skills
+    # Audit middleware (Phase 4)
+    from app.auth.audit import AuditMiddleware
+    app.add_middleware(AuditMiddleware)
+
+    from app.api import (
+        auth as auth_api,
+    )
+    from app.api import (
+        chat,
+        experience,
+        feishu,
+        health,
+        ontology,
+        patrol,
+        skills,
+    )
 
     app.include_router(health.router, prefix="/api")
+    app.include_router(auth_api.router, prefix="/api")
     app.include_router(chat.router, prefix="/api")
     app.include_router(skills.router, prefix="/api")
     app.include_router(experience.router, prefix="/api")

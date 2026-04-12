@@ -57,6 +57,17 @@ class Settings(BaseSettings):
     # --- Patrol ---
     patrol_enabled: bool = True
     patrol_timezone: str = "Asia/Shanghai"
+    use_celery: bool = False  # If true, use Celery instead of APScheduler
+
+    # --- Langfuse Observability ---
+    langfuse_public_key: str = ""
+    langfuse_secret_key: str = ""
+    langfuse_host: str = "https://cloud.langfuse.com"
+
+    # --- Cost Control (Phase 4) ---
+    per_task_max_tokens: int = 50000
+    per_task_max_calls: int = 20
+    per_user_daily_tokens: int = 500000
 
     @property
     def is_production(self) -> bool:

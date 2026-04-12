@@ -79,7 +79,70 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # ============================================================
+  # Langfuse — LLM 可观测性（追踪、评估、prompt 管理）
+  # ============================================================
+  langfuse-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse123
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "langfuse"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse123@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: changeme-langfuse-secret-32chars
+      NEXTAUTH_URL: http://localhost:3000
+      SALT: changeme-langfuse-salt
+      TELEMETRY_ENABLED: "false"
+    restart: unless-stopped
+
+  # ============================================================
+  # Celery Worker — 分布式任务执行
+  # ============================================================
+  celery-worker:
+    build: .
+    command: celery -A app.patrol.celery_app worker --loglevel=info
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./app/ontology/definitions:/app/app/ontology/definitions
+    restart: unless-stopped
+
+  # ============================================================
+  # Celery Beat — 定时调度器
+  # ============================================================
+  celery-beat:
+    build: .
+    command: celery -A app.patrol.celery_app beat --loglevel=info
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    restart: unless-stopped
+
 volumes:
   mysql_data:
   redis_data:
   neo4j_data:
+  langfuse_db:
