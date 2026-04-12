@@ -33,7 +33,14 @@ from app.ontology.service import OntologyService
 from app.patrol.notifier import PatrolNotifier
 from app.patrol.scheduler import PatrolScheduler
 from app.skills.base import configure_skill_runtime
-from app.skills.builtin import CompliantCopySkill
+from app.skills.builtin import (
+    CompetitorWatchSkill,
+    CompliantCopySkill,
+    ContentAdaptSkill,
+    DataQuerySkill,
+    ReportGenSkill,
+    WebSearchSkill,
+)
 from app.skills.dispatcher import SkillDispatcher
 from app.skills.registry import SkillRegistry
 
@@ -216,7 +223,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 def _register_builtin_skills(state: AppState) -> None:
     """Register all built-in skills."""
-    state.skill_registry.register(CompliantCopySkill(state.model_router))
+    router = state.model_router
+    state.skill_registry.register(CompliantCopySkill(router))
+    state.skill_registry.register(DataQuerySkill(router))
+    state.skill_registry.register(ReportGenSkill(router))
+    state.skill_registry.register(WebSearchSkill(router))
+    state.skill_registry.register(CompetitorWatchSkill(router))
+    state.skill_registry.register(ContentAdaptSkill(router))
 
 
 def _create_role_agents(state: AppState) -> None:
