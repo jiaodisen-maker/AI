@@ -21,7 +21,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     content: str
     skill_id: str | None = None
-    tier: int | None = None
+    mode: str | None = None
     execution_time_ms: int | None = None
 
 
@@ -47,6 +47,6 @@ async def chat(req: ChatRequest, user: dict = Depends(require_auth)) -> ChatResp
     return ChatResponse(
         content=result["content"],
         skill_id=result.get("skill_id"),
-        tier=None,  # deprecated, use mode
+        mode=result.get("mode"),
         execution_time_ms=result.get("metadata", {}).get("execution_time_ms"),
     )

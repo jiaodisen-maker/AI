@@ -17,6 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app.brain.agent import BrainAgent
+from app.brain.workflow import WorkflowEngine
 from app.channels.feishu import FeishuBot
 from app.channels.message import MessageRouter
 from app.config import settings
@@ -54,8 +55,11 @@ class AppState:
     # Skill Dispatcher (the center of everything)
     dispatcher: SkillDispatcher | None = None
 
-    # Brain (AgentScope, only for Tier 3 multi-step orchestration)
+    # Brain (AgentScope — full integration)
     brain: BrainAgent = field(default_factory=BrainAgent)
+
+    # Workflow engine (SOP execution from ontology)
+    workflow_engine: WorkflowEngine | None = None
 
     # Experience
     experience_store: ExperienceStore = field(default_factory=ExperienceStore)
@@ -148,14 +152,30 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     state.skill_registry = SkillRegistry()
     _register_builtin_skills(state)
 
-    # --- Brain (AgentScope, only for Tier 3) ---
+    # --- Brain (AgentScope — full integration) ---
     state.brain = BrainAgent()
+    from app.brain.tools import register_skills_as_tools
+    register_skills_as_tools(
+        brain=state.brain,
+        registry=state.skill_registry,
+        experience_engine=state.experience_engine,
+    )
+
+    # --- Create role agents from ontology ---
+    _create_role_agents(state)
+
+    # --- Workflow engine ---
+    state.workflow_engine = WorkflowEngine(
+        skill_registry=state.skill_registry,
+        ontology_service=state.ontology_service,
+    )
 
     # --- Skill Dispatcher (the center of everything) ---
     state.dispatcher = SkillDispatcher(
         registry=state.skill_registry,
         brain=state.brain,
         session_memory=state.session_memory,
+        workflow_engine=state.workflow_engine,
     )
 
     # --- MCP ---
@@ -197,6 +217,30 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 def _register_builtin_skills(state: AppState) -> None:
     """Register all built-in skills."""
     state.skill_registry.register(CompliantCopySkill(state.model_router))
+
+
+def _create_role_agents(state: AppState) -> None:
+    """Create role agents from ontology organization.yaml.
+
+    Each role defined in the ontology gets a corresponding AgentScope agent
+    with permissions, tools, and data scope from the role definition.
+    """
+    if not state.ontology_service or not state.brain:
+        return
+
+    org = state.ontology_service.loader.get("organization")
+    roles = org.get("roles", {})
+
+    for role_name, role_def in roles.items():
+        try:
+            state.brain.create_role_agent(role_name, role_def)
+        except Exception as e:
+            logger.warning("Failed to create role agent %s: %s", role_name, e)
+
+    logger.info(
+        "Created %d role agents from ontology",
+        len(state.brain.role_agent_names),
+    )
 
 
 # ============================================================

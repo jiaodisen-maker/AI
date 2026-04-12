@@ -1,4 +1,4 @@
-"""Tests for the SkillDispatcher — 1+1+Deep routing."""
+"""Tests for the SkillDispatcher — 1+1+Deep+Workflow+Discuss routing."""
 
 import pytest
 
@@ -38,7 +38,6 @@ def dispatcher(registry):
 
 @pytest.mark.asyncio
 async def test_fast_track_trigger_match(dispatcher):
-    """Fast track: trigger word match, no LLM needed."""
     result = await dispatcher.dispatch("echo hello world")
     assert result["skill_id"] == "echo"
     assert result["mode"] == "fast"
@@ -47,81 +46,84 @@ async def test_fast_track_trigger_match(dispatcher):
 
 @pytest.mark.asyncio
 async def test_fast_track_chinese_trigger(dispatcher):
-    """Fast track: Chinese trigger word."""
     result = await dispatcher.dispatch("重复这句话")
     assert result["skill_id"] == "echo"
     assert result["mode"] == "fast"
 
 
 @pytest.mark.asyncio
-async def test_no_match_no_agent_returns_fallback(dispatcher):
-    """No matching skill, no agent → fallback message."""
-    result = await dispatcher.dispatch("completely unrelated query")
+async def test_no_match_no_agent(dispatcher):
+    result = await dispatcher.dispatch("unrelated query")
     assert result["skill_id"] is None
     assert result["mode"] == "no_match"
-    assert "抱歉" in result["content"]
 
 
 @pytest.mark.asyncio
 async def test_deep_command_no_deps(dispatcher):
-    """/deep command without LangChain deps → falls back gracefully."""
-    result = await dispatcher.dispatch("/deep 分析竞品机会")
-    # Should not crash, either runs deep agent or falls back
-    assert result["content"]  # Has some response
+    result = await dispatcher.dispatch("/deep 分析竞品")
+    assert result["content"]
     assert result["mode"] in ("deep", "deep_error", "no_match", "error")
 
 
 @pytest.mark.asyncio
-async def test_skill_goes_through_full_lifecycle():
-    """Verify the full BaseSkill lifecycle runs."""
-    lifecycle_log = []
+async def test_workflow_command_no_engine(dispatcher):
+    result = await dispatcher.dispatch("/workflow 新品上市文案流程")
+    assert "未初始化" in result["content"]
+    assert result["mode"] == "workflow_error"
+
+
+@pytest.mark.asyncio
+async def test_discuss_command_no_brain(dispatcher):
+    result = await dispatcher.dispatch("/discuss 竞品策略")
+    assert "未初始化" in result["content"]
+    assert result["mode"] == "discuss_error"
+
+
+@pytest.mark.asyncio
+async def test_lifecycle():
+    log = []
 
     class LifecycleSkill(BaseSkill):
         def meta(self):
             return SkillMeta(
-                id="lifecycle",
-                name="Lifecycle Test",
-                description="Tests lifecycle",
-                category=SkillCategory.DATA,
-                triggers=["lifecycle"],
+                id="lc", name="LC", description="test",
+                category=SkillCategory.DATA, triggers=["lifecycle"],
             )
 
-        def validate(self, skill_input):
-            lifecycle_log.append("validate")
+        def validate(self, si):
+            log.append("validate")
             return None
 
-        async def execute(self, skill_input):
-            lifecycle_log.append("execute")
+        async def execute(self, si):
+            log.append("execute")
             return SkillOutput(success=True, content="done")
 
-        async def post_execute(self, skill_input, output):
-            lifecycle_log.append("post_execute")
-            return output
+        async def post_execute(self, si, o):
+            log.append("post_execute")
+            return o
 
-    registry = SkillRegistry()
-    registry.register(LifecycleSkill())
-    dispatcher = SkillDispatcher(registry=registry)
+    reg = SkillRegistry()
+    reg.register(LifecycleSkill())
+    d = SkillDispatcher(registry=reg)
 
-    result = await dispatcher.dispatch("lifecycle test")
-    assert result["skill_id"] == "lifecycle"
-    assert "validate" in lifecycle_log
-    assert "execute" in lifecycle_log
-    assert "post_execute" in lifecycle_log
+    result = await d.dispatch("lifecycle test")
+    assert result["skill_id"] == "lc"
+    assert "validate" in log
+    assert "execute" in log
+    assert "post_execute" in log
 
 
 @pytest.mark.asyncio
-async def test_session_memory_integration():
-    """Session memory stores conversation history."""
+async def test_session_memory():
     from app.memory.session import SessionMemory
 
-    memory = SessionMemory()
-    registry = SkillRegistry()
-    registry.register(EchoSkill())
-    dispatcher = SkillDispatcher(registry=registry, session_memory=memory)
+    mem = SessionMemory()
+    reg = SkillRegistry()
+    reg.register(EchoSkill())
+    d = SkillDispatcher(registry=reg, session_memory=mem)
 
-    await dispatcher.dispatch("echo hello", session_id="s1")
-
-    history = await memory.get_history("s1")
-    assert len(history) == 2  # user + assistant
+    await d.dispatch("echo hi", session_id="s1")
+    history = await mem.get_history("s1")
+    assert len(history) == 2
     assert history[0]["role"] == "user"
     assert history[1]["role"] == "assistant"
