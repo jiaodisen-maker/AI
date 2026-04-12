@@ -373,3 +373,50 @@ Phase 3:        多角色 Agent + SOP 驱动 + Graphiti 时序记忆
 Phase 4:        生产加固 (SSO/RBAC/Langfuse/Portkey/Celery)
 Phase 5:        公司数字孪生 (组织本体驱动 Agent 自动生成)
 ```
+
+---
+
+## 12. 更新记录（Phase 2-3 已实现）
+
+### v0.2.0 — Phase 2-3 合并交付
+
+**架构升级:**
+- SkillDispatcher 简化为 1+1+Deep 三档（快速通道 + Agent 主路径 + /deep 深度分析）
+- AgentScope 深度集成：ReActAgent + Toolkit + MsgHub + Pipeline + RedisMemory
+- AgentFactory: 从 organization.yaml 动态创建角色 Agent（启动时自动 5 个角色）
+- WorkflowEngine: 从 workflows.yaml 驱动 SOP 执行（确定性+概率性混合步骤）
+- Deep Agent: LangChain + LangGraph ReAct agent 用于开放式研究
+
+**新增 Skills（共 6 个）:**
+
+| Skill | 触发词 | 类别 | 本体依赖 |
+|---|---|---|---|
+| compliant-copy | 写文案/合规文案 | content | health_supplements |
+| data-query | 查数据/GMV/ROI | data | data_definitions |
+| report-gen | 写报告/周报/月报 | data | data_definitions, goals |
+| web-search | 搜索/行业动态 | operation | - |
+| competitor-watch | 竞品/竞争对手 | operation | health_supplements |
+| content-adapt | 适配/多平台 | content | health_supplements |
+
+**新增命令:**
+- `/deep <query>` — LangChain Deep Agent 深度分析
+- `/workflow <name>` — 执行本体定义的 SOP 工作流
+- `/discuss <topic>` — MsgHub 多 Agent 群聊讨论
+
+**前端:**
+- Claude Code 风格 SPA（暗色主题、对话为主、右侧功能面板）
+- 快速操作芯片、技能/本体/合规/经验 4 个面板
+
+**全栈部署:**
+- Docker Compose: API + MySQL 8.0 + Redis 7 + Neo4j 5
+- 部署指南: docs/deployment.md
+
+**代码统计:**
+```
+源代码:    67 个 Python 文件, 5,334 行
+测试:      14 个测试文件, ~140 个测试
+本体 YAML: 13 个文件, 578 行
+前端:      1 个 SPA HTML, ~200 行
+总计:      8,100+ 行
+Git:       14 次提交
+```
