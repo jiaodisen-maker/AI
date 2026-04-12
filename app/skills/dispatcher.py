@@ -115,10 +115,19 @@ class SkillDispatcher:
             context={"source": source},
         )
 
-        # This goes through the FULL BaseSkill.run() lifecycle:
-        # validate → guardrail → ontology → experience → execute
-        # → guardrail → post_execute → record
-        record = await skill.run(skill_input)
+        try:
+            # This goes through the FULL BaseSkill.run() lifecycle:
+            # validate → guardrail → ontology → experience → execute
+            # → guardrail → post_execute → record
+            record = await skill.run(skill_input)
+        except Exception as e:
+            logger.error("Skill %s execution error: %s", skill.meta().id, e)
+            return {
+                "content": f"技能执行出错: {e}",
+                "skill_id": skill.meta().id,
+                "tier": tier,
+                "metadata": {"error": str(e)},
+            }
 
         return {
             "content": record.output.content if record.output.success
