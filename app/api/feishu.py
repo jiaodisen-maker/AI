@@ -11,9 +11,8 @@ router = APIRouter(prefix="/feishu", tags=["feishu"])
 
 logger = logging.getLogger(__name__)
 
-# Dedup: track recently processed message IDs to avoid duplicate processing
-_processed_messages: set[str] = set()
-_MAX_PROCESSED_CACHE = 1000
+# Dedup TTL in seconds (5 minutes)
+_DEDUP_TTL = 300
 
 
 @router.post("/webhook")
@@ -45,17 +44,26 @@ async def feishu_webhook(request: Request) -> dict[str, Any]:
     if not message:
         return {"status": "no_content"}
 
-    # Step 3: Dedup
-    if message.message_id in _processed_messages:
-        logger.debug("Duplicate message: %s", message.message_id)
-        return {"status": "duplicate"}
+    # Step 3: Dedup (Redis SETNX with TTL, fallback to in-memory)
+    redis_client = None
+    if hasattr(state, "redis") and state.redis and state.redis.is_connected:
+        redis_client = state.redis.client
 
-    _processed_messages.add(message.message_id)
-    if len(_processed_messages) > _MAX_PROCESSED_CACHE:
-        # Simple cache eviction: clear half
-        to_remove = list(_processed_messages)[: _MAX_PROCESSED_CACHE // 2]
-        for mid in to_remove:
-            _processed_messages.discard(mid)
+    if redis_client:
+        dedup_key = f"feishu:dedup:{message.message_id}"
+        was_set = await redis_client.set(dedup_key, "1", ex=_DEDUP_TTL, nx=True)
+        if not was_set:
+            logger.debug("Duplicate message (Redis): %s", message.message_id)
+            return {"status": "duplicate"}
+    else:
+        # Fallback: in-memory set (single worker only)
+        if not hasattr(feishu_webhook, "_seen"):
+            feishu_webhook._seen = set()
+        if message.message_id in feishu_webhook._seen:
+            return {"status": "duplicate"}
+        feishu_webhook._seen.add(message.message_id)
+        if len(feishu_webhook._seen) > 1000:
+            feishu_webhook._seen = set(list(feishu_webhook._seen)[-500:])
 
     # Step 4: Process through message router
     logger.info("Feishu message from %s: %s", message.user_id, message.content[:100])

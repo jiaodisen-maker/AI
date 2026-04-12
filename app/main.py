@@ -154,8 +154,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # --- Skill Dispatcher (the center of everything) ---
     state.dispatcher = SkillDispatcher(
         registry=state.skill_registry,
-        model_router=state.model_router,
         brain=state.brain,
+        session_memory=state.session_memory,
     )
 
     # --- MCP ---

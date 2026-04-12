@@ -7,8 +7,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from app.auth.middleware import require_auth
 
 router = APIRouter(prefix="/ontology", tags=["ontology"])
 
@@ -100,7 +102,7 @@ async def query_capability(name: str):
 
 
 @router.post("/reload")
-async def reload_ontology():
+async def reload_ontology(user: dict = Depends(require_auth)):
     """Hot-reload all ontology YAML files."""
     from app.main import get_app_state
 

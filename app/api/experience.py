@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from app.auth.middleware import require_auth
 
 router = APIRouter(prefix="/experience", tags=["experience"])
 
@@ -25,7 +27,7 @@ class PatternUpdateRequest(BaseModel):
 
 
 @router.post("/corrections")
-async def submit_correction(req: CorrectionRequest):
+async def submit_correction(req: CorrectionRequest, user: dict = Depends(require_auth)):
     """Submit a human correction to trigger experience learning.
 
     This is the key endpoint for the experience engine:
@@ -72,7 +74,9 @@ async def list_patterns(skill_id: str):
 
 
 @router.post("/patterns/{pattern_id}")
-async def update_pattern(pattern_id: str, req: PatternUpdateRequest):
+async def update_pattern(
+    pattern_id: str, req: PatternUpdateRequest, user: dict = Depends(require_auth)
+):
     """Confirm or reject an experience pattern."""
     from app.main import get_app_state
 

@@ -19,9 +19,17 @@ dependencies = [
     "jinja2>=3.1.0",
     "cryptography>=44.0.0",
     "pyjwt>=2.10.0",
+    "pyyaml>=6.0.0",
+    "aiosqlite>=0.20.0",
+    "agentscope>=1.0.0",
 ]
 
 [project.optional-dependencies]
+deep = [
+    "langchain>=0.3.0",
+    "langgraph>=1.0.0",
+    "langchain-openai>=0.3.0",
+]
 dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",

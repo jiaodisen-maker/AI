@@ -39,18 +39,52 @@ class ExperienceStore:
     # --- Records ---
 
     async def add_record(self, record: ExperienceRecord) -> str:
-        """Store an execution record."""
+        """Store an execution record (memory + Redis + DB)."""
         if not record.id:
             record.id = uuid.uuid4().hex
-        self._records.append(record)
 
+        # In-memory (capped to prevent leak)
+        self._records.append(record)
+        if len(self._records) > 10000:
+            self._records = self._records[-5000:]
+
+        # Redis
         if self._redis:
             await self._redis.lpush(
                 f"exp:records:{record.skill_id}",
                 record.model_dump_json(),
             )
+            # Cap Redis list too
+            await self._redis.ltrim(f"exp:records:{record.skill_id}", 0, 9999)
+
+        # DB persistence (best effort)
+        try:
+            await self._persist_record_to_db(record)
+        except Exception as e:
+            logger.warning("DB persist failed (non-fatal): %s", e)
 
         return record.id
+
+    async def _persist_record_to_db(self, record: ExperienceRecord) -> None:
+        """Persist record to SQLAlchemy database."""
+        try:
+            from app.data.database import DatabaseManager
+            from app.data.models import SkillExecutionLog
+
+            db = DatabaseManager()
+            async with db.session() as session:
+                log = SkillExecutionLog(
+                    id=record.id,
+                    skill_id=record.skill_id,
+                    input_message=record.input_context.get("user_message", ""),
+                    input_parameters=record.input_context,
+                    output_content=record.ai_output,
+                    human_edited_output=record.human_edited_output,
+                    model_used=record.model_used,
+                )
+                session.add(log)
+        except ImportError:
+            pass  # DB module not available
 
     def get_records(self, skill_id: str, limit: int = 50) -> list[ExperienceRecord]:
         """Get recent execution records for a skill."""

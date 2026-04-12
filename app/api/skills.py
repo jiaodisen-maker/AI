@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from app.auth.middleware import require_auth
 from app.skills.models import SkillInput
 
 router = APIRouter(prefix="/skills", tags=["skills"])
@@ -42,7 +43,9 @@ async def get_skill(skill_id: str):
 
 
 @router.post("/{skill_id}/execute")
-async def execute_skill(skill_id: str, req: SkillExecuteRequest):
+async def execute_skill(
+    skill_id: str, req: SkillExecuteRequest, user: dict = Depends(require_auth)
+):
     """Execute a specific skill directly."""
     from app.main import get_app_state
 

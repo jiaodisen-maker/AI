@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+
+from app.auth.middleware import require_auth
 
 router = APIRouter(tags=["chat"])
 
@@ -24,13 +26,12 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat")
-async def chat(req: ChatRequest) -> ChatResponse:
-    """Main chat endpoint — goes directly through SkillDispatcher.
+async def chat(req: ChatRequest, user: dict = Depends(require_auth)) -> ChatResponse:
+    """Main chat endpoint — goes through SkillDispatcher.
 
-    Three-tier routing:
-    1. Trigger word match (fast, no LLM)
-    2. LLM intent classification
-    3. Agent multi-step orchestration
+    Fast track: trigger word → Skill (0 tokens)
+    Main path:  Agent loop → model decides (AgentScope)
+    /deep:      Deep Agent for open-ended research (LangChain)
     """
     from app.main import get_app_state
 
@@ -38,7 +39,7 @@ async def chat(req: ChatRequest) -> ChatResponse:
 
     result = await state.dispatcher.dispatch(
         message=req.message,
-        user_id=req.user_id,
+        user_id=req.user_id or user.get("sub", ""),
         session_id=req.session_id,
         source="api",
     )
@@ -46,6 +47,6 @@ async def chat(req: ChatRequest) -> ChatResponse:
     return ChatResponse(
         content=result["content"],
         skill_id=result.get("skill_id"),
-        tier=result.get("tier"),
+        tier=None,  # deprecated, use mode
         execution_time_ms=result.get("metadata", {}).get("execution_time_ms"),
     )

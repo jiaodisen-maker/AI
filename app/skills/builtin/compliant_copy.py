@@ -26,34 +26,54 @@ from app.skills.models import (
 
 # ============================================================
 # 保健品广告法禁词库
-# 来源: 《中华人民共和国广告法》《保健食品广告审查暂行规定》
+# 优先从本体 YAML 加载，fallback 到硬编码列表
 # ============================================================
-PROHIBITED_WORDS: list[str] = [
-    # 绝对化用语
-    "最好", "最佳", "最优", "最高", "最低", "最大", "最小",
-    "第一", "唯一", "首个", "首选", "独一无二", "无与伦比",
-    "绝无仅有", "史无前例", "万能", "全能",
-    # 疾病治疗相关
-    "治疗", "治愈", "根治", "药到病除", "疗效", "疗程",
-    "处方", "复发", "病变", "药效", "药理", "药物",
-    "消炎", "抗菌", "杀菌", "抑菌", "止痛", "镇痛",
-    "抗癌", "防癌", "抗肿瘤", "降血压", "降血糖", "降血脂",
-    "治失眠", "治便秘", "减肥", "丰胸",
-    # 功效保证
-    "根除", "铲除", "药到病除", "一针见效", "立竿见影",
-    "百分之百", "无效退款", "保证有效", "绝对有效",
-    "包治", "包好", "必效", "特效", "速效", "神效",
-    "奇效", "灵丹妙药",
-    # 虚假宣传
-    "纯天然", "零添加", "无副作用", "无毒无害", "绿色无污染",
-    "祖传秘方", "宫廷秘方", "民间偏方",
-    # 权威误导
-    "国家级", "世界级", "全球首创", "科学认证",
-    "临床验证", "经XX医院认证",
-    # 诱导消费
-    "仅剩", "最后一天", "错过就没了", "限时免费",
-    "免费领取", "0元购",
+_FALLBACK_PROHIBITED_WORDS: list[str] = [
+    "最好", "最佳", "最优", "第一", "唯一",
+    "治疗", "治愈", "根治", "疗效", "消炎",
+    "特效", "立竿见影", "纯天然", "无副作用",
 ]
+
+
+def _load_prohibited_words() -> list[str]:
+    """Load prohibited words from ontology YAML, fallback to hardcoded."""
+    try:
+        from app.ontology.loader import OntologyLoader
+        loader = OntologyLoader()
+        loader.load_all()
+        data = loader.get("prohibited_words")
+        if data:
+            words = []
+            for category in [
+                "absolute_terms", "disease_treatment", "efficacy_guarantee",
+                "false_claims", "authority_misleading", "urgency_inducing",
+            ]:
+                words.extend(data.get(category, []))
+            if words:
+                return words
+    except Exception:
+        pass
+    return _FALLBACK_PROHIBITED_WORDS
+
+
+def _load_safe_replacements() -> dict[str, str]:
+    """Load safe word replacements from ontology YAML."""
+    try:
+        from app.ontology.loader import OntologyLoader
+        loader = OntologyLoader()
+        loader.load_all()
+        data = loader.get("prohibited_words")
+        if data and "safe_replacements" in data:
+            return data["safe_replacements"]
+    except Exception:
+        pass
+    return {
+        "最好": "优质", "治疗": "调理", "特效": "优质",
+        "纯天然": "天然来源", "无副作用": "温和配方",
+    }
+
+
+PROHIBITED_WORDS: list[str] = _load_prohibited_words()
 
 # Compile regex patterns for efficient matching
 PROHIBITED_PATTERNS: list[re.Pattern] = [
@@ -305,17 +325,7 @@ class CompliantCopySkill(BaseSkill):
 
     def _auto_fix_prohibited(self, text: str, violations: list[str]) -> str:
         """Attempt to replace prohibited words with safe alternatives."""
-        safe_replacements: dict[str, str] = {
-            "最好": "优质", "最佳": "优选", "最优": "优质",
-            "第一": "领先", "唯一": "特色", "首选": "推荐",
-            "治疗": "调理", "治愈": "改善", "根治": "调节",
-            "疗效": "效果", "消炎": "舒缓", "抗菌": "清洁",
-            "减肥": "体重管理", "丰胸": "曲线管理",
-            "纯天然": "天然来源", "零添加": "配方简洁",
-            "无副作用": "温和配方", "无毒无害": "安全配方",
-            "立竿见影": "循序渐进", "百分之百": "高比例",
-            "保证有效": "用心研发", "特效": "优质",
-        }
+        safe_replacements = _load_safe_replacements()
 
         for word in violations:
             replacement = safe_replacements.get(word, "***")

@@ -1,4 +1,4 @@
-"""Tests for the SkillDispatcher — Skill-centered routing."""
+"""Tests for the SkillDispatcher — 1+1+Deep routing."""
 
 import pytest
 
@@ -19,7 +19,9 @@ class EchoSkill(BaseSkill):
         )
 
     async def execute(self, skill_input: SkillInput) -> SkillOutput:
-        return SkillOutput(success=True, content=f"Echo: {skill_input.user_message}")
+        return SkillOutput(
+            success=True, content=f"Echo: {skill_input.user_message}"
+        )
 
 
 @pytest.fixture
@@ -35,29 +37,38 @@ def dispatcher(registry):
 
 
 @pytest.mark.asyncio
-async def test_tier1_trigger_match(dispatcher):
-    """Tier 1: trigger word match, no LLM needed."""
+async def test_fast_track_trigger_match(dispatcher):
+    """Fast track: trigger word match, no LLM needed."""
     result = await dispatcher.dispatch("echo hello world")
     assert result["skill_id"] == "echo"
-    assert result["tier"] == 1
+    assert result["mode"] == "fast"
     assert "Echo: echo hello world" in result["content"]
 
 
 @pytest.mark.asyncio
-async def test_tier1_chinese_trigger(dispatcher):
-    """Tier 1: Chinese trigger word."""
+async def test_fast_track_chinese_trigger(dispatcher):
+    """Fast track: Chinese trigger word."""
     result = await dispatcher.dispatch("重复这句话")
     assert result["skill_id"] == "echo"
-    assert result["tier"] == 1
+    assert result["mode"] == "fast"
 
 
 @pytest.mark.asyncio
-async def test_no_match_returns_fallback(dispatcher):
-    """No matching skill → fallback message."""
+async def test_no_match_no_agent_returns_fallback(dispatcher):
+    """No matching skill, no agent → fallback message."""
     result = await dispatcher.dispatch("completely unrelated query")
     assert result["skill_id"] is None
-    assert result["tier"] == 0
+    assert result["mode"] == "no_match"
     assert "抱歉" in result["content"]
+
+
+@pytest.mark.asyncio
+async def test_deep_command_no_deps(dispatcher):
+    """/deep command without LangChain deps → falls back gracefully."""
+    result = await dispatcher.dispatch("/deep 分析竞品机会")
+    # Should not crash, either runs deep agent or falls back
+    assert result["content"]  # Has some response
+    assert result["mode"] in ("deep", "deep_error", "no_match", "error")
 
 
 @pytest.mark.asyncio
@@ -96,3 +107,21 @@ async def test_skill_goes_through_full_lifecycle():
     assert "validate" in lifecycle_log
     assert "execute" in lifecycle_log
     assert "post_execute" in lifecycle_log
+
+
+@pytest.mark.asyncio
+async def test_session_memory_integration():
+    """Session memory stores conversation history."""
+    from app.memory.session import SessionMemory
+
+    memory = SessionMemory()
+    registry = SkillRegistry()
+    registry.register(EchoSkill())
+    dispatcher = SkillDispatcher(registry=registry, session_memory=memory)
+
+    await dispatcher.dispatch("echo hello", session_id="s1")
+
+    history = await memory.get_history("s1")
+    assert len(history) == 2  # user + assistant
+    assert history[0]["role"] == "user"
+    assert history[1]["role"] == "assistant"
