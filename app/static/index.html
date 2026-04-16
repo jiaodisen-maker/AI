@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 中台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .msg-in { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+    pre { white-space: pre-wrap; word-break: break-word; font-family: inherit; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    .chip:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 h-screen flex" x-data="app()" x-cloak>
+
+  <!-- Main: Conversation-centric (like Claude Code) -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- Top bar -->
+    <header class="h-11 border-b border-gray-700 flex items-center justify-between px-4 bg-gray-800/80">
+      <div class="flex items-center gap-2">
+        <span class="text-blue-400 font-bold text-sm">AI 中台</span>
+        <span class="text-gray-600 text-xs" x-text="health.version ? 'v'+health.version : ''"></span>
+        <span class="w-1.5 h-1.5 rounded-full" :class="health.status==='healthy'?'bg-green-400':'bg-gray-600'"></span>
+      </div>
+      <div class="flex items-center gap-3 text-xs text-gray-500">
+        <span x-text="skills.length+' skills'"></span>
+        <span x-text="ontologyDims.length+' 维本体'"></span>
+        <button @click="showPanel=!showPanel" class="text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-700" x-text="showPanel?'收起面板':'展开面板'"></button>
+      </div>
+    </header>
+
+    <!-- Chat -->
+    <div class="flex-1 overflow-y-auto px-4 py-6" id="chatArea">
+      <!-- Welcome -->
+      <div x-show="messages.length===0" class="flex flex-col items-center justify-center h-full">
+        <p class="text-2xl font-bold text-gray-400 mb-2">说你想做什么</p>
+        <p class="text-sm text-gray-600 mb-8">AI 中台会自动选择合适的技能来完成</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-w-2xl">
+          <button @click="q('帮我写一篇胶原蛋白的小红书文案')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">写合规文案</button>
+          <button @click="q('查一下上月胶原蛋白在抖音的GMV')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">查数据</button>
+          <button @click="q('生成上周全渠道运营周报')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">写报告</button>
+          <button @click="q('分析Swisse胶原蛋白的竞争策略')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">竞品分析</button>
+          <button @click="q('搜索保健品行业最新监管变化')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">联网搜索</button>
+          <button @click="q('把胶原蛋白文案适配抖音和公众号')" class="chip px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-400 text-left hover:border-blue-500 transition-all">多平台适配</button>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button @click="q('/workflow 新品上市文案流程')" class="chip px-3 py-1.5 bg-gray-800 border border-orange-800 rounded-lg text-xs text-orange-400 hover:border-orange-500 transition-all">/workflow</button>
+          <button @click="q('/deep 保健品行业2026年有什么新机会')" class="chip px-3 py-1.5 bg-gray-800 border border-purple-800 rounded-lg text-xs text-purple-400 hover:border-purple-500 transition-all">/deep 深度分析</button>
+          <button @click="q('/discuss 竞品降价20%应对策略')" class="chip px-3 py-1.5 bg-gray-800 border border-green-800 rounded-lg text-xs text-green-400 hover:border-green-500 transition-all">/discuss 多Agent</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <template x-for="m in messages" :key="m.id">
+        <div class="msg-in max-w-3xl mx-auto mb-3">
+          <div x-show="m.role==='user'" class="flex justify-end">
+            <div class="bg-blue-600 rounded-2xl rounded-br-sm px-4 py-2 max-w-lg"><p class="text-sm" x-text="m.content"></p></div>
+          </div>
+          <div x-show="m.role==='assistant'">
+            <div class="bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 border border-gray-700">
+              <pre class="text-sm text-gray-200 font-sans leading-relaxed" x-text="m.content"></pre>
+              <div x-show="m.skill_id||m.mode" class="mt-2 flex gap-1.5 text-xs">
+                <span x-show="m.skill_id" class="px-1.5 py-0.5 bg-blue-900/40 text-blue-400 rounded" x-text="'⚡'+m.skill_id"></span>
+                <span x-show="m.mode" class="px-1.5 py-0.5 bg-gray-700 text-gray-500 rounded" x-text="m.mode"></span>
+                <span x-show="m.ms" class="px-1.5 py-0.5 bg-gray-700 text-gray-500 rounded" x-text="m.ms+'ms'"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div x-show="loading" class="max-w-3xl mx-auto"><div class="bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 border border-gray-700 text-gray-600 text-sm animate-pulse">思考中...</div></div>
+    </div>
+
+    <!-- Input -->
+    <div class="border-t border-gray-700 bg-gray-800/80 p-3">
+      <form @submit.prevent="send()" class="max-w-3xl mx-auto flex gap-2">
+        <input x-model="input" :disabled="loading" placeholder="说你想做什么..." class="flex-1 bg-gray-700 border border-gray-600 rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <button type="submit" :disabled="loading||!input.trim()" class="px-5 py-2.5 bg-blue-600 rounded-xl text-sm hover:bg-blue-700 disabled:opacity-30 transition-colors">发送</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <aside x-show="showPanel" x-transition class="w-72 border-l border-gray-700 bg-gray-850 flex flex-col" style="background:#1a1f2e">
+    <div class="flex border-b border-gray-700 text-xs">
+      <button @click="pt='skills'" :class="pt==='skills'?'text-blue-400 border-b border-blue-400':'text-gray-600'" class="flex-1 py-2 text-center">技能</button>
+      <button @click="pt='ontology'" :class="pt==='ontology'?'text-blue-400 border-b border-blue-400':'text-gray-600'" class="flex-1 py-2 text-center">本体</button>
+      <button @click="pt='compliance';queryC()" :class="pt==='compliance'?'text-blue-400 border-b border-blue-400':'text-gray-600'" class="flex-1 py-2 text-center">合规</button>
+      <button @click="pt='exp';loadExp()" :class="pt==='exp'?'text-blue-400 border-b border-blue-400':'text-gray-600'" class="flex-1 py-2 text-center">经验</button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-2.5 text-xs">
+      <!-- Skills -->
+      <div x-show="pt==='skills'" class="space-y-1.5">
+        <template x-for="s in skills"><div class="p-2 rounded bg-gray-800/50 border border-gray-700/50">
+          <p class="text-gray-300 font-medium" x-text="s.name"></p>
+          <p class="text-gray-600 mt-0.5" x-text="s.description.slice(0,50)+'...'"></p>
+          <div class="flex gap-1 mt-1"><template x-for="t in s.triggers.slice(0,3)"><span @click="q(t)" class="cursor-pointer px-1 py-0.5 bg-gray-700/50 text-gray-500 rounded hover:text-blue-400" x-text="t"></span></template></div>
+        </div></template>
+      </div>
+      <!-- Ontology -->
+      <div x-show="pt==='ontology'" class="space-y-1">
+        <template x-for="d in ontologyDims"><button @click="loadDim(d)" class="w-full text-left p-1.5 rounded hover:bg-gray-800" :class="selDim===d?'bg-gray-800 text-blue-400':'text-gray-500'" x-text="dimL[d]||d"></button></template>
+        <div x-show="dimD" class="mt-2 p-2 bg-gray-900 rounded"><pre class="text-gray-500 max-h-48 overflow-y-auto" x-text="JSON.stringify(dimD,null,2)"></pre></div>
+      </div>
+      <!-- Compliance -->
+      <div x-show="pt==='compliance'">
+        <form @submit.prevent="queryC()" class="flex gap-1 mb-2"><input x-model="cQ" class="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-gray-300 focus:outline-none" placeholder="产品名"><button class="px-2 py-1 bg-blue-600 rounded">查</button></form>
+        <div x-show="cR"><p class="text-green-400 mb-1">批准</p><template x-for="c in cR?.approved_claims||[]"><p class="text-green-300 ml-2" x-text="'✓ '+c"></p></template><p class="text-red-400 mt-2 mb-1">禁止</p><template x-for="c in cR?.prohibited_claims||[]"><p class="text-red-300 ml-2" x-text="'✗ '+c"></p></template></div>
+      </div>
+      <!-- Experience -->
+      <div x-show="pt==='exp'">
+        <template x-for="p in pats"><div class="mb-1.5 p-2 bg-gray-800/50 border border-gray-700/50 rounded">
+          <p class="text-gray-400" x-text="p.pattern"></p>
+          <div class="flex gap-2 mt-1 text-gray-600"><span x-text="'置信:'+p.confidence.toFixed(2)"></span><button @click="cpat(p.id)" class="text-green-500">确认</button><button @click="rpat(p.id)" class="text-red-500">否决</button></div>
+        </div></template>
+        <p x-show="pats.length===0" class="text-gray-700">暂无经验</p>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+  const A='';
+  function app(){return{
+    health:{},skills:[],messages:[],input:'',loading:false,showPanel:true,pt:'skills',
+    ontologyDims:[],selDim:'',dimD:null,pats:[],cQ:'胶原蛋白',cR:null,
+    dimL:{organization:'组织',capabilities:'能力',workflows:'流程',health_supplements:'领域',data_definitions:'数据',goals:'目标',events:'事件',policies:'策略',tools:'工具',customers:'客户',schedule:'时间',resources:'资源',prohibited_words:'禁词'},
+    async init(){
+      try{this.health=await(await fetch(A+'/api/health')).json()}catch(e){}
+      try{this.skills=(await(await fetch(A+'/api/skills/')).json()).skills||[]}catch(e){}
+      try{this.ontologyDims=(await(await fetch(A+'/api/ontology/dimensions')).json()).dimensions||[]}catch(e){}
+    },
+    q(m){this.input=m;this.send()},
+    async send(){
+      if(!this.input.trim())return;const m=this.input.trim();this.input='';
+      this.messages.push({id:Date.now(),role:'user',content:m});this.loading=true;
+      this.$nextTick(()=>{document.getElementById('chatArea').scrollTop=999999});
+      try{const r=await fetch(A+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})});const d=await r.json();
+        this.messages.push({id:Date.now()+1,role:'assistant',content:d.content||'无响应',skill_id:d.skill_id,mode:d.mode,ms:d.execution_time_ms})
+      }catch(e){this.messages.push({id:Date.now()+1,role:'assistant',content:'连接失败: '+e.message})}
+      this.loading=false;this.$nextTick(()=>{document.getElementById('chatArea').scrollTop=999999});
+    },
+    async loadDim(d){this.selDim=d;try{this.dimD=(await(await fetch(A+'/api/ontology/dimension/'+d)).json()).data}catch(e){}},
+    async loadExp(){try{this.pats=(await(await fetch(A+'/api/experience/patterns/compliant-copy')).json()).patterns||[]}catch(e){}},
+    async cpat(id){await fetch(A+'/api/experience/patterns/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'confirm'})});this.loadExp()},
+    async rpat(id){await fetch(A+'/api/experience/patterns/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'reject'})});this.loadExp()},
+    async queryC(){if(!this.cQ.trim())return;try{this.cR=await(await fetch(A+'/api/ontology/compliance/'+encodeURIComponent(this.cQ))).json()}catch(e){}},
+  }}
+  </script>
+</body>
+</html>

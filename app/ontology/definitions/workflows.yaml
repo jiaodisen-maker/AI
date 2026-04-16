@@ -1,0 +1,42 @@
+# 流程本体：业务 SOP、审批链
+
+workflows:
+  新品上市文案流程:
+    trigger: "产品部提交新品信息"
+    steps:
+      - id: 1
+        role: 产品经理
+        action: "输出产品卖点+核心成分+目标人群"
+        type: deterministic
+      - id: 2
+        role: 文案
+        action: "根据产品简报生成各平台文案"
+        skill: compliant-copy
+        type: probabilistic
+      - id: 3
+        role: 合规专员
+        action: "三层合规审核"
+        type: deterministic
+        gate: "通过才能到下一步"
+      - id: 4
+        role: 内容总监
+        action: "最终审批"
+        type: human_approval
+        timeout: "24h"
+      - id: 5
+        role: 渠道运营
+        action: "上线到对应平台"
+        type: deterministic
+
+  竞品降价应急:
+    trigger: "巡逻系统检测到竞品降价超过15%"
+    urgency: P1
+    steps:
+      - role: 数据分析
+        action: "拉取近7天销售数据+竞品价格变动"
+      - role: 渠道总监
+        action: "决策：跟价/促销/不动"
+        type: human_decision
+      - role: 文案
+        action: "如果促销，自动生成促销文案"
+        condition: "decision == '促销'"

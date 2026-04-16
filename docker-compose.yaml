@@ -1,0 +1,148 @@
+version: "3.9"
+
+services:
+  # ============================================================
+  # AI 中台 API 服务
+  # ============================================================
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./app/ontology/definitions:/app/app/ontology/definitions
+    environment:
+      - DATABASE_URL=mysql+asyncmy://zhongtai:zhongtai123@mysql:3306/ai_zhongtai
+      - REDIS_URL=redis://redis:6379/0
+
+  # ============================================================
+  # MySQL — 业务数据库（Skill 执行日志、经验 Pattern）
+  # ============================================================
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ai_zhongtai
+      MYSQL_USER: zhongtai
+      MYSQL_PASSWORD: zhongtai123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================================
+  # Redis — 会话记忆、经验缓存、飞书去重、限流
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================================
+  # Neo4j — 知识图谱（本体关系、经验时序图谱）
+  # ============================================================
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"  # Web UI
+      - "7687:7687"  # Bolt 协议
+    environment:
+      NEO4J_AUTH: neo4j/zhongtai123
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================================
+  # Langfuse — LLM 可观测性（追踪、评估、prompt 管理）
+  # ============================================================
+  langfuse-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse123
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "langfuse"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse123@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: changeme-langfuse-secret-32chars
+      NEXTAUTH_URL: http://localhost:3000
+      SALT: changeme-langfuse-salt
+      TELEMETRY_ENABLED: "false"
+    restart: unless-stopped
+
+  # ============================================================
+  # Celery Worker — 分布式任务执行
+  # ============================================================
+  celery-worker:
+    build: .
+    command: celery -A app.patrol.celery_app worker --loglevel=info
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./app/ontology/definitions:/app/app/ontology/definitions
+    restart: unless-stopped
+
+  # ============================================================
+  # Celery Beat — 定时调度器
+  # ============================================================
+  celery-beat:
+    build: .
+    command: celery -A app.patrol.celery_app beat --loglevel=info
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
+  neo4j_data:
+  langfuse_db:

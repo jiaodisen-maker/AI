@@ -1,0 +1,23 @@
+# 事件本体：触发条件 → 响应规则
+
+business_events:
+  竞品降价:
+    trigger_condition: "巡逻系统检测到竞品价格下降 > 15%"
+    severity: P1
+    response_workflow: 竞品降价应急
+    sla: "4 小时内响应"
+
+  新品上市:
+    trigger_condition: "产品部标记新品状态为'待上市'"
+    severity: P2
+    response_workflow: 新品上市文案流程
+    timeline: "上市前 14 天触发"
+
+  合规违规:
+    trigger_condition: "合规审核 Agent 检测到已上线内容违规"
+    severity: P0
+    auto_actions:
+      - "立即标记违规内容"
+      - "通知内容总监 + 合规专员"
+    sla: "1 小时内下架违规内容"
+    escalation: "超时未处理通知 CEO"

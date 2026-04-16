@@ -1,0 +1,109 @@
+# 领域本体：保健品行业知识
+# Agent 通过 query_product / query_compliance 查询此文件
+
+product_categories:
+  胶原蛋白:
+    subcategories:
+      - 胶原蛋白肽粉
+      - 胶原蛋白口服液
+      - 胶原蛋白软糖
+    key_ingredients:
+      - name: 鱼胶原蛋白肽
+        source: [深海鱼皮, 罗非鱼鳞]
+        molecular_weight: "< 3000 道尔顿"
+      - name: 维生素C
+        function: 促进胶原蛋白合成
+    approved_claims:
+      - "有助于改善皮肤水份"
+    prohibited_claims:
+      - "美白"
+      - "抗衰老"
+      - "去皱"
+      - "恢复青春"
+      - "逆龄"
+    required_disclaimers:
+      - "保健食品不是药物，不能代替药物治疗疾病"
+      - "不适宜人群：少年儿童、孕妇、乳母"
+    competitors:
+      - brand: Swisse
+        products: [胶原蛋白肽粉, 胶原蛋白液]
+      - brand: 汤臣倍健
+        products: [胶原蛋白粉]
+      - brand: FANCL
+        products: [HTC胶原蛋白]
+
+  辅酶Q10:
+    subcategories:
+      - 辅酶Q10软胶囊
+      - 辅酶Q10片剂
+    key_ingredients:
+      - name: 辅酶Q10
+        aliases: [CoQ10, 泛醌]
+        daily_dose: "50-200mg"
+    approved_claims:
+      - "有助于心脏健康"
+      - "抗氧化"
+    prohibited_claims:
+      - "治疗心脏病"
+      - "降血压"
+      - "预防心梗"
+    required_disclaimers:
+      - "保健食品不是药物，不能代替药物治疗疾病"
+
+  益生菌:
+    subcategories:
+      - 益生菌粉
+      - 益生菌胶囊
+      - 益生菌饮品
+    key_ingredients:
+      - name: 乳双歧杆菌
+        strain: BB-12
+      - name: 鼠李糖乳杆菌
+        strain: LGG
+    approved_claims:
+      - "有助于维持肠道菌群平衡"
+    prohibited_claims:
+      - "治疗便秘"
+      - "治疗腹泻"
+      - "减肥"
+      - "提高免疫力"
+    required_disclaimers:
+      - "保健食品不是药物，不能代替药物治疗疾病"
+
+channels:
+  抖音:
+    subtypes: [抖音商城, 抖音直播, 达人分销, 短视频挂车]
+    content_style: "口语化、节奏快、3秒抓注意力"
+    best_time: "19:00-22:00"
+  小红书:
+    subtypes: [图文笔记, 视频笔记, 直播]
+    content_style: "分享体验、第一人称、真实感受"
+    best_time: "12:00-14:00, 20:00-22:00"
+  公众号:
+    subtypes: [订阅号, 服务号]
+    content_style: "专业深度、讲故事、有温度"
+    best_time: "8:00-9:00, 12:00-13:00"
+  京东:
+    subtypes: [自营旗舰店, POP店铺]
+    content_style: "卖点前置、参数清晰、品质背书"
+
+compliance_rules:
+  advertising_law:
+    source: "《中华人民共和国广告法》2021修订版"
+    key_rules:
+      - id: R001
+        rule: "保健食品广告不得含有表示功效、安全性的断言或保证"
+      - id: R002
+        rule: "不得含有利用代言人作推荐、证明的内容"
+      - id: R003
+        rule: "保健食品广告应当显著标明'本品不能代替药物'"
+      - id: R004
+        rule: "不得涉及疾病预防、治疗功能"
+      - id: R005
+        rule: "功效宣称不得超出注册/备案的保健功能范围"
+
+  deep_synthesis:
+    source: "《互联网信息服务深度合成管理规定》2025修订"
+    key_rules:
+      - "AI生成内容需进行显著标识"
+      - "企业内部部署需算法备案（面向公众时）"

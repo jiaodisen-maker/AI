@@ -1,0 +1,53 @@
+# 能力本体：谁有什么能力，哪些已自动化
+
+capability_domains:
+  内容创作:
+    capabilities:
+      - id: copywriting
+        name: 文案撰写
+        holders:
+          humans: [张三, 李四]
+          agents: [compliant-copy]
+        automation_status: partial
+        automation_coverage: 70
+        gaps:
+          - "需要拍摄真人图文的场景"
+          - "品牌调性重大变更的创意"
+
+      - id: compliance_review
+        name: 合规审核
+        holders:
+          humans: [王五]
+          agents: [compliance-check]
+        automation_status: full
+        automation_coverage: 95
+        human_override: "P0 违规必须人工复核"
+
+  数据分析:
+    capabilities:
+      - id: channel_analysis
+        name: 渠道数据分析
+        holders:
+          humans: [赵六]
+          agents: []
+        automation_status: none
+        priority: P1
+
+      - id: report_generation
+        name: 报表生成
+        holders:
+          humans: [赵六]
+          agents: []
+        automation_status: none
+        priority: P2
+
+automation_roadmap:
+  phase_1:
+    - copywriting
+    - compliance_review
+  phase_2:
+    - channel_analysis
+    - report_generation
+  phase_3:
+    - competitor_monitoring
+    - customer_insights
