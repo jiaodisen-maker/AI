@@ -1,0 +1,11 @@
+{
+  "_schema": "blue-cap-number -> {product_name, registered_functions, 适宜人群, 不适宜人群, 食用量}",
+  "_note": "运行时填充。每次新品上架后, 人工或自动从国家总局特殊食品查询接口同步。",
+  "国食健字G20240XXX": {
+    "product_name": "示例胶原蛋白肽",
+    "registered_functions": ["增加骨密度"],
+    "适宜人群": "中老年人",
+    "不适宜人群": "少年儿童、孕妇、乳母",
+    "食用量": "每日 2 粒"
+  }
+}
