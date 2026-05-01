@@ -23,7 +23,14 @@ fi
 
 echo "===> 1/9 系统更新 + 基础包"
 apt-get update -y
-apt-get install -y curl git ufw fail2ban python3.11 python3.11-venv python3.11-dev \
+# Python 3.11+ 兼容：Ubuntu 22.04 用 python3.11，24.04 默认 python3 (3.12) 已满足
+PY_PKG="python3 python3-venv python3-dev python3-pip"
+if command -v lsb_release >/dev/null && [[ "$(lsb_release -rs)" == "22.04" ]]; then
+    add-apt-repository -y ppa:deadsnakes/ppa || true
+    apt-get update -y
+    PY_PKG="python3.11 python3.11-venv python3.11-dev python3-pip"
+fi
+apt-get install -y curl git ufw fail2ban $PY_PKG \
                    build-essential ffmpeg jq make ca-certificates gnupg lsb-release
 
 echo "===> 2/9 Docker + compose plugin"
@@ -59,9 +66,11 @@ cd "$APP_DIR"
 sudo -u app git pull --ff-only || true
 
 echo "===> 6/9 Python venv + 依赖"
-sudo -u app bash <<'EOSU'
+PY_BIN="python3.11"
+command -v python3.11 >/dev/null || PY_BIN="python3"
+sudo -u app PY_BIN="$PY_BIN" bash <<'EOSU'
 cd /opt/agentic-insight
-python3.11 -m venv .venv
+${PY_BIN} -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -e .
 EOSU
