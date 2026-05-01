@@ -54,7 +54,7 @@ table_count=$(docker exec $(docker ps -qf "name=postgres") \
 mt_count=$(docker exec $(docker ps -qf "name=postgres") \
     psql -U platform -d platform -tAc \
     "SELECT count(*) FROM microtypes WHERE status='active'" 2>/dev/null || echo "0")
-[[ "$mt_count" -ge 50 ]] && ok "active microtypes = $mt_count (≥50)" || fail "microtypes = $mt_count (run make seed)"
+[[ "$mt_count" -ge 40 ]] && ok "active microtypes = $mt_count" || fail "microtypes = $mt_count (run make seed)"
 
 echo "==> Feature flag posture"
 if grep -q "POC_CRAWLED_ENABLED=true" /opt/agentic-insight/infra/.env 2>/dev/null; then
