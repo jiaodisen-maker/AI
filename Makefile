@@ -1,4 +1,4 @@
-.PHONY: help up down migrate api worker fmt lint test demo
+.PHONY: help up down migrate seed api worker fmt lint test demo discover purge
 
 help:
 	@echo "  make up         — 启动 Postgres+pgvector / Temporal / MinIO / Redis"
@@ -9,6 +9,8 @@ help:
 	@echo "  make worker     — 启动 Temporal worker"
 	@echo "  make test       — pytest"
 	@echo "  make demo       — 端到端 demo (需先 up + migrate + worker + api)"
+	@echo "  make discover CHANNEL=poc QUERY=氨糖 N=5  — A1 批量发现 + 起 workflow"
+	@echo "  make purge      — 跑 PoC TTL 清理（删 30 天前 poc_crawled 数据 + MinIO 对象）"
 	@echo "  make fmt        — ruff format"
 	@echo "  make lint       — ruff check"
 
@@ -35,6 +37,12 @@ test:
 
 demo:
 	python scripts/demo_ingest.py
+
+discover:
+	python scripts/discovery_run.py --channel $(CHANNEL) --query $(QUERY) --n $(N)
+
+purge:
+	python scripts/poc_purge.py
 
 fmt:
 	ruff format .
