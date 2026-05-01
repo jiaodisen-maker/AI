@@ -36,10 +36,11 @@ def call_deepseek(
     system: str,
     user: str,
     *,
-    model: str = "deepseek-chat",
+    model: str | None = None,
     temperature: float = 0.3,
     response_format_json: bool = False,
 ) -> str:
+    model = model or os.getenv("LLM_MODEL_DEEPSEEK") or "deepseek-chat"
     client = _deepseek_client()
     kwargs: dict = {
         "model": model,
@@ -56,9 +57,10 @@ def call_qwen(
     system: str,
     user: str,
     *,
-    model: str = "qwen-max-latest",
+    model: str | None = None,
     temperature: float = 0.3,
 ) -> str:
+    model = model or os.getenv("LLM_MODEL_QWEN") or "qwen-max-latest"
     client = _qwen_client()
     resp = client.chat.completions.create(
         model=model,
@@ -73,9 +75,10 @@ def call_qwen_vl(
     user: str,
     image_urls: list[str],
     *,
-    model: str = "qwen-vl-max-latest",
+    model: str | None = None,
 ) -> str:
     """多模态：传 image url 列表（公开可访问 URL 或 OSS pre-signed URL）"""
+    model = model or os.getenv("LLM_MODEL_QWEN_VL") or "qwen-vl-max-latest"
     client = _qwen_client()
     content = [{"type": "image_url", "image_url": {"url": u}} for u in image_urls]
     content.append({"type": "text", "text": user})

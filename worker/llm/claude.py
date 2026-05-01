@@ -13,9 +13,10 @@ def call_claude(
     system: str,
     user: str,
     *,
-    model: str = DEFAULT_MODEL,
+    model: str | None = None,
     max_tokens: int = 4096,
 ) -> str:
+    model = model or os.getenv("LLM_MODEL_CLAUDE") or DEFAULT_MODEL
     # 聚合端点优先（OpenAI 兼容）
     if os.getenv("LLM_BASE_URL") and os.getenv("LLM_API_KEY"):
         from openai import OpenAI
