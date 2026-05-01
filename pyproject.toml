@@ -1,0 +1,43 @@
+[project]
+name = "ai-platform"
+version = "0.1.0"
+description = "v6 Agentic Insight System - 9 Agent pipeline for content insight automation"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
+    "alembic>=1.13",
+    "pgvector>=0.3",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "temporalio>=1.7",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "minio>=7.2",
+    "redis>=5.1",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+agents = [
+    "openai>=1.50",            # used for Deepseek-V3 / Qwen via OpenAI-compatible endpoints
+    "anthropic>=0.40",
+    "dspy-ai>=2.5",
+    "yt-dlp>=2024.10",
+    "funasr>=1.1",
+    "paddleocr>=2.7",
+]
+dev = [
+    "ruff>=0.7",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

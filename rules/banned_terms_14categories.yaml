@@ -1,0 +1,180 @@
+# 14 类违禁词词库 v0.1
+#
+# 责任：法务部门定义并维护，工程师只读不改。任何修改需法务签字。
+# 加载时机：A3 Compliance Agent 启动时一次性加载到内存，运行期不热更新。
+# 更新流程：法务通过 PR 修改 → 法务负责人 review → 季度复审 → merge。
+#
+# 命中策略（A3 Compliance Agent）：
+#   1) 文本（ASR + OCR）按每类的 patterns 做正则匹配 → 命中即标 R 红色
+#   2) 命中时附带 category + matched_term + context 入 cross_validations.raw_data
+#   3) 红色 case 不进入 atoms 库（即使内容很爆）
+#   4) LLM 双验仅用于补充——LLM 认为该改红，但词库没命中时，写 hitl_alert，不能直接覆盖词库判定
+#
+# 优先级：本词库为 source of truth；LLM 只能补充不能否决。
+#
+# v0.1 仅给出 14 类骨架与示例 term，待法务部门按 §11 调研里的处罚案例库 ≥100 条扩充。
+
+version: "0.1"
+last_reviewed_at: null
+last_reviewed_by: null
+
+categories:
+  - id: 01_efficacy
+    name_cn: 疗效宣称
+    legal_basis: 广告法 §17 + 保健食品广告审查规定 §6
+    description: 任何形式声称对疾病的预防、治疗、治愈作用
+    severity: red
+    patterns:
+      - "治疗"
+      - "治愈"
+      - "根治"
+      - "痊愈"
+      - "(?:能|可以|有效)?(?:治|愈|医治)\\s*\\S{0,8}(?:病|症|炎|癌)"
+    sample_violations:
+      - "本品能治愈失眠"
+      - "三盒根治高血压"
+
+  - id: 02_promise
+    name_cn: 效果承诺
+    legal_basis: 广告法 §17
+    description: 保证、承诺特定效果或时间
+    severity: red
+    patterns:
+      - "包治"
+      - "100%(?:有效|见效)"
+      - "(?:7|14|30)天\\s*\\S{0,4}(?:见效|痊愈|根治)"
+      - "(?:无效|不见效)\\s*退款"
+    sample_violations:
+      - "30 天见效，无效全额退款"
+
+  - id: 03_absolute
+    name_cn: 绝对化用语
+    legal_basis: 广告法 §9 第 3 项
+    description: "绝对化表达"
+    severity: red
+    patterns:
+      - "最(?:好|佳|强|顶级|有效|领先)"
+      - "第一"
+      - "唯一"
+      - "顶级"
+      - "(?:全球|全国|世界)\\s*领先"
+    sample_violations:
+      - "全国销量第一"
+      - "最有效的氨糖产品"
+
+  - id: 04_comparison
+    name_cn: 同行贬损 / 比较级
+    legal_basis: 反不正当竞争法 §11 + 广告法 §13
+    description: 直接或暗示与竞品对比
+    severity: yellow
+    patterns:
+      - "比\\s*\\S{1,15}\\s*更"
+      - "(?:超越|碾压|秒杀)\\s*\\S{1,8}"
+      - "(?:某|其他)\\s*品牌\\s*\\S{0,10}\\s*(?:差|不如)"
+    sample_violations:
+      - "比某品牌氨糖效果好 3 倍"
+
+  - id: 05_medical_device
+    name_cn: 医疗器械 / 药品混淆
+    legal_basis: 保健食品广告审查规定 §8
+    description: 把保健食品包装成药品或医疗器械
+    severity: red
+    patterns:
+      - "处方药"
+      - "OTC"
+      - "(?:药效|药用|药理)"
+      - "(?:替代|取代)\\s*药物"
+    sample_violations:
+      - "本品具有药效，可替代降压药"
+
+  - id: 06_extreme_words
+    name_cn: 极限词
+    legal_basis: 广告法 §9 + 市场监管总局极限词指引
+    description: 极限化、绝对化形容词
+    severity: yellow
+    patterns:
+      - "(?:史上|空前|绝后|无双)\\s*\\S{0,5}"
+      - "(?:独家|独创|独有)\\s*\\S{0,8}"
+      - "(?:终极|顶级|尊贵)"
+    sample_violations:
+      - "史上最强护肝配方"
+
+  - id: 07_celebrity_endorsement
+    name_cn: 明星 / 患者代言
+    legal_basis: 广告法 §16 + §38
+    description: 利用名人 / 患者形象推荐保健食品
+    severity: red
+    patterns: []
+    detection_strategy: "由 A3 LLM 双验阶段做命名实体识别（NER）+ 患者证言识别"
+    sample_violations:
+      - "某影星推荐：吃了三个月，气色特别好"
+
+  - id: 08_tcm_efficacy
+    name_cn: 中医功效话术
+    legal_basis: 中医药法 §2 + 保健食品广告审查规定 §6
+    description: 借中医脏腑 / 气血 / 阴阳话术暗示功效
+    severity: yellow
+    patterns:
+      - "(?:补|养|护|清|降|调)\\s*(?:肝|肾|脾|胃|心|肺|气|血|阴|阳)"
+      - "(?:祛湿|排毒|活血|化瘀)"
+      - "(?:气血\\s*双补|阴阳\\s*调和)"
+    notes: "中医话术不一律红色——仅当与保健食品具体疗效绑定时升级红色"
+
+  - id: 09_age_discrimination
+    name_cn: 年龄歧视
+    legal_basis: 广告法 §9 第 7 项
+    description: 贬低或歧视特定年龄群体
+    severity: yellow
+    patterns:
+      - "(?:中老年|老年人)\\s*\\S{0,8}\\s*(?:无用|没用|废物)"
+      - "年纪大了\\s*就"
+
+  - id: 10_gender_discrimination
+    name_cn: 性别歧视
+    legal_basis: 广告法 §9 第 7 项
+    description: 性别刻板印象与歧视
+    severity: yellow
+    patterns:
+      - "(?:女人|男人)\\s*\\S{0,5}\\s*(?:就该|必须)"
+
+  - id: 11_data_fabrication
+    name_cn: 数据造假 / 虚构权威
+    legal_basis: 广告法 §11
+    description: 虚构销量、好评、研究数据、机构背书
+    severity: red
+    patterns:
+      - "全网\\s*\\S{0,4}\\s*(?:销量|好评)\\s*(?:第一|冠军)"
+      - "(?:复购率|好评率)\\s*\\d{2,3}\\s*%"
+      - "(?:某权威机构|哈佛|MIT|NASA)\\s*认证"
+    sample_violations:
+      - "全网好评率 99%"
+
+  - id: 12_pseudoscience
+    name_cn: 伪科学 / 玄学话术
+    legal_basis: 广告法 §17 + 反对科学话术滥用
+    description: 量子、能量场、磁疗、波频等伪科学概念
+    severity: red
+    patterns:
+      - "量子\\s*\\S{0,5}"
+      - "纳米\\s*\\S{0,5}\\s*(?:能量|磁场)"
+      - "(?:负离子|远红外|微波)\\s*\\S{0,5}\\s*(?:疗效|治愈)"
+
+  - id: 13_medical_institution
+    name_cn: 医院 / 医保 / 临床机构
+    legal_basis: 保健食品广告审查规定 §6
+    description: 借医疗机构 / 医保身份背书
+    severity: red
+    patterns:
+      - "(?:医保|社保)\\s*(?:报销|定点)"
+      - "(?:某|三甲|协和|华西)\\s*医院\\s*推荐"
+      - "临床\\s*\\S{0,5}\\s*验证"
+
+  - id: 14_special_groups
+    name_cn: 特殊人群（孕妇 / 婴幼儿 / 病患）
+    legal_basis: 保健食品广告审查规定 §10
+    description: 针对特殊人群的功效宣称风险更高
+    severity: red
+    patterns:
+      - "(?:孕妇|婴儿|幼儿|宝宝|哺乳期)\\s*\\S{0,5}\\s*(?:可服|适合|放心)"
+      - "(?:糖尿病|高血压|心脏病|癌症)\\s*\\S{0,5}\\s*(?:患者|人群)\\s*\\S{0,5}\\s*(?:可|适合)"
+    notes: "对特殊人群的"适用"声明须有 SFDA 注册号支持，否则一律红色"

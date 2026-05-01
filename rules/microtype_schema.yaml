@@ -1,0 +1,253 @@
+# microtype 5 维 schema（保健品赛道 v0.1）
+#
+# 责任：架构师 + 内容主理共同定义。任何修改需季度审。
+# 加载时机：A6 Microtype Agent 启动时一次性加载。
+# 正交性约束：5 维互不重叠，组合空间 ≈ scenes×audiences×ingredients×emotions×restrictions
+# seed_combinations 给出 50 个高频组合，用于 A6 在没有命中时的 candidate 提案锚点。
+
+version: "0.1"
+last_reviewed_at: null
+last_reviewed_by: null
+
+# ============================================================
+# 维度 1：场景 (scene) — 内容发生的时空 / 生活场景
+# ============================================================
+scenes:
+  - id: morning           # 晨起
+  - id: commute           # 通勤
+  - id: office            # 办公室
+  - id: post_meal         # 餐后
+  - id: late_night        # 熬夜
+  - id: workout           # 健身 / 运动
+  - id: pre_sleep         # 睡前
+  - id: parenting         # 亲子 / 育儿
+  - id: business_dinner   # 应酬 / 饭局
+  - id: travel            # 出差 / 旅行
+  - id: family_care       # 照顾父母 / 长辈
+  - id: post_drinking     # 酒后
+  - id: weight_loss       # 减肥 / 控糖期
+  - id: post_illness      # 病后恢复（合规边界，标谨慎）
+  - id: seasonal          # 换季
+
+# ============================================================
+# 维度 2：人群 (audience) — 内容对话的对象
+# ============================================================
+audiences:
+  - id: white_collar_female      # 白领女性
+  - id: white_collar_male        # 白领男性
+  - id: late_night_workers       # 熬夜党
+  - id: middle_aged              # 中年（35-50）
+  - id: senior                   # 中老年（50+）
+  - id: pregnant_postpartum      # 孕产（合规高风险）
+  - id: students_exam            # 高考/考研学生
+  - id: fitness_enthusiast       # 运动健身党
+  - id: new_parents              # 新手爸妈
+  - id: aging_parents_caretaker  # 照顾父母人群（关切型购买决策）
+  - id: chronic_concern          # 三高担忧型（亚健康，未确诊）
+  - id: female_beauty            # 美妆护肤交叉人群
+
+# ============================================================
+# 维度 3：成分 (ingredient) — 主推 SKU 类目
+# ============================================================
+ingredients:
+  - id: glucosamine          # 氨糖软骨素
+  - id: collagen             # 胶原蛋白
+  - id: probiotics           # 益生菌
+  - id: lutein               # 叶黄素
+  - id: omega3               # 深海鱼油 Omega3
+  - id: vitamin_b            # 维生素 B 族
+  - id: vitamin_d            # 维生素 D
+  - id: vitamin_c            # 维生素 C
+  - id: liver_protect        # 护肝片（奶蓟草等）
+  - id: melatonin            # 褪黑素
+  - id: enzyme               # 酵素
+  - id: calcium              # 钙片
+  - id: iron_folic           # 铁 + 叶酸
+  - id: coq10                # 辅酶 Q10
+  - id: nmn                  # NMN（合规边界，标谨慎）
+  - id: dietary_fiber        # 膳食纤维
+  - id: protein_powder       # 蛋白粉
+  - id: ginseng              # 人参 / 西洋参（中药交叉）
+  - id: hyaluronic_acid      # 玻尿酸口服
+  - id: meal_replacement     # 代餐
+
+# ============================================================
+# 维度 4：情绪 (emotion) — 内容驱动的核心情绪
+# ============================================================
+emotions:
+  - id: anxiety            # 焦虑
+  - id: fatigue            # 疲惫
+  - id: guilt              # 愧疚（特别是父母 / 育儿场景）
+  - id: fear               # 恐惧（健康损失）
+  - id: aspiration         # 向往（理想状态）
+  - id: belonging          # 归属（同人群共鸣）
+  - id: nostalgia          # 怀旧（情怀型种草）
+  - id: empowerment        # 赋能 / 掌控感
+
+# ============================================================
+# 维度 5：限制 (restriction) — 合规等级 / 平台 / 达人形态
+# ============================================================
+restrictions:
+  - id: green_safe         # 合规绿色 — 任何账号可发
+  - id: yellow_caution     # 合规黄色 — 需广审号 / 蓝词库过审
+  - id: platform_douyin    # 抖音特定限制
+  - id: platform_xhs       # 小红书特定限制
+  - id: kol_real_person    # 真人达人（出镜型）
+  - id: kol_doctor         # 医生 / 营养师人设（合规高门槛）
+  - id: brand_owned        # 品牌自营号（更宽松）
+
+# ============================================================
+# Seed 50 高频组合（A6 candidate 提案锚点）
+# 格式：scene/audience/ingredient/emotion/restriction
+# ============================================================
+seed_combinations:
+  - id: 001
+    name: 熬夜白领焦虑型护肝
+    combo: [late_night, white_collar_female, liver_protect, anxiety, yellow_caution]
+  - id: 002
+    name: 晨起中年关节氨糖
+    combo: [morning, middle_aged, glucosamine, fear, green_safe]
+  - id: 003
+    name: 办公室疲惫白领B族
+    combo: [office, white_collar_female, vitamin_b, fatigue, green_safe]
+  - id: 004
+    name: 睡前熬夜党褪黑素
+    combo: [pre_sleep, late_night_workers, melatonin, anxiety, yellow_caution]
+  - id: 005
+    name: 餐后白领益生菌
+    combo: [post_meal, white_collar_female, probiotics, aspiration, green_safe]
+  - id: 006
+    name: 通勤美妆叶黄素
+    combo: [commute, female_beauty, lutein, aspiration, green_safe]
+  - id: 007
+    name: 应酬男士护肝
+    combo: [business_dinner, white_collar_male, liver_protect, fear, yellow_caution]
+  - id: 008
+    name: 健身党蛋白粉赋能
+    combo: [workout, fitness_enthusiast, protein_powder, empowerment, green_safe]
+  - id: 009
+    name: 父母照顾愧疚型氨糖
+    combo: [family_care, aging_parents_caretaker, glucosamine, guilt, green_safe]
+  - id: 010
+    name: 季节换季维C白领
+    combo: [seasonal, white_collar_female, vitamin_c, fear, green_safe]
+  - id: 011
+    name: 高考学生B族焦虑
+    combo: [office, students_exam, vitamin_b, anxiety, green_safe]
+  - id: 012
+    name: 餐后中老年益生菌
+    combo: [post_meal, senior, probiotics, fear, yellow_caution]
+  - id: 013
+    name: 减肥代餐向往女性
+    combo: [weight_loss, white_collar_female, meal_replacement, aspiration, platform_xhs]
+  - id: 014
+    name: 减肥膳食纤维办公
+    combo: [office, white_collar_female, dietary_fiber, aspiration, green_safe]
+  - id: 015
+    name: 熬夜叶黄素白领
+    combo: [late_night, white_collar_female, lutein, fear, green_safe]
+  - id: 016
+    name: 孕产铁叶酸
+    combo: [post_meal, pregnant_postpartum, iron_folic, fear, kol_doctor]
+  - id: 017
+    name: 中老年钙片晨起
+    combo: [morning, senior, calcium, fear, green_safe]
+  - id: 018
+    name: 美妆胶原睡前
+    combo: [pre_sleep, female_beauty, collagen, aspiration, green_safe]
+  - id: 019
+    name: NMN中年向往
+    combo: [morning, middle_aged, nmn, aspiration, yellow_caution]
+  - id: 020
+    name: 商务出差Omega3
+    combo: [travel, white_collar_male, omega3, fear, green_safe]
+  - id: 021
+    name: 健身辅酶Q10
+    combo: [workout, fitness_enthusiast, coq10, empowerment, green_safe]
+  - id: 022
+    name: 中老年三高Omega3
+    combo: [post_meal, chronic_concern, omega3, fear, kol_doctor]
+  - id: 023
+    name: 应酬酵素肠道
+    combo: [post_drinking, white_collar_male, enzyme, guilt, yellow_caution]
+  - id: 024
+    name: 新手爸妈维D宝宝
+    combo: [parenting, new_parents, vitamin_d, anxiety, kol_doctor]
+  - id: 025
+    name: 美妆玻尿酸口服
+    combo: [pre_sleep, female_beauty, hyaluronic_acid, aspiration, platform_xhs]
+  - id: 026
+    name: 中老年人参养气
+    combo: [morning, senior, ginseng, fatigue, yellow_caution]
+  - id: 027
+    name: 学生维D晨起
+    combo: [morning, students_exam, vitamin_d, fear, green_safe]
+  - id: 028
+    name: 病后恢复蛋白粉
+    combo: [post_illness, senior, protein_powder, fear, kol_doctor]
+  - id: 029
+    name: 通勤B族疲惫
+    combo: [commute, white_collar_male, vitamin_b, fatigue, green_safe]
+  - id: 030
+    name: 熬夜赋能辅酶Q10
+    combo: [late_night, late_night_workers, coq10, empowerment, green_safe]
+  - id: 031
+    name: 应酬维C防醉
+    combo: [post_drinking, white_collar_male, vitamin_c, fear, yellow_caution]
+  - id: 032
+    name: 父母氨糖恐惧
+    combo: [family_care, aging_parents_caretaker, glucosamine, fear, green_safe]
+  - id: 033
+    name: 健身钙片骨骼
+    combo: [workout, fitness_enthusiast, calcium, empowerment, green_safe]
+  - id: 034
+    name: 儿童成长维D钙
+    combo: [parenting, new_parents, calcium, fear, kol_doctor]
+  - id: 035
+    name: 通勤美妆胶原
+    combo: [commute, female_beauty, collagen, aspiration, platform_xhs]
+  - id: 036
+    name: 餐后白领膳食纤维
+    combo: [post_meal, white_collar_female, dietary_fiber, aspiration, green_safe]
+  - id: 037
+    name: 减脂期蛋白粉女性
+    combo: [weight_loss, white_collar_female, protein_powder, aspiration, green_safe]
+  - id: 038
+    name: 抗衰中年NMN晨起
+    combo: [morning, middle_aged, nmn, aspiration, yellow_caution]
+  - id: 039
+    name: 商务高血压关注
+    combo: [office, chronic_concern, omega3, fear, kol_doctor]
+  - id: 040
+    name: 照顾父母维C冬季
+    combo: [seasonal, aging_parents_caretaker, vitamin_c, guilt, green_safe]
+  - id: 041
+    name: 学生晨起DHA注意力
+    combo: [morning, students_exam, omega3, anxiety, kol_doctor]
+  - id: 042
+    name: 出差益生菌肠道
+    combo: [travel, white_collar_male, probiotics, fear, green_safe]
+  - id: 043
+    name: 商务应酬护肝品牌号
+    combo: [business_dinner, white_collar_male, liver_protect, fear, brand_owned]
+  - id: 044
+    name: 美妆白领褪黑睡眠
+    combo: [pre_sleep, female_beauty, melatonin, anxiety, yellow_caution]
+  - id: 045
+    name: 减肥酵素早晨
+    combo: [morning, white_collar_female, enzyme, aspiration, platform_xhs]
+  - id: 046
+    name: 真人医生氨糖中老年
+    combo: [office, senior, glucosamine, fear, kol_doctor]
+  - id: 047
+    name: 熬夜胶原焦虑女性
+    combo: [late_night, white_collar_female, collagen, anxiety, green_safe]
+  - id: 048
+    name: 晨起钙片中老年品牌号
+    combo: [morning, senior, calcium, belonging, brand_owned]
+  - id: 049
+    name: 通勤叶黄素学生用眼
+    combo: [commute, students_exam, lutein, fear, green_safe]
+  - id: 050
+    name: 健身后蛋白粉赋能男性
+    combo: [workout, white_collar_male, protein_powder, empowerment, green_safe]
