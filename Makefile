@@ -1,5 +1,14 @@
 .PHONY: help up down migrate seed api worker fmt lint test demo discover purge monitoring health logs
 
+# Auto-detect venv (./.venv/bin/), fallback to system PATH
+VENV := $(shell test -x .venv/bin/python && echo .venv/bin/ || echo "")
+PY      := $(VENV)python
+PIP     := $(VENV)pip
+ALEMBIC := $(VENV)alembic
+UVICORN := $(VENV)uvicorn
+PYTEST  := $(VENV)pytest
+RUFF    := $(VENV)ruff
+
 help:
 	@echo "  make up         — 启动 Postgres+pgvector / Temporal / MinIO / Redis"
 	@echo "  make down       — 停止所有服务"
@@ -24,28 +33,28 @@ down:
 	docker compose -f infra/docker-compose.yml down
 
 migrate:
-	cd db && alembic upgrade head
+	cd db && ../$(ALEMBIC) upgrade head
 
 seed:
-	python scripts/seed_microtypes.py
+	$(PY) scripts/seed_microtypes.py
 
 api:
-	uvicorn api.main:app --reload --port 8000
+	$(UVICORN) api.main:app --reload --port 8000
 
 worker:
-	python -m worker.run_worker
+	$(PY) -m worker.run_worker
 
 test:
-	pytest tests/
+	$(PYTEST) tests/
 
 demo:
-	python scripts/demo_ingest.py
+	$(PY) scripts/demo_ingest.py
 
 discover:
-	python scripts/discovery_run.py --channel $(CHANNEL) --query $(QUERY) --n $(N)
+	$(PY) scripts/discovery_run.py --channel $(CHANNEL) --query $(QUERY) --n $(N)
 
 purge:
-	python scripts/poc_purge.py
+	$(PY) scripts/poc_purge.py
 
 monitoring:
 	docker compose -f infra/monitoring/docker-compose.yml up -d
@@ -63,7 +72,7 @@ logs:
 	docker compose -f infra/docker-compose.yml logs -f --tail=100
 
 fmt:
-	ruff format .
+	$(RUFF) format .
 
 lint:
-	ruff check api/ worker/ tests/
+	$(RUFF) check api/ worker/ tests/
