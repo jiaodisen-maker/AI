@@ -20,6 +20,7 @@ from .agents import (
     a9_critic,
 )
 from .workflows.agentic_insight import AgenticInsightWorkflow
+from .workflows.poc_purge import PocPurgeWorkflow, run_poc_purge
 
 
 async def main() -> None:
@@ -38,12 +39,13 @@ async def main() -> None:
         a7_feasibility.score_feasibility,
         a8_generation.generate_scripts,
         a9_critic.critique,
+        run_poc_purge,
     ]
 
     worker = Worker(
         client,
         task_queue=os.getenv("TEMPORAL_TASK_QUEUE", "agentic-insight"),
-        workflows=[AgenticInsightWorkflow],
+        workflows=[AgenticInsightWorkflow, PocPurgeWorkflow],
         activities=activities,
     )
     await worker.run()

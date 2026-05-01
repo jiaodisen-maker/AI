@@ -48,12 +48,30 @@ def test_clean_text_green():
     assert _verdict_from_hits(hits) == "green"
 
 
-def test_known_false_positive_documents_regex_limitation():
-    """v0.1 词库 '第一' 会误命中 '第一件事'。文档此限制——A3 LLM 双验阶段会写
-    hitl_alert(compliance_edge) 让人介入修订。"""
+def test_v01_false_positive_now_fixed_in_v02():
+    """v0.1 '第一' 会误命中 '第一件事'；v0.2 加了 negative lookahead，修了。"""
     hits = _scan_text("早起第一件事是喝水")
     cats = _categories_hit(hits)
-    assert "03_absolute" in cats  # 已知误报，留作后续 hitl 案例
+    assert "03_absolute" not in cats  # v0.2 修复
+
+
+def test_efficacy_v02_extended_patterns():
+    """v0.2 扩充后能命中更多疗效宣称变体。"""
+    hits = _scan_text("本品可以预防糖尿病并发症，抑制肿瘤生长")
+    cats = _categories_hit(hits)
+    assert "01_efficacy" in cats
+
+
+def test_promise_v02_立竿见影():
+    hits = _scan_text("吃一盒立竿见影，绝对管用")
+    cats = _categories_hit(hits)
+    assert "02_promise" in cats
+
+
+def test_absolute_v02_完美无敌():
+    hits = _scan_text("完美的氨糖配方，宇宙领先科技")
+    cats = _categories_hit(hits)
+    assert "03_absolute" in cats
 
 
 def test_tcm_yellow():
