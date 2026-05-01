@@ -79,6 +79,16 @@ sudo -u app git pull --ff-only || true
 echo "===> 6/9 Python venv + 依赖"
 PY_BIN="python3.11"
 command -v python3.11 >/dev/null || PY_BIN="python3"
+
+# 配 pip 国内镜像（app 用户级别）
+sudo -u app mkdir -p /home/app/.pip
+sudo -u app tee /home/app/.pip/pip.conf > /dev/null <<'EOF'
+[global]
+index-url = https://mirrors.aliyun.com/pypi/simple/
+trusted-host = mirrors.aliyun.com
+timeout = 120
+EOF
+
 sudo -u app PY_BIN="$PY_BIN" bash <<'EOSU'
 cd /opt/agentic-insight
 ${PY_BIN} -m venv .venv
@@ -87,6 +97,8 @@ ${PY_BIN} -m venv .venv
 EOSU
 
 echo "===> 7/9 Web build"
+# 配 npm 国内镜像（app 用户级别）
+sudo -u app npm config set registry https://registry.npmmirror.com 2>/dev/null || true
 sudo -u app bash <<'EOSU'
 cd /opt/agentic-insight/web
 npm install --no-audit --no-fund
