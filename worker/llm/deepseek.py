@@ -1,18 +1,35 @@
-"""Deepseek-V3 + Qwen via OpenAI-compatible endpoints."""
+"""Deepseek-V3 + Qwen via OpenAI-compatible endpoints.
+
+支持三种凭据来源（优先级由高到低）：
+1) LLM_BASE_URL + LLM_API_KEY  — 统一聚合端点（如 dataeyes.ai）
+2) DEEPSEEK_BASE_URL / QWEN_BASE_URL + 各自的 API_KEY  — 分别配置
+3) 硬编码默认（api.deepseek.com / dashscope.aliyuncs.com）
+"""
 import os
 
 from openai import OpenAI
 
-DEEPSEEK_BASE_URL = "https://api.deepseek.com"
-DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+DEEPSEEK_DEFAULT = "https://api.deepseek.com"
+DASHSCOPE_DEFAULT = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+
+def _resolve(url_env: str, key_env: str, url_default: str) -> tuple[str, str]:
+    """聚合端点优先 → 单独配置 → 默认。返回 (base_url, api_key)。"""
+    if os.getenv("LLM_BASE_URL") and os.getenv("LLM_API_KEY"):
+        return os.environ["LLM_BASE_URL"], os.environ["LLM_API_KEY"]
+    base = os.getenv(url_env) or url_default
+    key = os.environ[key_env]
+    return base, key
 
 
 def _deepseek_client() -> OpenAI:
-    return OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"], base_url=DEEPSEEK_BASE_URL)
+    base, key = _resolve("DEEPSEEK_BASE_URL", "DEEPSEEK_API_KEY", DEEPSEEK_DEFAULT)
+    return OpenAI(api_key=key, base_url=base)
 
 
 def _qwen_client() -> OpenAI:
-    return OpenAI(api_key=os.environ["QWEN_API_KEY"], base_url=DASHSCOPE_BASE_URL)
+    base, key = _resolve("QWEN_BASE_URL", "QWEN_API_KEY", DASHSCOPE_DEFAULT)
+    return OpenAI(api_key=key, base_url=base)
 
 
 def call_deepseek(
