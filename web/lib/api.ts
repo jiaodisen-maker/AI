@@ -74,6 +74,48 @@ export type Alert = {
   created_at: string;
 };
 
+export type Microtype = {
+  id: string;
+  scene: string;
+  audience: string;
+  ingredient: string;
+  emotion: string;
+  restriction: string;
+  status: "active" | "candidate" | "deprecated";
+  proposed_by_agent: boolean;
+};
+
+export type ScriptListItem = {
+  id: string;
+  microtype_id: string;
+  prompt_version: string;
+  output: string;
+  llm_model: string;
+  for_internal_research_only: boolean;
+  generated_at: string;
+};
+
+export type ScriptDetail = {
+  script: ScriptListItem & { atom_ids: string[] };
+  critic_scores: {
+    id: string;
+    evaluator_model: string;
+    scores: Record<string, number>;
+    reasoning: string | null;
+    confidence: number | null;
+    scored_at: string;
+  }[];
+};
+
+export type PromptVersion = {
+  id: string;
+  agent: string;
+  version: string;
+  metric: Record<string, unknown> | null;
+  created_at: string;
+  trigger_critic_id: string | null;
+};
+
 export const api = {
   listCases: () => get<CaseListItem[]>("/cases?limit=50"),
   getCase: (id: string) => get<CaseDetail>(`/cases/${id}`),
@@ -83,4 +125,24 @@ export const api = {
     post<{ id: string; status: string }>(
       `/alerts/${id}/resolve?resolved_by=${encodeURIComponent(by)}`,
     ),
+  searchAtoms: (params: {
+    q?: string;
+    atom_type?: string;
+    grade?: string;
+    microtype_id?: string;
+  } = {}) => {
+    const qs = new URLSearchParams(
+      Object.entries(params).filter(([, v]) => v) as [string, string][],
+    );
+    return get<Atom[]>(`/atoms?${qs}`);
+  },
+  listMicrotypes: (status?: string) =>
+    get<Microtype[]>(`/microtypes${status ? `?status=${status}` : ""}`),
+  activateMicrotype: (id: string) =>
+    post<{ id: string; status: string }>(`/microtypes/${id}/activate`),
+  listScripts: () => get<ScriptListItem[]>("/scripts?limit=50"),
+  getScript: (id: string) => get<ScriptDetail>(`/scripts/${id}`),
+  listPromptVersions: () => get<PromptVersion[]>("/prompt-versions"),
+  getPromptVersion: (id: string) =>
+    get<PromptVersion & { prompt_text: string }>(`/prompt-versions/${id}`),
 };

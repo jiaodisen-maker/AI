@@ -1,5 +1,19 @@
 # Changelog
 
+## W6 — UI 完整 6 页 + 违禁词全 14 类 v0.2
+
+- **Web UI 4 个新页面**：
+  - `/atoms` 文本/类型/合规等级搜索
+  - `/microtypes` 列表 + status filter + candidate Activate 按钮
+  - `/scripts` 列表 + `/scripts/[id]` 详情（7 维 critic 平均分 grid + 三家 evaluator 表）
+  - `/prompts` DSPy prompt 历史
+- 违禁词类目 04-14 全部扩到 v0.2 水平（每类 +5-10 patterns）
+- **8 个 v0.2 命中单测**（同行贬损/医疗器械/极限词/中医经络/数据造假/伪科学/酸碱体质/能量场）
+- API client 类型补完（`web/lib/api.ts` 新增 Microtype/ScriptListItem/ScriptDetail/PromptVersion 类型）
+- 导航栏补全 6 个页面链接
+
+**40/40 pytest pass，ruff 全绿，UI 6 页齐备。**
+
 ## W5 — Production Hardening
 
 - **客服库 PIPL 脱敏 + 导入** (`scripts/import_userpain.py`)：手机/邮箱/身份证/订单号/IP/银行卡/中文姓名 7 类 PII 替换为 token，启发式聚类后嵌入入库

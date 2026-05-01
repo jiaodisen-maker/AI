@@ -74,6 +74,48 @@ def test_absolute_v02_完美无敌():
     assert "03_absolute" in cats
 
 
+def test_comparison_v02_kills_competitors():
+    hits = _scan_text("效果是普通氨糖的 5 倍，市面上很多牌子都比不上")
+    cats = _categories_hit(hits)
+    assert "04_comparison" in cats
+
+
+def test_medical_device_v02_drug_substitute():
+    hits = _scan_text("相当于胰岛素针剂，可以代替药品")
+    cats = _categories_hit(hits)
+    assert "05_medical_device" in cats
+
+
+def test_extreme_v02_no_side_effects():
+    hits = _scan_text("独家神奇配方 0 副作用")
+    cats = _categories_hit(hits)
+    assert "06_extreme_words" in cats
+
+
+def test_tcm_v02_meridian():
+    hits = _scan_text("打通经络，疏通脉络")
+    cats = _categories_hit(hits)
+    assert "08_tcm_efficacy" in cats
+
+
+def test_data_fabrication_v02_harvard():
+    hits = _scan_text("哈佛大学认证配方，中科院院士推荐")
+    cats = _categories_hit(hits)
+    assert "11_data_fabrication" in cats
+
+
+def test_pseudoscience_v02_alkaline():
+    hits = _scan_text("调节酸碱体质，激活细胞线粒体再生")
+    cats = _categories_hit(hits)
+    assert "12_pseudoscience" in cats
+
+
+def test_pseudoscience_v02_energy_field():
+    hits = _scan_text("产品蕴含宇宙能量场，开光加持")
+    cats = _categories_hit(hits)
+    assert "12_pseudoscience" in cats
+
+
 def test_tcm_yellow():
     hits = _scan_text("本品有助于补肝护肾，调和阴阳")
     assert "08_tcm_efficacy" in _categories_hit(hits)
