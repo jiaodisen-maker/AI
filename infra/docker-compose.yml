@@ -23,7 +23,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-platform}
       POSTGRES_PWD: ${POSTGRES_PASSWORD:-platform}
       POSTGRES_SEEDS: postgres
-      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development.yaml
     ports:
       - "7233:7233"
     depends_on:
