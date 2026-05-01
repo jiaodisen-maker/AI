@@ -1,0 +1,19 @@
+[Unit]
+Description=Agentic Insight Temporal Worker
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/opt/agentic-insight
+EnvironmentFile=/opt/agentic-insight/infra/.env
+ExecStart=/opt/agentic-insight/.venv/bin/python -m worker.run_worker
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
