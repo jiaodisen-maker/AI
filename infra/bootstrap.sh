@@ -36,10 +36,13 @@ apt-get install -y curl git ufw fail2ban $PY_PKG \
 echo "===> 2/9 Docker + compose plugin"
 if ! command -v docker >/dev/null; then
   install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  # 国内 ECS 优先走阿里云 Docker 镜像（download.docker.com 在中国网络不稳）
+  DOCKER_REPO="${DOCKER_REPO:-https://mirrors.aliyun.com/docker-ce/linux/ubuntu}"
+  rm -f /etc/apt/keyrings/docker.gpg
+  curl -fsSL "${DOCKER_REPO}/gpg" | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
   chmod a+r /etc/apt/keyrings/docker.gpg
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    ${DOCKER_REPO} $(lsb_release -cs) stable" \
     > /etc/apt/sources.list.d/docker.list
   apt-get update -y
   apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -48,8 +51,16 @@ fi
 
 echo "===> 3/9 Node 20 (Next.js)"
 if ! command -v node >/dev/null; then
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  apt-get install -y nodejs
+  # 国内 ECS 走阿里云 NodeSource 镜像
+  if curl -fsS --max-time 5 https://deb.nodesource.com/setup_20.x -o /tmp/nodesetup.sh 2>/dev/null; then
+    bash /tmp/nodesetup.sh && apt-get install -y nodejs
+  else
+    # fallback: 阿里云 Node 二进制（避免 nodesource 不可达）
+    apt-get install -y nodejs npm || {
+      echo "Node 安装失败，请手动装 Node 20+ 后重跑"
+      exit 1
+    }
+  fi
 fi
 
 echo "===> 4/9 应用用户 + 目录"
