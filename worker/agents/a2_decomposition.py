@@ -40,25 +40,23 @@ from .a2_prompts import DECOMPOSITION_SYSTEM, build_user_prompt
 log = logging.getLogger(__name__)
 
 
-def _extract_via_media_pipeline(url: str) -> dict:
-    """yt-dlp + FunASR + PaddleOCR + Qwen-VL.
+def _safe_workflow_id() -> str:
+    """Return Temporal workflow_id if running inside an activity, else 'manual-<random>'.
 
-    所有依赖在 optional [media] extras 里，未安装时抛 NotImplementedError，
-    此时调用方应该用 manual_payload 旁路。
+    使集成测试可在 Temporal context 之外直接调 activity 函数。
     """
     try:
-        import funasr  # noqa: F401
-        import paddleocr  # noqa: F401
-        import yt_dlp  # noqa: F401
-    except ImportError as e:
-        raise NotImplementedError(
-            "Media pipeline deps not installed. Install with `pip install -e .[media]` "
-            "or pass manual_payload in IngestRequest."
-        ) from e
+        return activity.info().workflow_id
+    except Exception:
+        import uuid as _uuid
+        return f"manual-{_uuid.uuid4().hex[:8]}"
 
-    # 下载 → ASR → OCR → 视觉理解
-    # 完整实装见 worker/agents/a2_media.py（W1 末交付）
-    raise NotImplementedError("Media pipeline implementation pending — use manual_payload for now")
+
+def _extract_via_media_pipeline(url: str, workflow_id: str) -> dict:
+    """yt-dlp + FunASR + PaddleOCR + Qwen-VL — 完整实装见 a2_media.py。"""
+    from .a2_media import extract
+
+    return extract(url, workflow_id)
 
 
 def _persist_case_and_segments(case_input: dict, decomp: dict) -> str:
@@ -99,7 +97,7 @@ def _persist_case_and_segments(case_input: dict, decomp: dict) -> str:
                 "discovered_by": "manual" if data_lineage == "manual" else "a1_discovery",
                 "lineage": data_lineage,
                 "purge_at": poc_purge_at,
-                "wfid": activity.info().workflow_id,
+                "wfid": _safe_workflow_id(),
             },
         ).first()
         case_id = str(case_row.id)
@@ -164,7 +162,8 @@ async def decompose(case_input: dict[str, Any]) -> str:
 
     payload = case_input.get("manual_payload")
     if payload is None:
-        payload = _extract_via_media_pipeline(case_input["url"])
+        wf_id = _safe_workflow_id()
+        payload = _extract_via_media_pipeline(case_input["url"], wf_id)
 
     asr = payload.get("asr_text") or ""
     ocr = payload.get("ocr_text") or ""

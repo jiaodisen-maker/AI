@@ -19,6 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link href="/microtypes" className="hover:underline">Microtypes</Link>
             <Link href="/scripts" className="hover:underline">Scripts</Link>
             <Link href="/prompts" className="hover:underline">Prompts</Link>
+            <Link href="/discovery" className="hover:underline">Discovery</Link>
             <Link href="/alerts" className="hover:underline">Alerts</Link>
             <a
               href="http://localhost:8233"

@@ -149,17 +149,37 @@ def maybe_optimize(agent: str = "a8") -> dict:
             "delta": delta,
         }
 
-    # 提取编译后的 prompt 作为新 prompt_text
+    # 把编译产物序列化为 LLM-friendly system prompt（A8 直接拿去用）
     try:
-        signature_str = str(compiled.predictors()[0].signature)
+        from worker.agents.a8_prompts import GENERATION_SYSTEM_DEFAULT
+
         demos = compiled.predictors()[0].demos or []
-        prompt_text = f"{signature_str}\n\n# Demos: {len(demos)}\n" + "\n---\n".join(
-            f"INPUT(microtype):{d.microtype_json[:200]}\nINPUT(atoms):{d.atoms_json[:200]}\nOUTPUT:{d.script_json[:300]}"
-            for d in demos
+        demo_blocks: list[str] = []
+        for i, d in enumerate(demos[:5], 1):
+            try:
+                m_str = d.microtype_json
+                a_str = d.atoms_json
+                s_str = d.script_json
+            except AttributeError:
+                continue
+            demo_blocks.append(
+                f"### 示例 {i}\n"
+                f"目标 microtype: {m_str[:300]}\n"
+                f"可用原子: {a_str[:600]}\n"
+                f"高分输出: {s_str[:500]}"
+            )
+        prompt_text = (
+            GENERATION_SYSTEM_DEFAULT
+            + "\n\n## DSPy BootstrapFewShot 学习产出的高分示例（v"
+            + str(len(demos))
+            + "）\n\n"
+            + "\n\n".join(demo_blocks)
+            if demo_blocks
+            else GENERATION_SYSTEM_DEFAULT
         )
     except Exception as e:
         log.warning("extract compiled prompt failed: %s", e)
-        prompt_text = f"# DSPy compiled at {datetime.now(UTC).isoformat()}\n# (extraction failed: {e})"
+        prompt_text = f"# DSPy compile @ {datetime.now(UTC).isoformat()}\n# extraction error: {e}"
 
     version = _next_version("a8")
     pv_id = _persist(

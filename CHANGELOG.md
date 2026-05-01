@@ -1,5 +1,32 @@
 # Changelog
 
+## W7 — 全栈集成实装
+
+**真实管道实装**：
+- **媒体管道完整** (`worker/agents/a2_media.py`)：yt-dlp 下载 → MinIO 存储 → ffmpeg 抽音/抽帧 → FunASR 转写 → PaddleOCR 字幕 → Qwen-VL 视觉理解；A2 decomposition 直接调用，缺 manual_payload 时走真管道
+- **抖音 OAuth 完整 flow** (`worker/discovery/oauth_tokens.py`)：DB 表 `oauth_tokens` (迁移 002) 持久化 access/refresh tokens；自动刷新（剩余 ≤5min 触发）；exchange_code 接 OAuth 回调
+- **千川 Marketing API 完整 client** (`worker/discovery/qianchuan_client.py`)：v3.0 报表（CPM/CTR/CVR/GMV）+ 视频信息接口；通过 oauth_tokens 表读取 advertiser_id；A5 改用此 client
+- **DSPy compiled prompt 真正喂回 A8**：`dspy_opt.optimizer` 把 BootstrapFewShot 学到的 demos 序列化成 LLM-friendly system prompt（DEFAULT + 高分示例）写入 `prompt_versions.prompt_text`；A8 启动时拉最新版本作为系统提示
+
+**生产监控栈**：
+- `infra/monitoring/docker-compose.yml`：Prometheus + Grafana + Alertmanager
+- `prometheus.yml` 抓 API `/metrics`；`alerts.yml` 5 条规则（HITL 堆积/PoC purge 失败/合规边界/新 microtype 候选）
+- Grafana dashboard JSON：8 panels（open alerts/PoC pending/cases/DSPy/lineage/atoms/alerts trend/microtypes）+ datasource 自动 provision
+- `make monitoring` 一键启动
+
+**集成测试**：
+- `tests/integration/test_workflow_mocked.py` — mock LLM 跑 A2→A3 全链 + 验 PoC isolation trigger 真实 RAISE EXCEPTION
+- 自动 skip if no DATABASE_URL；CI 用 GitHub Actions Postgres service container 真跑
+
+**Quality of Life**：
+- structured logging + correlation IDs（worker `setup_structured_logging`）
+- 违禁词补到 100+ patterns（年龄/性别歧视、医疗机构、特殊人群类目扩充）
+- /discovery Web UI 页（批量 A1 触发表单）
+- Makefile 加 monitoring / health / logs 三命令
+- CI 拆双 job（lint+unit + integration-test with PG service）+ production-build feature flag 守卫
+
+**40/40 单测 pass + 集成测试就绪 + ruff 全绿。**
+
 ## W6 — UI 完整 6 页 + 违禁词全 14 类 v0.2
 
 - **Web UI 4 个新页面**：

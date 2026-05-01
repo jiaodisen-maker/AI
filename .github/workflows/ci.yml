@@ -26,8 +26,47 @@ jobs:
       - name: Ruff lint
         run: ruff check api/ worker/ tests/ scripts/ dspy_opt/
 
-      - name: Pytest
-        run: pytest tests/ -v
+      - name: Pytest (unit only — integration skipped without DATABASE_URL)
+        run: pytest tests/ -v --ignore=tests/integration
+
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: platform
+          POSTGRES_PASSWORD: platform
+          POSTGRES_DB: platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U platform"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --upgrade pip
+          pip install pyyaml sqlalchemy temporalio openai anthropic pytest ruff fastapi pydantic-settings httpx pgvector "psycopg[binary]" alembic
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql+psycopg://platform:platform@localhost:5432/platform
+        run: cd db && alembic upgrade head
+      - name: Seed microtypes
+        env:
+          DATABASE_URL: postgresql+psycopg://platform:platform@localhost:5432/platform
+        run: python scripts/seed_microtypes.py
+      - name: Integration tests
+        env:
+          DATABASE_URL: postgresql+psycopg://platform:platform@localhost:5432/platform
+        run: pytest tests/integration -v
 
   production-build-guard:
     runs-on: ubuntu-latest

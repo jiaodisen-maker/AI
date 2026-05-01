@@ -1,0 +1,41 @@
+groups:
+  - name: agentic-insight
+    interval: 1m
+    rules:
+      - alert: HitlAlertsBacklog
+        expr: sum(agentic_open_alerts) > 20
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "HITL alerts inbox 堆积 (>20)"
+          description: "open alerts: {{ $value }} — 检查 /alerts UI"
+
+      - alert: PocPurgePending
+        expr: agentic_poc_pending_purge > 0
+        for: 30m
+        labels: { severity: critical }
+        annotations:
+          summary: "PoC 数据未及时 purge"
+          description: "{{ $value }} 个 poc_crawled cases 已过 TTL 但未清理 — TTL job 是否在跑？"
+
+      - alert: ComplianceEdgeAlertsHigh
+        expr: agentic_open_alerts{alert_type="compliance_edge"} > 5
+        for: 30m
+        labels: { severity: warning }
+        annotations:
+          summary: "合规边界告警增多 — 法务复审违禁词库"
+
+      - alert: NewMicrotypeBacklog
+        expr: agentic_open_alerts{alert_type="new_microtype"} > 10
+        for: 1h
+        labels: { severity: info }
+        annotations:
+          summary: "新 microtype 候选积压 — 内容主理审定"
+
+      - alert: PocPurgeFailed
+        expr: increase(agentic_open_alerts{alert_type="poc_purge_failed"}[1h]) > 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "PoC purge 失败"
+          description: "MinIO 对象删除失败 — 法律合规风险，立即排查"

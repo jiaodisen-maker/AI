@@ -18,7 +18,6 @@ import json
 import logging
 import os
 
-import httpx
 from sqlalchemy import text
 from temporalio import activity
 
@@ -26,26 +25,27 @@ from ..db import session_scope
 
 log = logging.getLogger(__name__)
 
-QIANCHUAN_BASE = "https://ad.oceanengine.com/open_api/v1.0"
-JULIANG_BASE = "https://open.oceanengine.com/api"
+# 端点常量已迁移到 worker/discovery/qianchuan_client.py
 
 
 def _has_creds() -> bool:
-    return bool(os.getenv("QIANCHUAN_API_KEY") and os.getenv("DOUYIN_OAUTH_CLIENT_ID"))
+    """V7 起改用 oauth_tokens 表存的凭据；环境变量只看 ACCOUNT_ID 路由。"""
+    return bool(os.getenv("QIANCHUAN_ACCOUNT_ID"))
 
 
 def _fetch_qianchuan_video_metrics(item_id: str) -> dict:
-    """千川 Marketing API：拉视频维度 CPM / CTR / 完播率 / GMV.
+    """走 oauth_tokens 持久化的 token + advertiser_id（worker/discovery/qianchuan_client.py）。"""
+    from ..discovery.qianchuan_client import fetch_metrics
 
-    真实场景需要 access_token + advertiser_id 配套。这里给 shape，签字执行 OAuth 后接入。
-    """
-    api_key = os.environ["QIANCHUAN_API_KEY"]
-    headers = {"Access-Token": api_key, "Content-Type": "application/json"}
-    params = {"item_id": item_id, "fields": "cpm,ctr,cvr,play_over_rate,total_pay_amount"}
-    with httpx.Client(timeout=10.0) as c:
-        r = c.get(f"{QIANCHUAN_BASE}/qianchuan/material/video/get/", headers=headers, params=params)
-        r.raise_for_status()
-        return r.json()
+    account_id = os.environ["QIANCHUAN_ACCOUNT_ID"]
+    metrics = fetch_metrics(account_id, item_id)
+    if metrics is None:
+        raise RuntimeError("qianchuan metrics fetch returned None")
+    # 把 v3.0 报表的第一行扁平化
+    rows = metrics.get("report", {}).get("rows") or []
+    flat = rows[0].get("metrics", {}) if rows else {}
+    flat["info"] = metrics.get("info", {})
+    return flat
 
 
 def _classify_verdict(metrics: dict) -> str:

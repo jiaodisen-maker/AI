@@ -3,6 +3,7 @@
 Run: python -m worker.run_worker
 """
 import asyncio
+import logging
 import os
 
 from temporalio.client import Client
@@ -19,11 +20,13 @@ from .agents import (
     a8_generation,
     a9_critic,
 )
+from .logging_config import setup_structured_logging
 from .workflows.agentic_insight import AgenticInsightWorkflow
 from .workflows.poc_purge import PocPurgeWorkflow, run_poc_purge
 
 
 async def main() -> None:
+    setup_structured_logging(level=getattr(logging, os.getenv("LOG_LEVEL", "INFO")))
     client = await Client.connect(
         os.getenv("TEMPORAL_ADDRESS", "localhost:7233"),
         namespace=os.getenv("TEMPORAL_NAMESPACE", "default"),
