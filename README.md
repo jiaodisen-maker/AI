@@ -42,8 +42,20 @@ docs/       架构索引 + PoC 法务备忘录模板
 
 ## 排期
 
-- W0 系统初始化（Day 1-3）— **当前阶段（已完成 repo 骨架）**
-- W1 A2/A3 + Temporal 骨架（Day 4-10）
-- W2 A4/A5/A6/A7（Day 11-17）
-- W3 A8/A9 + DSPy 闭环 + UI（Day 18-24）
+- W0 系统初始化 ✅
+- W1 A2/A3 + Temporal 骨架 ✅
+- W2 A4/A5/A6/A7 ✅
+- W3 A8/A9 + DSPy 闭环 + UI ✅
 - W4 buffer + A1 Discovery + 决策门（Day 25-28）
+
+## Web UI
+
+```bash
+cd web && npm install && npm run dev    # http://localhost:3000
+```
+
+页面：
+- `/` 首页
+- `/cases` 列表
+- `/cases/[id]` 详情（9 段拆解 + 原子 + 4 路交叉）
+- `/alerts` HITL 告警 inbox + Resolve 操作

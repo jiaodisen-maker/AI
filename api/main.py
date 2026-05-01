@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .config import get_settings
-from .routes import alerts, atoms, cases, generate, ingest, microtypes
+from .routes import alerts, atoms, cases, generate, ingest, microtypes, prompts, scripts
 
 settings = get_settings()
 
@@ -17,6 +17,8 @@ app.include_router(atoms.router)
 app.include_router(microtypes.router)
 app.include_router(generate.router)
 app.include_router(alerts.router)
+app.include_router(prompts.router)
+app.include_router(scripts.router)
 
 
 @app.get("/health")

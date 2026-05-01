@@ -84,7 +84,46 @@ async def main() -> int:
         for cv in d["cross_validations"]:
             print(f"    [{cv['agent']}] verdict={cv['verdict']} confidence={cv['confidence']}")
 
+        # generated scripts (W3)
+        scripts = await client.get(f"{API}/scripts?limit=10")
+        print(f"\nGENERATED_SCRIPTS: {len(scripts.json())}")
+        for sc in scripts.json()[:3]:
+            print(
+                f"  {sc['id']} prompt={sc['prompt_version']} "
+                f"internal_only={sc['for_internal_research_only']}"
+            )
+            if scripts.json():
+                detail = await client.get(f"{API}/scripts/{sc['id']}")
+                cs = detail.json()["critic_scores"]
+                print(f"    critic_scores ({len(cs)}):")
+                for c in cs:
+                    print(
+                        f"      [{c['evaluator_model']}] "
+                        f"avg={_avg_score(c['scores'])} conf={c['confidence']}"
+                    )
+
+        # alerts (HITL inbox)
+        alerts = await client.get(f"{API}/alerts?status=open&limit=10")
+        print(f"\nOPEN ALERTS: {len(alerts.json())}")
+        for al in alerts.json()[:5]:
+            print(f"  [{al['alert_type']}] {al['created_at']}")
+
+        # prompt versions (DSPy 自优化历史)
+        pv = await client.get(f"{API}/prompt-versions?limit=5")
+        print(f"\nPROMPT_VERSIONS: {len(pv.json())}")
+        for v in pv.json():
+            print(f"  agent={v['agent']} version={v['version']} created={v['created_at']}")
+
         return 0
+
+
+def _avg_score(scores: dict | None) -> str:
+    if not scores or not isinstance(scores, dict):
+        return "—"
+    vals = [v for v in scores.values() if isinstance(v, int | float)]
+    if not vals:
+        return "—"
+    return f"{sum(vals) / len(vals):.1f}"
 
 
 if __name__ == "__main__":
