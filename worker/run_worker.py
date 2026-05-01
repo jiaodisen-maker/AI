@@ -8,8 +8,17 @@ import os
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from .agents import a1_discovery, a2_decomposition, a3_compliance, a4_userpain
-from .agents import a5_conversion, a6_microtype, a7_feasibility, a8_generation, a9_critic
+from .agents import (
+    a1_discovery,
+    a2_decomposition,
+    a3_compliance,
+    a4_userpain,
+    a5_conversion,
+    a6_microtype,
+    a7_feasibility,
+    a8_generation,
+    a9_critic,
+)
 from .workflows.agentic_insight import AgenticInsightWorkflow
 
 

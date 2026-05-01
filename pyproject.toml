@@ -18,16 +18,18 @@ dependencies = [
     "minio>=7.2",
     "redis>=5.1",
     "python-dotenv>=1.0",
+    "openai>=1.50",            # Deepseek-V3 / Qwen via OpenAI-compatible endpoints
+    "anthropic>=0.40",
 ]
 
 [project.optional-dependencies]
-agents = [
-    "openai>=1.50",            # used for Deepseek-V3 / Qwen via OpenAI-compatible endpoints
-    "anthropic>=0.40",
-    "dspy-ai>=2.5",
+media = [
     "yt-dlp>=2024.10",
     "funasr>=1.1",
     "paddleocr>=2.7",
+]
+dspy = [
+    "dspy-ai>=2.5",
 ]
 dev = [
     "ruff>=0.7",
@@ -41,3 +43,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

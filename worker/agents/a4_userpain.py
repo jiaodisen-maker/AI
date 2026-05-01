@@ -5,10 +5,13 @@
 3) 在 userpain_clusters.embedding 上做 top-k 相似召回
 4) Deepseek-V3 判定"真痛点 / 伪痛点 / 营销造痛点"
 5) 写 cross_validations.agent='a4_userpain'
+
+W1 阶段：no-op，让 workflow 能端到端跑通。
 """
 from temporalio import activity
 
 
 @activity.defn
-async def match_userpain(case_id: str) -> None:
-    raise NotImplementedError("A4 UserPain — W2 deliverable")
+async def match_userpain(case_id: str) -> dict:
+    activity.logger.info("A4 UserPain (W2 stub) case_id=%s", case_id)
+    return {"verdict": "skipped", "reason": "W2 deliverable"}

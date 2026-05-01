@@ -5,14 +5,24 @@ W2 加：A4/A5/A6/A7
 W3 加：A8/A9 + DSPy 自闭环
 W4 加：A1 Discovery（PoC + 生产双通道）
 """
+import asyncio
 from datetime import timedelta
 from typing import Any
 
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from ..agents import a1_discovery, a2_decomposition, a3_compliance, a4_userpain
-    from ..agents import a5_conversion, a6_microtype, a7_feasibility, a8_generation, a9_critic
+    from ..agents import (
+        a1_discovery,
+        a2_decomposition,
+        a3_compliance,
+        a4_userpain,
+        a5_conversion,
+        a6_microtype,
+        a7_feasibility,
+        a8_generation,
+        a9_critic,
+    )
 
 
 @workflow.defn
@@ -37,7 +47,6 @@ class AgenticInsightWorkflow:
         )
 
         # 4 路交叉验证（A3 W1, A4/A5/A7 W2）— 并行
-        import asyncio
         await asyncio.gather(
             workflow.execute_activity(
                 a3_compliance.scan_compliance,

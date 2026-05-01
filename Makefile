@@ -1,4 +1,4 @@
-.PHONY: help up down migrate api worker fmt lint
+.PHONY: help up down migrate api worker fmt lint test demo
 
 help:
 	@echo "  make up         — 启动 Postgres+pgvector / Temporal / MinIO / Redis"
@@ -6,6 +6,8 @@ help:
 	@echo "  make migrate    — 跑 Alembic 升级到最新版本"
 	@echo "  make api        — 启动 FastAPI (uvicorn, port 8000)"
 	@echo "  make worker     — 启动 Temporal worker"
+	@echo "  make test       — pytest"
+	@echo "  make demo       — 端到端 demo (需先 up + migrate + worker + api)"
 	@echo "  make fmt        — ruff format"
 	@echo "  make lint       — ruff check"
 
@@ -24,8 +26,14 @@ api:
 worker:
 	python -m worker.run_worker
 
+test:
+	pytest tests/
+
+demo:
+	python scripts/demo_ingest.py
+
 fmt:
 	ruff format .
 
 lint:
-	ruff check .
+	ruff check api/ worker/ tests/
