@@ -80,7 +80,7 @@ async def main() -> int:
         print(f"\nCASE {first_id} DETAIL:")
         print(f"  segments: {len(d['segments'])}")
         print(f"  atoms:    {len(d['atoms'])}")
-        print(f"  cross_validations:")
+        print("  cross_validations:")
         for cv in d["cross_validations"]:
             print(f"    [{cv['agent']}] verdict={cv['verdict']} confidence={cv['confidence']}")
 

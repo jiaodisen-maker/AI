@@ -4,6 +4,7 @@ help:
 	@echo "  make up         — 启动 Postgres+pgvector / Temporal / MinIO / Redis"
 	@echo "  make down       — 停止所有服务"
 	@echo "  make migrate    — 跑 Alembic 升级到最新版本"
+	@echo "  make seed       — 灌 microtype 50 个 seed 组合到表 (status='active')"
 	@echo "  make api        — 启动 FastAPI (uvicorn, port 8000)"
 	@echo "  make worker     — 启动 Temporal worker"
 	@echo "  make test       — pytest"
@@ -19,6 +20,9 @@ down:
 
 migrate:
 	cd db && alembic upgrade head
+
+seed:
+	python scripts/seed_microtypes.py
 
 api:
 	uvicorn api.main:app --reload --port 8000
