@@ -53,6 +53,35 @@ restrictions (限制)   允许值: {sch["restrictions"]}
 {{"scene":"...","audience":"...","ingredient":"...","emotion":"...","restriction":"...","reasoning":"简要说明"}}"""
 
 
+def _parse_tags_with_fallback(raw: str) -> dict:
+    """容错 JSON 解析：先 strict，再找 {...} 块，再去掉 markdown 包裹。"""
+    if not raw or not raw.strip():
+        return {}
+    # 1. strict
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        pass
+    # 2. 去掉 ```json ... ``` 之类的 markdown 包裹
+    cleaned = raw
+    for marker in ["```json", "```JSON", "```"]:
+        cleaned = cleaned.replace(marker, "")
+    cleaned = cleaned.strip()
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+    # 3. 找首个 {...} 块
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            return json.loads(raw[start : end + 1])
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
 def _validate_tags(tags: dict) -> tuple[bool, str]:
     sch = _load_schema()
     pairs = [
@@ -107,6 +136,7 @@ async def classify_microtype(case_id: str) -> dict:
             "atoms": [{"type": r.atom_type, "content": r.content[:160]} for r in atom_rows],
         }
 
+        raw = ""
         try:
             raw = call_deepseek(
                 _build_extraction_system(),
@@ -114,10 +144,13 @@ async def classify_microtype(case_id: str) -> dict:
                 temperature=0.0,
                 response_format_json=True,
             )
-            tags = json.loads(raw)
+            tags = _parse_tags_with_fallback(raw)
         except Exception as e:
             log.warning("A6 LLM extraction failed: %s", e)
             tags = {}
+
+        if not tags:
+            activity.logger.warning("A6 LLM returned empty/unparseable tags. raw=%r", raw[:500])
 
         ok, err = _validate_tags(tags)
         if not ok:
