@@ -1,0 +1,93 @@
+# Agent 批量导入示例
+# 用法：python scripts/bulk_import_agents.py scripts/agents.example.yaml
+#
+# 把你公司现有 20+ Agent 按这个格式填进来即可。
+
+agents:
+  # ========== Coze 上的 Agent ==========
+  - name: marketing-copywriter-coze
+    display_name: 营销文案助手（Coze）
+    description: 在小红书/抖音/微信平台为保健品生成合规营销文案
+    framework: coze
+    endpoint: https://api.coze.cn/open_api/v2/chat
+    skill:
+      name: marketing-copy
+      description: 多平台保健品营销文案生成
+      triggers: [写文案, 小红书文案, 抖音文案, 营销文案]
+    owner_team: marketing
+    maturity: production
+    cost_per_call: 0.05
+    auth_type: bearer
+    auth_config:
+      token: ${COZE_TOKEN}  # 从环境变量读
+    metadata:
+      bot_id: "7xxxxxxx"
+
+  # ========== Dify 上的 Agent ==========
+  - name: data-analyst-dify
+    display_name: 数据分析助手（Dify）
+    description: 自然语言查询销售/库存/会员数据并生成洞察
+    framework: dify
+    endpoint: https://api.dify.ai/v1
+    skill:
+      name: data-query
+      description: NL2SQL 数据查询
+      triggers: [查数据, 销售数据, 库存, 会员, 数据分析]
+    owner_team: operation
+    maturity: production
+    cost_per_call: 0.03
+    auth_type: api_key
+    auth_config:
+      api_key: ${DIFY_API_KEY}
+
+  # ========== 自建 HTTP Agent ==========
+  - name: compliance-reviewer-internal
+    display_name: 合规审查助手（自建）
+    description: 对营销文案进行三层合规审查（禁词/平台规则/法规）
+    framework: custom_http
+    endpoint: http://internal-compliance.your-company.com/review
+    skill:
+      name: compliance-review
+      description: 保健品文案三层合规审查
+      triggers: [合规审查, 审核, 检查文案, 禁词检查]
+    owner_team: legal
+    maturity: production
+    cost_per_call: 0.02
+    auth_type: api_key
+    auth_config:
+      api_key: ${INTERNAL_API_KEY}
+      header_name: X-Internal-Token
+
+  # ========== 扣子 Bot ==========
+  - name: customer-service-koudou
+    display_name: 客服助手（扣子）
+    description: 处理常见售前售后问题
+    framework: coze  # 扣子 = Coze 中文版
+    endpoint: https://api.coze.cn/open_api/v2/chat
+    skill:
+      name: customer-service
+      description: 售前售后客服
+      triggers: [客服, 售后, 退货, 物流]
+    owner_team: customer
+    maturity: production
+    cost_per_call: 0.04
+    auth_type: bearer
+    auth_config:
+      token: ${COZE_TOKEN}
+    metadata:
+      bot_id: "7yyyyyyy"
+    allowed_teams: [customer-service]
+
+  # ========== LangGraph 自建（核心 Agent，未来）==========
+  - name: compliance-reviewer-langgraph
+    display_name: 合规审查（LangGraph 重写版）
+    description: 用 LangGraph 状态机重写的合规审查，支持长链路
+    framework: langgraph
+    endpoint: http://langgraph-agents:8002
+    skill:
+      name: compliance-review-v2
+      description: 长链路合规审查（含 HITL）
+      triggers: [深度合规审查, 复杂审查]
+    owner_team: legal
+    maturity: beta  # 灰度中
+    cost_per_call: 0.08

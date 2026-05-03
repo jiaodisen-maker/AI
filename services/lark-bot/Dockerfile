@@ -6,7 +6,8 @@ RUN pip install --no-cache-dir \
     "fastapi==0.115.*" \
     "uvicorn[standard]==0.32.*" \
     "pydantic==2.9.*" \
-    "httpx==0.28.*"
+    "httpx==0.28.*" \
+    "cryptography>=43"
 
 COPY services/lark-bot/app /app/app
 

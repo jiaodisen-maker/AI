@@ -2,18 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir uv
-
-COPY pyproject.toml /app/
-RUN uv pip install --system --no-cache \
-    fastapi==0.115.* \
+RUN pip install --no-cache-dir \
+    "fastapi==0.115.*" \
     "uvicorn[standard]==0.32.*" \
-    pydantic==2.9.* \
-    redis==5.2.* \
-    httpx==0.28.* \
-    pyyaml==6.* \
-    python-dotenv==1.* \
-    structlog==24.4.*
+    "pydantic==2.9.*" \
+    "redis==5.2.*" \
+    "httpx==0.28.*" \
+    "pyyaml>=6" \
+    "python-dotenv>=1" \
+    "structlog>=24"
 
 COPY services/agent-router/app /app/app
 

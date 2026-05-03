@@ -1,14 +1,17 @@
 version: '3.8'
 
-# AI Platform - 治理层 MVP（Week 1）
+# AI Platform - 完整治理层
 #
 # 启动:   docker compose up -d
 # 验证:   curl http://localhost:8000/healthz
-# 调试:   curl -X POST http://localhost:8001/debug/message \
-#               -d '{"text": "写一篇文案"}' -H 'Content-Type: application/json'
+# 注册示例: python scripts/seed_agents.py
+# 模拟消息: curl -X POST http://localhost:8001/debug/message \
+#               -d '{"text": "写文案"}' -H 'Content-Type: application/json'
 
 services:
-  # ========== 治理层核心 ==========
+  # ============================================================
+  # 治理层核心
+  # ============================================================
   agent-router:
     build:
       context: .
@@ -16,21 +19,57 @@ services:
     ports:
       - "8000:8000"
     environment:
+      # 数据层
       - REGISTRY_REDIS_URL=redis://agent-registry-redis:6379
       - SESSION_REDIS_URL=redis://session-redis:6379
+      - MEMORY_REDIS_URL=redis://memory-redis:6379
+
+      # Adapter 选择
+      - REGISTRY_TYPE=local
+      - SESSION_TYPE=redis           # 生产用 Redis
+      - MEMORY_TYPE=redis             # 生产用 Redis
+      - SKILL_TYPE=filesystem
+      - AGENT_FRAMEWORK=mock          # 切换：mock | agentscope_1x | langgraph
+
+      # Skill 目录
       - SKILLS_DIR=/data/skills
-      - AGENT_FRAMEWORK=mock
+
+      # 中间件开关
+      - ENABLE_PII=true
+      - ENABLE_COMPLIANCE=true
+      - ENABLE_EXPERIENCE=true
+      - COMPLIANCE_BLOCK_INPUT=false
+      - RATE_LIMIT_PER_MIN=60
+      - RATE_LIMIT_PER_DAY=1000
+
+      # Session
+      - SESSION_TTL=604800
+      - SESSION_MAX_MESSAGES=100
+
+      - LOG_LEVEL=INFO
     volumes:
       - skills_data:/data/skills
     depends_on:
       agent-registry-redis:
         condition: service_healthy
+      session-redis:
+        condition: service_healthy
+      memory-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/readyz').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     deploy:
       resources:
         limits: { cpus: '2', memory: 4G }
     restart: unless-stopped
 
-  # ========== 飞书入口 ==========
+  # ============================================================
+  # 飞书入口
+  # ============================================================
   lark-bot:
     build:
       context: .
@@ -42,18 +81,28 @@ services:
       - LARK_APP_ID=${LARK_APP_ID:-}
       - LARK_APP_SECRET=${LARK_APP_SECRET:-}
       - LARK_VERIFICATION_TOKEN=${LARK_VERIFICATION_TOKEN:-}
+      - LARK_ENCRYPT_KEY=${LARK_ENCRYPT_KEY:-}
       - DEBUG=${DEBUG:-true}
+      - LOG_LEVEL=INFO
     depends_on:
-      - agent-router
+      agent-router:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8001/healthz').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     deploy:
       resources:
         limits: { cpus: '1', memory: 2G }
     restart: unless-stopped
 
-  # ========== 注册表数据层 ==========
+  # ============================================================
+  # 数据层 - 3 个 Redis 物理隔离（注册/会话/经验）
+  # ============================================================
   agent-registry-redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
       - registry_data:/data
     healthcheck:
@@ -66,10 +115,9 @@ services:
         limits: { cpus: '0.5', memory: 1G }
     restart: unless-stopped
 
-  # ========== 用户会话层（预留）==========
   session-redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory 1gb --maxmemory-policy allkeys-lru
     volumes:
       - session_data:/data
     healthcheck:
@@ -82,7 +130,23 @@ services:
         limits: { cpus: '0.5', memory: 2G }
     restart: unless-stopped
 
+  memory-redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    volumes:
+      - memory_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { cpus: '0.5', memory: 3G }
+    restart: unless-stopped
+
 volumes:
   registry_data:
   session_data:
+  memory_data:
   skills_data:
