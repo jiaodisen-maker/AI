@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir uv
+
+COPY pyproject.toml /app/
+RUN uv pip install --system --no-cache \
+    fastapi==0.115.* \
+    "uvicorn[standard]==0.32.*" \
+    pydantic==2.9.* \
+    redis==5.2.* \
+    httpx==0.28.* \
+    pyyaml==6.* \
+    python-dotenv==1.* \
+    structlog==24.4.*
+
+COPY services/agent-router/app /app/app
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

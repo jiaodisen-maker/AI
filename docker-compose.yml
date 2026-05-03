@@ -1,0 +1,88 @@
+version: '3.8'
+
+# AI Platform - 治理层 MVP（Week 1）
+#
+# 启动:   docker compose up -d
+# 验证:   curl http://localhost:8000/healthz
+# 调试:   curl -X POST http://localhost:8001/debug/message \
+#               -d '{"text": "写一篇文案"}' -H 'Content-Type: application/json'
+
+services:
+  # ========== 治理层核心 ==========
+  agent-router:
+    build:
+      context: .
+      dockerfile: services/agent-router/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - REGISTRY_REDIS_URL=redis://agent-registry-redis:6379
+      - SESSION_REDIS_URL=redis://session-redis:6379
+      - SKILLS_DIR=/data/skills
+      - AGENT_FRAMEWORK=mock
+    volumes:
+      - skills_data:/data/skills
+    depends_on:
+      agent-registry-redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits: { cpus: '2', memory: 4G }
+    restart: unless-stopped
+
+  # ========== 飞书入口 ==========
+  lark-bot:
+    build:
+      context: .
+      dockerfile: services/lark-bot/Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - AGENT_ROUTER_URL=http://agent-router:8000
+      - LARK_APP_ID=${LARK_APP_ID:-}
+      - LARK_APP_SECRET=${LARK_APP_SECRET:-}
+      - LARK_VERIFICATION_TOKEN=${LARK_VERIFICATION_TOKEN:-}
+      - DEBUG=${DEBUG:-true}
+    depends_on:
+      - agent-router
+    deploy:
+      resources:
+        limits: { cpus: '1', memory: 2G }
+    restart: unless-stopped
+
+  # ========== 注册表数据层 ==========
+  agent-registry-redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - registry_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { cpus: '0.5', memory: 1G }
+    restart: unless-stopped
+
+  # ========== 用户会话层（预留）==========
+  session-redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - session_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { cpus: '0.5', memory: 2G }
+    restart: unless-stopped
+
+volumes:
+  registry_data:
+  session_data:
+  skills_data:
