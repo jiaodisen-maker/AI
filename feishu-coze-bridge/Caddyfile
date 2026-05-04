@@ -1,0 +1,20 @@
+bridge.your-company.com {
+    encode gzip
+
+    # 飞书侧严格 IP 白名单（生产建议加：CDN 后端没办法精确，先注释）
+    # @allowed not remote_ip 1.180.0.0/16 ...
+
+    reverse_proxy bridge:8810 {
+        flush_interval -1   # 流式必须 disable buffer
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+    }
+
+    # /metrics 仅内网
+    @metrics path /metrics
+    handle @metrics {
+        @blocked not remote_ip 10.0.0.0/8 192.168.0.0/16 127.0.0.1/32
+        respond @blocked "Forbidden" 403
+        reverse_proxy bridge:9100
+    }
+}

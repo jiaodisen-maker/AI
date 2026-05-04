@@ -1,0 +1,83 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bridge
+      POSTGRES_USER: bridge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME}
+    volumes: [pg_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "bridge"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+
+  bridge:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8810:8810"
+      - "127.0.0.1:9100:9100"
+    depends_on:
+      redis:    { condition: service_healthy }
+      postgres: { condition: service_healthy }
+
+  worker-1: &worker
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    command: ["python", "-m", "bridge.worker", "--consumer", "w1"]
+    depends_on: { bridge: { condition: service_started } }
+
+  worker-2:
+    <<: *worker
+    command: ["python", "-m", "bridge.worker", "--consumer", "w2"]
+
+  worker-3:
+    <<: *worker
+    command: ["python", "-m", "bridge.worker", "--consumer", "w3"]
+
+  token-refresher:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    command: ["python", "-m", "bridge.token_refresher", "--cron"]
+    depends_on: { redis: { condition: service_healthy } }
+
+  backfill:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    command: ["python", "-m", "bridge.backfill", "--cron"]
+    depends_on:
+      redis:           { condition: service_healthy }
+      token-refresher: { condition: service_started }
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pg_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
