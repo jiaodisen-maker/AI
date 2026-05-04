@@ -1,0 +1,65 @@
+# reliability 阈值与调度
+
+healthcheck:
+  interval_seconds: 60
+  timeout_ms: 5000
+  probes:
+    redis_ping:           { critical: true }
+    token_ttl_min_s:      { value: 60,  critical: true }
+    queue_consumers_min:  { value: 1,   critical: true }
+    queue_lag_max:        { value: 200, critical: false }
+    dlq_increment_per_h:  { value: 10,  critical: false }
+    write_probe_ms:       { value: 1000, critical: true }
+    read_probe_ms:        { value: 2000, critical: true }
+    consolidation_max_h:  { value: 25,   critical: false }
+  escalation:
+    consecutive_critical_for_phone: 3
+    cooldown_minutes: 10                 # 同类告警 10 分钟内不重复推
+
+audit:
+  cron: "0 4 * * *"                      # 每天 4:00
+  conflict_age_days_warn: 3
+  conflict_count_warn: 5
+  duplicate_entity_keys: [email, mobile, feishu_open_id]
+  archive_residual_days: 30
+
+optimizer:
+  cron: "0 2 * * 0"                      # 每周日 2:00
+  dry_run_default: true
+  recall_baseline_path: ./reliability/golden_questions.jsonl
+  recall_minimum: 0.90
+  slow_query_p99_ms: 500
+  postgres_vacuum: true
+  pgvector_reindex_threshold: 0.05       # recall 比基线低 5% 触发
+
+reporter:
+  cron: "0 8 * * *"                      # 每天 8:00
+  recipients:
+    - kind: feishu_chat
+      chat_id: oc_xxxxxxxxxxxxxxxxx       # 群 ID
+    - kind: email
+      to: [ops@your-company.com]
+  include_recommendations: true
+  show_trends: 7                          # 7 天趋势图
+
+alerts:
+  feishu_bot_webhook: ${FEISHU_ALERT_BOT_WEBHOOK}
+  oncall_phone_webhook: ${PAGERDUTY_OR_PHONE_WEBHOOK}
+  oncall_users:
+    primary:   ou_xxxxxxxxxxxxxxxxx
+    secondary: ou_yyyyyyyyyyyyyyyyy
+  channels_by_severity:
+    INFO:     [feishu_chat]
+    WARN:     [feishu_at]
+    CRITICAL: [feishu_phone, email]
+    FATAL:    [feishu_phone, email, sms]
+
+slo:
+  # 错误预算
+  ingest_e2e_p99_ms: 3000
+  ingest_success_rate: 0.999     # 30 天滚动
+  recall_p99_ms: 1000
+  recall_success_rate: 0.999
+
+storage:
+  state_db: ./reliability/state.sqlite     # 探针历史 / 告警去重 / SLO 累计
