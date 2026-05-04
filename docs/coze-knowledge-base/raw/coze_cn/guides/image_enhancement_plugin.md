@@ -1,0 +1,123 @@
+---
+source_url: https://docs.coze.cn/guides/image_enhancement_plugin
+title: '火山图像增强插件 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:41:01Z
+---
+
+# 火山图像增强插件 - 文档 - 扣子
+
+火山图像增强插件
+
+[火山图像增强插件](<https://www.coze.cn/store/plugin/7524589330107596815?from=add_plugin_menu>)基于画质分析技术和 AI 重建技术，支持对模糊图像进行智能去噪，优化图像纹理细节，大幅度地提高人像质量和整体画面清晰度，适用于修复模糊的图像、优化监控图像、批量美化照片等场景。​
+
+计费说明​
+
+火山图像增强插件根据插件调用次数计费，对应的计费项及单价请参考​插件费用。​
+
+效果演示​
+
+原始图片​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271658%27%20height=%271022.4333333333334%27/%3e)![](https://p9-arcosite.byteimg.com/tos-cn-i-goo7wpa0wc/a532c03621d94761a80426c9d12bae7e~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+处理后的图片​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%273316%27%20height=%272044.8666666666668%27/%3e)![](https://p9-arcosite.byteimg.com/tos-cn-i-goo7wpa0wc/a541010f58a94ed0961870a7d72dd923~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+​
+
+使用限制​
+
+扣子主账号内所有子账号共享图像增强插件的 QPS 限制，其值为 2次/秒。​
+
+配置说明​
+
+在配置图像增强插件时，你需要配置 image_url 参数，用于输入原始图像 URL。你还可以选择开启 HDR 功能以增强对比度和细节，开启白平衡功能以优化色彩平衡。此外，你还能指定输出格式（如 PNG 或 JPEG），以满足不同需求和存储要求。​
+
+输入参数​
+
+​
+
+界面参数​| 说明​  
+---|---  
+image_url​| 设置原始图片 URL，必填参数，String 类型。支持如下两种配置方式：​
+
+  * 固定值：直接输入图片 URL。​
+
+  * 变量：引用开始节点的输入参数、上游节点的输出参数、用户变量、应用变量、系统变量等变量，实现图片的动态输入。​
+
+图片要求：​
+
+  * 图片格式：支持 JPG、JPEG、PNG、BMP 等常见图片格式，建议使用 JPG 格式。​
+
+  * 图片大小：最大 5 MB。​
+
+  * 图片尺寸：宽度范围为 50～2128，高度范围为 50～4046，单位为像素。​
+
+  
+enable_hdr​| 是否开启高动态范围（HDR）能力，用于提升图像视觉质量。​  
+enable_wb​| 是否开启白平衡能力，用于调整图像的色彩平衡，确保在不同光照条件下色彩的准确性。​  
+hdr_strength​| 设置 HDR 效果强度，取值范围为(0.0, 1.0]。​hdr_strength 值越高，HDR 效果越明显。​当 enable_hdr 设置为 true 时，hdr_strength才会生效。​  
+jpg_quality​| 设置输出图片（JPG 格式）的质量因子，取值范围为 0～100。​jpg_quality 值越大，输出的图片质量越高。​仅 result_format 设置为 1 时，生效。​  
+resolution_boundary​| 定义图片处理的分辨率阈值。可选值：144p、240p、360p、480p、540p、720p、1080p、2k。​
+
+  * 原始图片分辨率 < resolution_boundary 时，采用超分辨率算法， 将图片的分辨率放大 2 倍。​
+
+  * 原始图片分辨率 >= resolution_boundary 时，采用去模糊算法， 图片分辨率不变。​
+
+  
+result_format​| 输出图片的格式。​
+
+  * 0：输出图片为 PNG 格式。​
+
+  * 1：输出图片为 JPEG/JPG 格式。​
+
+  
+  
+​
+
+输出参数​
+
+​
+
+参数​| 说明​  
+---|---  
+code​| 执行插件时的状态码。​  
+log_id​| 日志 ID。​  
+msg​| 执行插件时的状态描述或错误提示信息。​  
+data.message​| 子错误信息，仅在请求失败时返回。​  
+data.status​| 子状态码，进一步区分错误原因。​  
+data.code​| 本次请求的结果状态码。​  
+data.request_id​| 请求 ID。​  
+data.time_elapsed​| 整个请求所花费的时间，单位：毫秒。​  
+data.data.algorithm_base_resp.status_code​| 算法执行的状态码。​  
+data.data.algorithm_base_resp.status_message​| 算法执行的状态信息。​  
+data.data.binary_data_base64​| 返回图片的 Base64 编码。​  
+data.data.image_url​| 输出图片的 URL，图片有效期为 24 小时，建议及时转存。​  
+  
+​
+
+​
+
+​
+
+* 图像增强插件 ID：7524589642371137570​
+
+​
+
+上一篇
+
+指令编辑插件
+
+下一篇
+
+图片超分辨率插件

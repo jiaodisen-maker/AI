@@ -1,0 +1,216 @@
+---
+source_url: https://docs.coze.cn/guides/conversation_content_security_policy
+title: '对话内容安全策略 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:47:20Z
+---
+
+# 对话内容安全策略 - 文档 - 扣子
+
+对话内容安全策略
+
+对话内容安全策略可帮助企业自动识别并过滤用户与智能体对话过程中的涉黄、涉敏、诈骗等各类风险，高效处理违规内容，确保内容合规，从而保障业务生态的健康与安全。本文介绍对话内容安全策略的配置方法。​
+
+说明
+
+  * 套餐限制：扣子企业旗舰版白名单功能。如果需要使用该功能，你可以提供企业 ID，联系扣子商务经理添加白名单。你可以在[扣子编程企业管理页面](<https://docs.coze.cn/guides/admin.coze.cn>)的企业设置中查看企业 ID。​
+
+  * 角色限制：企业超级管理员。​
+
+​
+
+功能简介​
+
+扣子编程支持以下两种内容安全策略：​
+
+  * 扣子安全策略：扣子编程默认的内容安全机制。​
+
+  * 火山引擎安全策略：基于火山引擎内容风险识别产品，提供更高阶的内容风控能力。其通过前沿的 NLP 算法模型，结合海量敏感词库和企业自定义的风控规则，能自动识别文本、图片等对话内容中的潜在合规风险，当用户输入包含敏感词或违规内容的信息时，智能体直接拒绝回复对话内容，从源头降低企业因违规对话引发的业务风险，同时减少人工监控的运营成本。​
+
+火山引擎安全策略的主要功能包括：​
+
+  * 多维度风险识别：支持从涉黄、涉敏、违禁、谩骂、联系方式、广告、诈骗等多个维度，对用户输入的对话内容进行精准识别和拦截，确保对话内容符合合规要求。 ​
+
+  * 自定义词库：支持企业根据自身业务特点，维护自定义的敏感词库，提升风险识别的准确性。​
+
+对话拦截效果类似如下图所示。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27400%27%20height=%27443.46820809248555%27/%3e)![](https://p9-arcosite.byteimg.com/https://p9-arcosite.byteimg.com/obj/tos-cn-i-goo7wpa0wc/072a04285160444f876c805517e3af73~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+费用说明​
+
+使用火山引擎安全策略会涉及如下两块费用，这些费用将自动从你的火山引擎余额中扣款，不支持用积分抵扣。​
+
+  * 内容风险识别产品的相关费用，包括文本风险识别和图片风险识别，具体收费标准请参见购买内容风险识别套餐时，页面的费用说明。​
+
+  * TOS 对象存储的存储容量费用，具体收费标准可参考[对象存储计费概述](<https://www.volcengine.com/docs/6349/78455>)。​
+
+使用限制​
+
+  * 对话内容安全策略仅支持拦截 API 渠道的对话内容，其他渠道暂不支持。​
+
+  * 扣子编程、火山引擎内容风险识别和 TOS 对象存储需要在同一个火山引擎主账号下。​
+
+步骤一：火山侧配置内容安全策略​
+
+说明
+
+  * 仅火山主账号或具备 [BusinessSecurityFullAccess](<https://console.volcengine.com/iam/policymanage/System/BusinessSecurityFullAccess>) 权限的 IAM 用户，才可开通内容风险识别。​
+
+  * 在内容风险识别控制台申请开通后。火山引擎会进行人工审批，审批通过后，才可访问内容风险识别控制台。​
+
+​
+
+1.
+
+登录[内容风险识别控制台](<https://console.volcengine.com/rmc/main/product/overview>)。​
+
+2.
+
+在左侧导航栏选择应用管理，单击新建应用，配置应用信息。​
+
+3.
+
+配置文本风险识别场景。​
+
+a.
+
+在左侧导航栏选择文本风险识别 > 场景配置，在页面左上角的应用下拉列表中选择上一步创建的应用，单击启用服务。​
+
+b.
+
+在左上角单击新建场景，配置场景名称、自定义该场景的 bizType、选择行业分类和需识别的风险。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27800%27%20height=%27422.6589595375723%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQyMi42NTg5NTk1Mzc1NzIzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+)​
+
+​
+
+  * ​
+
+参数​| 说明​  
+---|---  
+场景名称​| 自定义一个方便识别的场景名称，如对话输入文本检测。​  
+场景 bizType​| 自定义该场景的 bizType，用于标识该场景，例如 input_text。​说明请记录场景的 bizType，后续在扣子侧配置内容安全策略时需要填写该 bizType。​​  
+行业分类​| 选择业务所属的行业，系统会根据你选择的行业，应用其内置的行业特定敏感词库，使风险识别更精准。​  
+需识别的风险​| 勾选需要识别的风险类型。​  
+文本自定义库​| 你可以在文本风险识别 > 自定义库中新建自定义库，根据业务需求添加敏感词及其拦截策略，并将其关联到相应场景，以提升风险识别的准确率。​  
+  
+​
+
+4.
+
+配置图片风险识别场景。​
+
+a.
+
+在左侧导航栏选择图片风险识别 > 场景配置，在左上角选择上一步创建的应用，单击启用服务。​
+
+  * 说明
+
+    * 启用服务时，系统会弹出存储 TOS 的授权提醒，用于获取你账号下火山引擎 TOS 的存储权限，以便转存图片。如跳过此授权，可能导致你查看日志时，相关图片无法正常显示，但不会影响识别效果。​
+
+    * 图片转存需要使用火山引擎 TOS 对象存储产品。如你尚未开通 TOS 服务，可登录[对象存储控制台](<https://console.volcengine.com/tos>)，开通 TOS 服务并完成基础配置，具体请参见[TOS 快速入门](<https://www.volcengine.com/docs/6349/74830>)。​
+
+​
+
+b.
+
+在左上角单击新建场景，配置场景名称、自定义场景的 bizType、行业分类和需识别的风险。​
+
+c.
+
+（可选）单击左上角的存储配置，可以修改图片存储配置。​
+
+  * 授权 TOS 存储权限：单击授权。​
+
+  * 修改存储策略：默认存储违规和疑似图片，你也可以修改为存储全量图片。​
+
+步骤二：扣子编程侧配置内容安全策略​
+
+扣子编程默认采用扣子自身的安全策略，企业超级管理员可以根据需要，将其修改为已在火山引擎内容风险识别中配置的策略。​
+
+1.
+
+企业超级管理员或管理员登录[扣子编程](<https://code.coze.cn/home>)。​
+
+2.
+
+在左下角单击个人头像，选择企业> 团队与企业管理。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27267%27%20height=%27259%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjY3IiBoZWlnaHQ9IjI1OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+​
+
+​
+
+3.
+
+在左侧导航栏选择企业设置，在顶部选择内容安全策略配置页签。​
+
+4.
+
+分别配置对话-Input 文本、对话-Input 图片、对话-Response 文本和对话-Response 图片的策略。​
+
+  * 单击对应场景右侧的编辑，配置内容安全策略、火山应用 ID 和 bizType，单击保存并应用。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27600%27%20height=%27384.2774566473989%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM4NC4yNzc0NTY2NDczOTg5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+)​
+
+​
+
+  * ​
+
+参数​| 说明​  
+---|---  
+内容安全策略​| 默认为扣子安全策略，本场景中选择火山安全策略。​  
+火山应用ID​| 请填写你在火山内容风险识别控制台上创建的应用所对应的 AppID。​  
+bizType​| 请填写你在火山内容风险识别控制台上相应场景配置中设置的 bizType。​  
+  
+​
+
+步骤三：验证策略生效​
+
+完成配置后，你可以验证内容安全策略是否正常工作。​
+
+1.
+
+将智能体发布 API 渠道，调用​发起对话 API 与智能体对话时，尝试输入包含敏感词或违规内容的信息，如果智能体拒绝回复对话内容，则表示内容安全策略生效。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27400%27%20height=%27443.46820809248555%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQ0My40NjgyMDgwOTI0ODU1NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+2.
+
+在内容风险识别控制台左侧导航栏选择文本风险识别 > 日志查询，查看拦截的消息日志。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27800%27%20height=%27217.3410404624277%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjIxNy4zNDEwNDA0NjI0Mjc3IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+)​
+
+​
+
+​
+
+​
+
+上一篇
+
+数据加密管理
+
+下一篇
+
+企业团队常见问题

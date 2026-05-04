@@ -1,0 +1,212 @@
+---
+source_url: https://docs.coze.cn/guides/build_project_in_projectide
+title: '编排业务逻辑 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:36:17Z
+---
+
+# 编排业务逻辑 - 文档 - 扣子
+
+编排业务逻辑
+
+业务逻辑是指应用程序中处理特定业务规则和操作的部分。它定义了应用如何根据业务需求处理数据、执行操作以及进行决策。​
+
+在扣子编程，可通过工作流功能来实现低代码应用的业务逻辑部分。工作流决定了应用的输入和输出的数据结构、接收和处理数据的规则以及决策流程，是低代码应用的核心部分。​
+
+了解业务编排​
+
+业务逻辑编排的本质就是搭建工作流。工作流的复杂程度以及使用哪些资源是由业务逻辑决定的，对于简单的业务逻辑一个工作流和一些基础的节点即可实现，对于一些复杂的业务逻辑实现，可能需要多个工作流才能实现。​
+
+  * 简单业务：应用中应至少有一个试运行通过的工作流，作为应用的业务处理流程。​
+
+  * 例如一个用来进行英文文本内容优化的低代码应用，只需要配置一个大模型节点即可。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27523%27%20height=%27147%27/%3e)![](https://p9-arcosite.byteimg.com/https://p9-arcosite.byteimg.com/obj/tos-cn-i-goo7wpa0wc/7714aea9ca15456aa70667f78beef821~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+  * 复杂业务：​
+
+  * 复杂任务：如果你的业务逻辑由多个子任务组成，建议将其拆分为多个工作流，每个工作流负责完成其中的一个子任务，再将这些工作流组合到一个工作流中。​
+
+  * 例如一个内容检测的低代码应用，可以将不同的内容检查拆解为一个单独的工作流，再最终将这些工作流组合在一个工作流中共同完成全部内容的检测。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27551%27%20height=%27278%27/%3e)![](https://p9-arcosite.byteimg.com/https://p9-arcosite.byteimg.com/obj/tos-cn-i-goo7wpa0wc/fc23627f5ef04186a747f281a39003f0~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+  * 多功能模块：如果你为应用设计了多个功能模块，可以通过多个工作流实现。项目中可以包含多个并列的工作流，它们用于处理不同的任务、实现不同功能。然后通过用户界面实现不同功能的切换即可。​
+
+  * 例如一个翻译助手的应用中，可以有两个工作流，一个是术语查询，一个是内容翻译，分别满足不同的使用场景，这两个工作流可以在一个项目中进行管理和发布。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27573%27%20height=%27219%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTczIiBoZWlnaHQ9IjIxOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+编排业务逻辑​
+
+在编排业务逻辑前，你需要先创建一个低代码应用。详情参考​创建低代码应用。​
+
+创建低代码应用后，你会直接进入到业务逻辑编排页面。在左侧列表，你可以添加或创建资源。在扣子编程中，工作流、插件、数据库、知识库和变量这些能力统称为资源。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27651%27%20height=%27296%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjUxIiBoZWlnaHQ9IjI5NiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+资源之间可以相互调用，例如在工作流中使用插件、数据库和变量等。​
+
+在进行业务搭建（工作流编排）时，可以在左侧资源列表中创建或引入已有的资源。​
+
+注意
+
+在低代码应用中使用资源时请注意：​
+
+  * 选择引入资源库文件方式添加的资源是复制操作。添加后，对引用的资源的修改不影响工作空间内的资源。​
+
+  * 在低代码应用中新建的资源无法共享给工作空间内的其他项目或智能体使用。如果想被其他项目使用，需要将其复制或转移到资源库。​
+
+  * 如果后续项目中还需要进行针对性的修改，则选择复制到资源库。这样资源库中就会有一个一样的副本，而在项目中的修改不会影响资源库中副本。​
+
+  * 如果这个资源可以作为公共资源使用，不需要在项目中进行特别修改，可选择转移到资源库。​
+
+  * 当在复制、转移、引入资源时，请勿关闭操作窗口，耐心等待操作完成，否则会造成操作失败。​
+
+  * 仅资源创建者支持转移和删除操作。​
+
+更多详细说明，参考​管理低代码应用资源。​
+
+​
+
+添加工作流​
+
+工作流是实现业务逻辑的一套指令集。在工作流中，节点是核心，代表具有独特功能的特定工具，例如处理数据、执行任务。通过连接节点，你可以建立一个无缝的操作链，指导数据在应用中的流动。​
+
+扣子编程支持在项目中创建一个新的工作流或复制一个已有的工作流使用。​
+
+在资源列表中，找到工作流，然后选择一种添加方式。​
+
+  * 新建工作流：在该项目中创建一个新的工作流。​
+
+  * 新创建的工作流只能在该项目中使用，无法共享给其他项目使用。​
+
+  * 新建对话流：对话流是基于对话场景的特殊工作流，你可以在该项目中创建一个新的对话流。​
+
+  * 新创建的对话流只能在该项目中使用，无法共享给其他项目使用。​
+
+  * 引入资源库文件：复制一个项目所属的工作空间内已发布的工作流到该项目中使用。​
+
+  * 复制后，你可以对这个工作流进行修改。在项目中对工作流的修改不影响资源库中的工作流。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27305%27%20height=%27177%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzA1IiBoZWlnaHQ9IjE3NyIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+添加工作流后，你可以根据实际需求修改节点配置，或新增新的节点。关于工作流节点的使用说明，请参考​使用低代码工作流。​
+
+添加插件​
+
+插件是可以独立开发和部署的线上服务，由一个或多个工具组成。扣子编程支持使用插件来扩展模型的能力边界，添加新的数据处理功能，或集成第三方服务等。​
+
+在低代码应用的工作流中添加插件节点时，可以使用插件商店中已发布的公共插件、工作空间内的已发布插件或创建一个新插件资源仅供项目使用。​
+
+参考以下操作，在低代码应用中创建一个插件，并添加到工作流中。​
+
+1.
+
+在左侧资源列表中，找到插件，然后选择 \+ > 新建插件。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27290%27%20height=%27162%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjkwIiBoZWlnaHQ9IjE2MiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+2.
+
+根据引导完成插件工具的创建和测试。详情参考​插件介绍。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27517%27%20height=%27132%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTE3IiBoZWlnaHQ9IjEzMiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+3.
+
+在画布中，选择添加插件节点。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27435%27%20height=%27248%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDM1IiBoZWlnaHQ9IjI0OCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+4.
+
+在打开的页面中，选择项目工具，找到目标工具后，单击添加。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27477%27%20height=%27132%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDc3IiBoZWlnaHQ9IjEzMiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+5.
+
+完成工作流插件节点的输入和输出配置。​
+
+添加数据​
+
+扣子编程支持通过数据库、知识库等功能存储和管理数据。​
+
+  * 数据库：与传统数据库一样，扣子编程支持以表格结构存储数据。在大模型的加持下，开发者和用户还可以通过自然语言插入、查询、修改或删除数据库中的数据。同时，也支持开发者开启多用户模式，支持更灵活的读写控制。这种数据存储方式非常适合组织和管理结构化数据，例如通过数据库维护通讯录、读书笔记、日程记录、每日消费等。​
+
+  * 同其他资源一样，你也可以选择创建一个新的数据库或复制工作空间中已有的数据库使用。关于如何在应用中添加和使用数据库，参考​为低代码应用添加数据库。​
+
+  * 知识库：扣子知识库支持上传和存储外部知识内容，并提供了多种检索能力，可解决大模型幻觉、专业领域知识不足的问题，提升大模型回复的准确率。关于如何添加并使用知识库，参考​为低代码应用添加知识库。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27335%27%20height=%27251%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzM1IiBoZWlnaHQ9IjI1MSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+添加变量​
+
+扣子编程支持在应用中添加和使用变量，例如通过变量来存储用户语言偏好。在资源列表，选择设置 > 变量，然后单击新增添加变量。关于如何在应用中使用变量，参考​为低代码应用设置变量。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27600%27%20height=%27270%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjI3MCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+测试业务逻辑​
+
+你可以通过编排面板中的试运行功能，测试工作流的运行结果是否符合预期。如果工作流中，包含数据库节点，可点击试运行旁的图标，展开数据看板查看数据存储是否正确。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27609%27%20height=%27280%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjA5IiBoZWlnaHQ9IjI4MCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+​
+
+上一篇
+
+创建低代码应用
+
+下一篇
+
+为低代码应用编排对话流

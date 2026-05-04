@@ -1,0 +1,68 @@
+---
+source_url: https://docs.coze.cn/developer_guides/message_type
+title: '消息 type 说明 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:20:51Z
+---
+
+# 消息 type 说明 - 文档 - 扣子
+
+消息 type 说明
+
+仅​发起对话接口需要在接口传参中添加消息内容（content）和消息类型（type），但不同场景支持传入的消息类型和角色类型（role）不同。本文档介绍各个场景支持的 type 类型及各种类型消息内容示例。​
+
+支持的 type 类型​
+
+仅​发起对话接口支持将此参数作为入参，且：​
+
+  * 如果 autoSaveHistory=true，type 支持设置为 question 或 answer。​
+
+  * 如果 autoSaveHistory=false，type 支持设置为 question、answer、function_call、tool_output/tool_response。​
+
+其中，type=question 只能和 role=user 对应，即仅用户角色可以且只能发起 question 类型的消息。​
+
+​
+
+type​| 发起对话​| ​| ​  
+---|---|---|---  
+​| Response​| Request，且 autoSaveHistory=false​| Request，且 autoSaveHistory=true​  
+question​| ❌​| ✔️​| ✔️​  
+answer​| ✔️​| ✔️​| ✔️​  
+function_call​| ✔️​| ✔️​| ❌​  
+tool_output/tool_response​| ✔️​| ✔️​| ❌​  
+follow_up​| ✔️​| ❌​| ❌​  
+knowledge​| ✔️​| ❌​| ❌​  
+verbose​| ✔️​| ❌​| ❌​  
+  
+​
+
+消息结构示例​
+
+创建消息并指定消息类型时，应遵循 type、role 和 content_type 的匹配关系，例如 role 为 user 时，type 只能为 question。详细的匹配关系及消息体示例可参考下表。​
+
+​
+
+消息类型（type）​| 角色​（role）​| 内容类型​（content_type）​| 示例​  
+---|---|---|---  
+question​| user​| 
+
+  * text​
+
+  * object_string​
+
+| ​JSON复制{​ "role": "user",​ "content": "--- 只需要回答最新的这一条问题：搜几个最新的军事新闻",​ "content_type": "text",​ "type": "question"​}​​  
+answer​| assistant​| text​| ​JSON复制{​ "role": "assistant",​ "content": "以下是最新的体育新闻 ......",​ "content_type": "text",​ "type": "answer"​}​​  
+function_call​| assistant​| text​| ​JSON复制{​ "role": "assistant",​ "content": "{\"name\":\"toutiaosousuo-search\",\"arguments\":{\"cursor\":0,\"input_query\":\"体育新闻\"...}",​ "content_type": "text",​ "type": "function_call"​}​​  
+tool_output/tool_response​| assistant​| text​| ​JSON复制{​ "role": "assistant",​ "content": "{\"news\":[{\"title\":\"新闻内容：.....\"}]}",​ "content_type": "text",​ "type": "tool_output"​},​​  
+follow_up​| assistant​| text​| ​JSON复制{​ "role": "assistant",​ "type": "follow_up",​ "content": "国足将会有哪些变化和调整？",​ "content_type": "text"​}​​  
+verbose​| assistant​| text​| ​JSON复制{​ "role": "assistant",​ "type": "verbose",​// generate_answer_finish 表示全部 answer 已回复完毕​ "content": "{\"msg_type\":\"generate_answer_finish\",\"data\":\"\",\"from_module\":null,\"from_unit\":null}",​ "content_type": "text"​}​​  
+  
+​
+
+上一篇
+
+删除消息
+
+下一篇
+
+提交消息评价

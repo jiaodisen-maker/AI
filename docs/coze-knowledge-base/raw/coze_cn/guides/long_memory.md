@@ -1,0 +1,186 @@
+---
+source_url: https://docs.coze.cn/guides/long_memory
+title: '长期记忆 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:32:50Z
+---
+
+# 长期记忆 - 文档 - 扣子
+
+长期记忆
+
+长期记忆功能模仿人类大脑形成对用户的个人记忆，基于这些记忆可以提供个性化回复，提升用户体验。​
+
+升级长期记忆功能​
+
+为进一步优化服务体验，提供更强大、更灵活的长期记忆功能，扣子编程于2025年10月15日对长期记忆功能进行了升级。关于新版记忆库的更多信息，请参考​记忆库。​
+
+注意
+
+  * 存量的低代码智能体、低代码工作流可继续使用旧版记忆库。​
+
+  * 升级到新版记忆库后，历史的长期记忆数据将被重置，无法找回。​
+
+  * 新建低代码智能体仅可选择新版记忆库；已开长期记忆功能的存量低代码智能体，将提示手动升级至新版记忆库。​
+
+  * 新建的工作流仅能选择长期记忆新节点（包含写入、检索节点）；包含旧长期记忆节点的存量工作流，你可以将旧节点替换为新节点。​
+
+​
+
+扣子编程长期记忆功能升级后：​
+
+  * 系统会将长期记忆统一写入指定的新版记忆库，记忆召回服务的准确性与稳定性显著提升。​
+
+  * 各记忆库间数据相互隔离，并且系统会通过用户 UID 与渠道 ID 组合生成编码，该编码将作为数据隔离的核心标识，保障同一记忆库中不同使用主体的记忆数据独立。​
+
+  * 新版记忆库支持绑定多个低代码智能体、工作流，可实现记忆数据共享。​
+
+功能说明​
+
+和智能体对话时，如果对话轮数超过模型的上下文窗口，智能体可能会忘记历史对话中的某些信息。为了解决这个问题，你可以为智能体开启长期记忆功能，智能体会自动识别并记录用户在对话中提供的个性化信息，并在后续对话中自动提取长期记忆、总结个性化信息，在此基础上生成最终回复。​
+
+长期记忆功能可帮助智能体记录对话关键信息、用户偏好、总结用户画像，从而持续提升对话体验。​
+
+说明
+
+  * 长期记忆在用户之间是相互隔离的，包括智能体开发者在内的每个用户只能看到和使用自己与智能体对话生成的记忆内容。​
+
+  * 长期记忆会保存用户的个性化信息，包括用户画像、用户记忆点等，详细说明可参考​记录长期记忆。​
+
+​
+
+开启长期记忆​
+
+你可以在智能体的编排页面打开长期记忆功能。功能开启后，智能体会自动收集对话中和用户相关的个性化信息，并将其记录到自己的长期记忆中。长期记忆数据将保存在平台的系统数据库中。​
+
+功能开启后，你还可以设置是否支持在 Prompt 中调用长期记忆。关于两种使用方式的说明，可以查看​召回长期记忆。​
+
+  * 开启“支持在Prompt中调用”：智能体的用户可以通过 Prompt 或工作流的长期记忆节点召回长期记忆。​
+
+  * 关闭“支持在Prompt中调用”：智能体的用户只能在工作流中通过长期记忆节点召回长期记忆，无法在和智能体对话时通过提问的方式召回长期记忆。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27622%27%20height=%27119.99999999999999%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjIyIiBoZWlnaHQ9IjExOS45OTk5OTk5OTk5OTk5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+说明
+
+  * 支持在Prompt中调用仅影响长期记忆的召回方式，不影响长期记忆的记录方式，只要长期记忆功能是开启状态，智能体就会记录用户的个性化信息。​
+
+  * 如果智能体绑定了包含长期记忆的工作流，则智能体需要开启长期记忆功能，否则工作流执行会报错 702090900 This智能体does not have LTM enabled.。同时建议关闭支持在Prompt中调用，否则在对话中容易同时触发长期记忆召回和工作流执行，影响对话效果。​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27649%27%20height=%27244.00000000000003%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQ5IiBoZWlnaHQ9IjI0NC4wMDAwMDAwMDAwMDAwMyIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+​
+
+记录长期记忆​
+
+开启长期记忆后，智能体用户可以通过多轮对话向智能体输入个性化信息，智能体会自动提取并记录以下信息：​
+
+  * 用户画像信息：用户的个人信息和喜好。例如用户希望智能体如何称呼自己、用户的年龄、性别、个人喜好等个性化信息。​
+
+  * 用户记忆点信息：某个日期发生的某些关键事件。例如用户昨天的期末考试得了 100 分、今天早上喝了豆浆等信息。​
+
+  * 用户编写的信息：用户主动提供的信息中，手动编辑过的部分。若记忆中的其他信息与此类信息有冲突，智能体会优先采纳用户编写的信息。目前仅在智能体调试模式下可以手动编辑长期记忆。​
+
+通常情况下，智能体会主动识别并提取、记录用户个性化信息，例如在对话中和智能体强调“叫我小李”。对于一些非关键信息，可能智能体不会主动记录，你可以通过对话方式强制智能体记录长期记忆，例如对话时使用“记录到长期记忆”、“一定要记住”、“别忘了”等相似语义的关键词。​
+
+例如，通过对话方式告诉智能体今天的天气，智能体会自动将其记录在长期记忆中。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27283%27%20height=%27141%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgzIiBoZWlnaHQ9IjE0MSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+召回长期记忆​
+
+开启长期记忆后，用户可以通过 Prompt 或工作流召回长期记忆。​
+
+在 Prompt 中召回长期记忆​
+
+如果智能体开发者开启了“支持在Prompt中调用”，那么用户可以在和智能体的对话中主动查询长期记忆，例如用户向智能体发送自己的早餐菜谱，如果用户询问“今天早上我吃了什么”，智能体会从长期记忆中召回今日早餐相关的内容，总结后回复用户。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27301%27%20height=%27219%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAxIiBoZWlnaHQ9IjIxOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+对于人设类的智能体，为了出于对用户关心，增强用户体验，在某些场景下，智能体也会主动提及长期记忆中存储的关键信息。例如用户表示自己摔了一跤，智能体可能会主动关心用户的康复情况。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27416%27%20height=%27219%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDE2IiBoZWlnaHQ9IjIxOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+如果未开启长期记忆，或关闭了“支持在Prompt中调用”，用户清空对话记录后，智能体不会在对话中考虑上下文。例如：​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27328%27%20height=%27238%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ9IjIzOCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+在工作流中召回长期记忆​
+
+你可以在工作流中通过长期记忆节点来召回指定关键词相关的长期记忆，作为工作流下游节点的输入参数。关于工作流长期记忆节点的详细说明，可以参考​长期记忆节点。​
+
+例如对于查看热点新闻的工作流，可以召回用户的长期记忆，根据用户喜好来筛选出其可能感兴趣的内容。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27752%27%20height=%27436%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzUyIiBoZWlnaHQ9IjQzNiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+修改和删除长期记忆​
+
+记录长期记忆后，可以在对话中通过自然语言修改和更新长期记忆，随着对话次数的逐渐累积，智能体的长期记忆也会越来越丰富、完善。​
+
+支持智能体的开发者删除或清空本人的长期记忆。在调试页面的右上角单击 Memory > 长期记忆，可查看本人相关的所有长期记忆，也可以编辑或删除、清空本人的长期记忆。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27553%27%20height=%27299%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUzIiBoZWlnaHQ9IjI5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+常见问题​
+
+1 长期记忆与变量的区别？​
+
+变量是由智能体开发者创建的，智能体仅记录开发者定义过的变量。而长期记忆是智能体从对话中自动提取、总结、并且不断调整和积累的用户信息，是更为个性化的内容。​
+
+2 长期记忆与知识的区别？​
+
+知识是更通用的基础设施，虽然支持自动更新已添加的知识，但知识仍然是相对静态的内容。而长期记忆一定是在不断构建的，随着用户使用智能体对话的变多，记忆也会越来越丰富。​
+
+3 为什么 Memory 中看不到长期记忆？​
+
+长期记忆记录到 Memory 中需要一定时间，建议在对话一段时间后再进入 Memory > 长期记忆页面查看长期记忆，或者再与智能体对话 1~2 轮之后查看。​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27425%27%20height=%27230%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDI1IiBoZWlnaHQ9IjIzMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+4 长期记忆的最大数据量和保存时长是多少？​
+
+目前长期记忆的最大数据量和保存时长没有明确限制。只要调试框的聊天记录不被删除，系统会一直保存这些记录。​
+
+上一篇
+
+数据库
+
+下一篇
+
+记忆库

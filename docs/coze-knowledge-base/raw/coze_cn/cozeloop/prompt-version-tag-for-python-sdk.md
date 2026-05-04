@@ -1,0 +1,76 @@
+---
+source_url: https://docs.coze.cn/cozeloop/prompt-version-tag-for-python-sdk
+title: '通过版本标识拉取 Prompt 版本 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:56:19Z
+---
+
+# 通过版本标识拉取 Prompt 版本 - 文档 - 扣子
+
+通过版本标识拉取 Prompt 版本
+
+扣子罗盘 SDK 支持通过版本标识拉取指定 Prompt 版本。​
+
+使用方式​
+
+在扣子罗盘中提交 Prompt 版本时，如果设置了版本标识，即可在 SDK 中通过 get_prompt 方法指定 prompt_key 和 label 来获取该版本的 Prompt 详细信息。​
+
+说明
+
+  * get_prompt 方法中 version 参数优先级高于 label。 例如 Prompt 提交了两个版本（0.0.1 和 0.0.2），其中 0.0.2 版本添加了production标识，以下代码最终会获取 0.0.1 版本 prompt，而不是production标识对应的 0.0.2 版本。​
+
+  * ​
+
+Go
+
+复制
+
+prompt = client.get_prompt(prompt_key="prompt_hub_test", version="0.0.1", label="production")​
+
+​
+
+  * version和label参数均为空时，会获取最新提交版本的 prompt。​
+
+​
+
+通过版本标识获取指定 Prompt 的示例代码如下：​
+
+​
+
+Python
+
+复制
+
+import cozeloop​
+
+​
+
+client = cozeloop.new_client(prompt_trace=True)​
+
+​
+
+prompt = client.get_prompt(prompt_key={prompt_key}, label={label})​
+
+​
+
+formatted_messages = client.prompt_format(prompt, {​
+
+"var1": "artificial intelligence",​
+
+"var2": "What is the weather like?",​
+
+})​
+
+​
+
+print(formatted_messages)​
+
+​
+
+上一篇
+
+最佳实践
+
+下一篇
+
+调用 Prompt

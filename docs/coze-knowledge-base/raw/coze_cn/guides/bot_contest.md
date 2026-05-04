@@ -1,0 +1,254 @@
+---
+source_url: https://docs.coze.cn/guides/bot_contest
+title: '【已发奖】🪐与 AI 童行，扣子创意 Bot 挑战赛 - 文档 - 扣子'
+site: coze_cn
+scraped_at: 2026-05-04T14:29:36Z
+---
+
+# 【已发奖】🪐与 AI 童行，扣子创意 Bot 挑战赛 - 文档 - 扣子
+
+【已发奖】🪐与 AI 童行，扣子创意 Bot 挑战赛
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%271920%27%20height=%271080.9104704097117%27/%3e)![](https://p9-arcosite.byteimg.com/tos-cn-i-goo7wpa0wc/a1d6a798aa0d427583e67d5c886faf08~tplv-goo7wpa0wc-quality:q75.image)​
+
+​
+
+扣子（[coze.cn](<https://www.coze.cn/home>)）是新一代 AI 应用开发平台。无论你是否有编程基础，都可以在扣子上快速搭建基于大模型的各类 Bot，并将 Bot 发布到各个社交平台、通讯软件或部署到网站等其他渠道。​
+
+🎉获奖公告​
+
+感谢大家的积极参与，“与AI童行，扣子创意 Bot 挑战赛”获奖名单如下，请获奖者留意扣子主页获奖公告推送并及时提交奖品邮寄信息哦！​
+
+  * 🥇天马行空奖：罗技 POPKEYS无线蓝牙机械键盘​
+
+  * ​
+
+Bot名称​| 作品链接​  
+---|---  
+拼图游乐馆​| [https://www.coze.cn/s/ijDAPJQs/](<https://www.coze.cn/s/ijDAPJQs/>)​  
+MuseGuru​| [https://www.coze.cn/s/ijPckoYr/](<https://www.coze.cn/s/ijPckoYr/>)​  
+冠军欧洲​| [https://www.coze.cn/store/bot/7379639244861767707](<https://www.coze.cn/store/bot/7379639244861767707>)​  
+  
+​
+
+  * 🥇才华横溢奖：抖音文创 「能量拉满」充电宝​
+
+  * ​
+
+Bot名称​| 作品链接​  
+---|---  
+AI电子宠物​| [https://www.coze.cn/store/bot/7373938556126969891?bot_id=true](<https://www.coze.cn/store/bot/7373938556126969891?bot_id=true>)​  
+找三思做二十四节气海报​| [https://www.coze.cn/s/i68qvBce/](<https://www.coze.cn/s/i68qvBce/>)​  
+成语拼图​| [https://www.coze.cn/store/bot/7376928713239445530](<https://www.coze.cn/store/bot/7376928713239445530>)​  
+网页总结 · 万物皆可脑图（url-脑图）​| [https://www.coze.cn/store/bot/7375878065538465819?panel=1&bid=6cnvbr4to9g00](<https://www.coze.cn/store/bot/7375878065538465819?panel=1&bid=6cnvbr4to9g00>)​  
+小白爱旅行​| [https://www.coze.cn/store/bot/7383708800202686499?panel=1&bid=6cu1pug240g14](<https://www.coze.cn/store/bot/7383708800202686499?panel=1&bid=6cu1pug240g14>)​  
+  
+​
+
+  * 🥇好运连连奖：扣子限定版T恤或Folotoy 仙人掌​
+
+Folotoy 仙人掌数量有限，以选择该奖品的用户信息提交时间排序，若领完则发扣子限定版T恤​
+
+本次抽奖由[抽奖 Bot ](<https://www.coze.cn/store/bot/7385521303173873704?panel=1&bid=6d0i15m381g09>)随机选出，抽奖过程可查看 Bot 的推荐对话哦！​
+
+芒果外教（英语外教 linda 又名：专业外教 ） ​
+
+精灵宝可梦 ​
+
+手工教主 ​
+
+奇妙为什么 ​
+
+童心绘诗，用图像讲述中华的诗篇​
+
+童谜·答案之书 ​
+
+童真诗语小精灵🧚♀️​
+
+奥运知识小助手 ​
+
+奥运小贴士 ​
+
+童心共创绘梦师​
+
+童年动漫​
+
+忆童年：老物件​
+
+找回童年梦想 ​
+
+童趣时光机 ​
+
+童年的纸飞机 ​
+
+童心绘梦​
+
+追忆最美童年 1.0 ​
+
+Luna - 童年导航员​
+
+童话故事王国 ​
+
+宝宝爱识图 ​
+
+乐一童话故事 ​
+
+🔍活动主题​
+
+AI 童行，创意无界，在六月，我们用一颗童心带上 Bot 看世界。本期活动旨在征集日常生活场景里的创意 Bot ，大家可以结合以下的创意场景进行 Bot 的搭建并发布至商店和豆包上，优质的 Bot 将会获得六月童心礼噢！​
+
+​
+
+创意方向一：童心绘梦，六一快乐​
+
+使用图像流/卡片/工作流等复杂能力，围绕着儿童节或青少年群体搭建创意 Bot ，你可以用 AI 穿梭回童年，制作童年回忆照，你也可以用 AI 帮助小朋友理解世界，用图片呈现诗歌，更多创意期待你来实现。​
+
+可参考优质 Bot 👉[橘猫漫画家](<https://www.coze.cn/store/bot/7359541408325173289?bid=6cojf94ek7g0a&from=bots_card&panel=1>) 、[少儿百科](<https://www.coze.cn/store/bot/7356639925657255963?bid=6cojfhjm85g1j&from=bots_card&panel=1>)等。​
+
+​
+
+创意方向二：暑假必备 Bot​
+
+提到暑假，我们可能会宅家刷剧，也可能会外出旅游。结合暑假的场景，欢迎发挥你的创意，搭建更多消暑娱乐的 Bot 。​
+
+可参考优质 Bot 👉[旅途小助手](<https://www.coze.cn/store/bot/7362489247057887266?panel=1&bid=6cm2am91g601v>) 、[认真读一百本书](<https://www.coze.cn/store/bot/7359476139624218678?from=bots_card&panel=1&bid=6cm2c91og600j>)等。​
+
+​
+
+创意方向三：为奥运加油​
+
+四年一度的奥运会将于 2024 年 7 月 26 日- 8 月 11 日在法国巴黎举行，在这个全球狂欢的赛事里，我们鼓励大家能够产出相关的 Bot ，可以是奥运知识科普，也可以是赛事日程同步等。在 7 月，我们将会上线奥运相关的专题，期待你的 Bot 出现！​
+
+​
+
+还有无限的创意等你来分享！​
+
+⏰活动时间​
+
+Bot 提交时间：即日起- 6月 23 日​
+
+Bot 评选时间：2024 年 6 月 24 日- 6 月 28 日​
+
+获奖公布时间：2024 年 6 月 30 日前​
+
+​
+
+🔖活动要求​
+
+1.
+
+必须使用[扣子开发平台](<https://www.coze.cn/home>)，选择任一模型进行 Bot 搭建。​
+
+2.
+
+搭建的 Bot 需有完善的 Bot 头像、功能介绍、开场白等元素，同时将 Bot 发布到 [Bot 商店](<https://www.coze.cn/store/bot>) 和豆包上。​
+
+3.
+
+支持同时发布 1 个或多个 Bot ，我们将以 Bot 维度进行评选。​
+
+4.
+
+发布 Bot 后，将商店链接提交至 [https://survey.feelgood.cn/s/?taskID=7374739194804961290](<https://survey.feelgood.cn/s/?taskID=7374739194804961290>)​
+
+​
+
+🎁奖项及奖品​
+
+🥇天马行空奖（3 名）​
+
+Bot 创意让人眼前一亮，贴近主题，有使用场景。​
+
+对话输出格式上使用了卡片、消息节点等让人眼前一亮的能力。​
+
+综合 Bot 6 月份的使用数、对话数及评委的评分进行评选 。​
+
+  * 罗技 POPKEYS无线蓝牙机械键盘​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27634%27%20height=%27215%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjM0IiBoZWlnaHQ9IjIxNSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+  * 扣子 Bot 商店，Today's Pick 推荐资源位 1 天​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%272480%27%20height=%271366%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQ4MCIgaGVpZ2h0PSIxMzY2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+)​
+
+​
+
+🥇才华横溢奖（5 名）​
+
+在 Bot 搭建上使用到扣子的插件/工作流/图像流/知识库等工具能力，且运转逻辑合理，使用流畅。 ​
+
+综合 Bot 使用人数、对话数及评委的评分进行评选。​
+
+  * 抖音文创 「能量拉满」充电宝​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27565%27%20height=%27565%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTY1IiBoZWlnaHQ9IjU2NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+  * 扣子 Bot 商店，Today's Pick 推荐资源位 1 天​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%272480%27%20height=%271366%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQ4MCIgaGVpZ2h0PSIxMzY2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PC9zdmc+)​
+
+​
+
+🥇好运连连奖（20 名）​
+
+从全部参赛者中随机挑选 20 名，获得扣子限定版 T 恤或 Folotoy 仙人掌二选一​
+
+  * 扣子限定版 T 恤​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27550%27%20height=%27263%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTUwIiBoZWlnaHQ9IjI2MyIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+  * Folotoy 仙人掌（数量有限，选完即止）——可内嵌 Bot ，与仙人掌进行互动噢！​
+
+​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27532%27%20height=%27326%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTMyIiBoZWlnaHQ9IjMyNiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+​
+
+⛽学习加油站​
+
+  * 扣子活动交流群：​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27211%27%20height=%27211%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjExIiBoZWlnaHQ9IjIxMSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+  * 扣子官方公众号：​
+
+  * ​
+
+​​![](data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%27192%27%20height=%27191%27/%3e)![](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==)​
+
+​
+
+  * 官方帮助文档：[https://www.coze.cn/docs/guides/welcome](<https://www.coze.cn/docs/guides/welcome>)​
+
+上一篇
+
+🤖扣子 AI 工坊 Coze AI Factory 火热开启
+
+下一篇
+
+🔥四城联动，扣子 AI 工坊-硬件专场报名开启

@@ -1,0 +1,1225 @@
+---
+source_url: https://github.com/coze-dev/coze-java
+title: 'GitHub - coze-dev/coze-java: The Java SDK for the Coze API · GitHub'
+site: github_coze
+scraped_at: 2026-05-04T13:27:07Z
+---
+
+# GitHub - coze-dev/coze-java: The Java SDK for the Coze API · GitHub
+
+[ coze-dev ](<https://github.com/coze-dev>) / **[coze-java](<https://github.com/coze-dev/coze-java>) ** Public
+
+  * [ Notifications ](<https://github.com/login?return_to=%2Fcoze-dev%2Fcoze-java>) You must be signed in to change notification settings
+  * [ Fork 96 ](<https://github.com/login?return_to=%2Fcoze-dev%2Fcoze-java>)
+  * [ Star  208 ](<https://github.com/login?return_to=%2Fcoze-dev%2Fcoze-java>)
+
+[](<https://github.com/coze-dev/coze-java>)
+
+main
+
+[Branches](<https://github.com/coze-dev/coze-java/branches>)[Tags](<https://github.com/coze-dev/coze-java/tags>)
+
+[](<https://github.com/coze-dev/coze-java/branches>)[](<https://github.com/coze-dev/coze-java/tags>)
+
+Go to file
+
+Code
+
+Open more actions menu
+
+## Folders and files
+
+Name| Name| Last commit message| Last commit date  
+---|---|---|---  
+  
+## Latest commit
+
+## History
+
+[49 Commits](<https://github.com/coze-dev/coze-java/commits/main/>)[](<https://github.com/coze-dev/coze-java/commits/main/>)49 Commits  
+[.github](<https://github.com/coze-dev/coze-java/tree/main/.github> ".github")| [.github](<https://github.com/coze-dev/coze-java/tree/main/.github> ".github")|  |   
+[api](<https://github.com/coze-dev/coze-java/tree/main/api> "api")| [api](<https://github.com/coze-dev/coze-java/tree/main/api> "api")|  |   
+[example](<https://github.com/coze-dev/coze-java/tree/main/example> "example")| [example](<https://github.com/coze-dev/coze-java/tree/main/example> "example")|  |   
+[.coderabbit.yaml](<https://github.com/coze-dev/coze-java/blob/main/.coderabbit.yaml> ".coderabbit.yaml")| [.coderabbit.yaml](<https://github.com/coze-dev/coze-java/blob/main/.coderabbit.yaml> ".coderabbit.yaml")|  |   
+[.gitignore](<https://github.com/coze-dev/coze-java/blob/main/.gitignore> ".gitignore")| [.gitignore](<https://github.com/coze-dev/coze-java/blob/main/.gitignore> ".gitignore")|  |   
+[CONTRIBUTING.md](<https://github.com/coze-dev/coze-java/blob/main/CONTRIBUTING.md> "CONTRIBUTING.md")| [CONTRIBUTING.md](<https://github.com/coze-dev/coze-java/blob/main/CONTRIBUTING.md> "CONTRIBUTING.md")|  |   
+[LICENSE](<https://github.com/coze-dev/coze-java/blob/main/LICENSE> "LICENSE")| [LICENSE](<https://github.com/coze-dev/coze-java/blob/main/LICENSE> "LICENSE")|  |   
+[README.md](<https://github.com/coze-dev/coze-java/blob/main/README.md> "README.md")| [README.md](<https://github.com/coze-dev/coze-java/blob/main/README.md> "README.md")|  |   
+[codecov.yaml](<https://github.com/coze-dev/coze-java/blob/main/codecov.yaml> "codecov.yaml")| [codecov.yaml](<https://github.com/coze-dev/coze-java/blob/main/codecov.yaml> "codecov.yaml")|  |   
+[pom.xml](<https://github.com/coze-dev/coze-java/blob/main/pom.xml> "pom.xml")| [pom.xml](<https://github.com/coze-dev/coze-java/blob/main/pom.xml> "pom.xml")|  |   
+View all files  
+  
+## Repository files navigation
+
+# Coze Java API SDK
+
+[](<https://github.com/coze-dev/coze-java#coze-java-api-sdk>)
+
+[![Maven Central Version](https://camo.githubusercontent.com/88299e81fa7214f0c8df148a43dec9795a5301daff06d1c5bd28b8b8489feffb/68747470733a2f2f696d672e736869656c64732e696f2f6d6176656e2d63656e7472616c2f762f636f6d2e636f7a652f636f7a652d617069)](<https://central.sonatype.com/artifact/com.coze/coze-api>) [![codecov](https://camo.githubusercontent.com/75d9f319f42c168332ee73b9a994db19350595dba73b0221ca7f48c9390d54e8/68747470733a2f2f636f6465636f762e696f2f6769746875622f636f7a652d6465762f636f7a652d6a6176612f67726170682f62616467652e7376673f746f6b656e3d55586974615130777037)](<https://codecov.io/github/coze-dev/coze-java>)
+
+## Introduction
+
+[](<https://github.com/coze-dev/coze-java#introduction>)
+
+The Coze API SDK for Java is a powerful tool designed to seamlessly integrate Coze's open APIs into your projects.
+
+Key Features:
+
+  * Full support for Coze open APIs and authentication APIs
+  * Both synchronous and asynchronous SDK calls
+  * Optimized streaming APIs with Stream object returns
+  * Optimized list APIs with Iterator Page object returns
+  * Simple and intuitive API design for ease of use
+
+## Importing
+
+[](<https://github.com/coze-dev/coze-java#importing>)
+
+### Gradle
+
+[](<https://github.com/coze-dev/coze-java#gradle>)
+    
+    
+    dependencies {
+        implementation 'com.coze:coze-api:+'
+    }
+
+### Maven
+
+[](<https://github.com/coze-dev/coze-java#maven>)
+    
+    
+    <dependency>
+        <groupId>com.coze</groupId>
+        <artifactId>coze-api</artifactId>
+        <version>version</version>
+    </dependency>
+    
+
+## Usage
+
+[](<https://github.com/coze-dev/coze-java#usage>)
+
+### Examples
+
+[](<https://github.com/coze-dev/coze-java#examples>)
+
+Example | File  
+---|---  
+pat auth | [TokenAuthExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/TokenAuthExample.java>)  
+oauth by web code | [WebOAuthExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/WebOAuthExample.java>)  
+oauth by jwt flow | [JWTsOauthExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/JWTOAuthExample.java>)  
+oauth by pkce flow | [PKCEOauthExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/PKCEOAuthExample.java>)  
+oauth by device flow | [DevicesOAuthExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/DeviceOAuthExample.java>)  
+handle auth exception | [HandlerExceptionExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/HandlerExceptionExample.java>)  
+bot create, publish and chat | [PublishBotExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/bot/BotPublishExample.java>)  
+get bot and bot list | [GetBotExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/bot/BotRetrieveExample.java>)  
+non-stream chat | [ChatExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/chat/ChatExample.java>)  
+steam chat | [StreamChatExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/chat/StreamChatExample.java>)  
+chat with local plugin | [SubmitToolOutputExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/chat/SubmitToolOutputExample.java>)  
+chat with image | [ChatWithImageExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/chat/ChatWithImageExample.java>)  
+non-stream workflow chat | [RunWorkflowExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/workflow/RunWorkflowExample.java>)  
+stream workflow chat | [StreamWorkflowExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/workflow/StreamWorkflowExample.java>)  
+stream workflow chat with rx | [StreamWorkflowChatExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/workflow/StreamWorkflowChatExample.java>)  
+async workflow run | [AsyncRunWorkflowExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/workflow/AsyncRunWorkflowExample.java>)  
+conversation | [CreateConversationExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/conversation/ConversationCreateExample.java>)  
+list conversation | [ListConversationsExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/conversation/ConversationsListExample.java>)  
+workspace | [ListWorkspaceExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/workspace/WorkspaceListExample.java>)  
+create update delete message | [ListWorkspaceExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/conversation/message/MessageCrudExample.java>)  
+list message | [ListWorkspaceExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/conversation/message/MessageListExample.java>)  
+create update delete document | [DocumentCrudExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/document/DocumentCrudExample.java>)  
+list document | [DocumentListExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/document/DocumentListExample.java>)  
+create update delete dataset | [DatasetCrudExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/DatasetCrudExample.java>)  
+list dataset | [DatasetListExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/DatasetListExample.java>)  
+update image caption | [ImageCrudExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/image/ImageCrudExample.java>)  
+list image | [ImageListExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/datasets/image/ImageListExample.java>)  
+duplicate template | [TemplateDuplicateExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/template/TemplateDuplicateExample.java>)  
+initial client | [InitServiceExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/service/InitClientExample.java>)  
+how to handle exception | [HandlerExceptionExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/service/HandlerExceptionExample.java>)  
+get request log id | [GetLogExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/service/GetLogExample.java>)  
+set timeout | [SetRequestTimeoutExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/service/SetRequestTimeoutExample.java>)  
+websocket chat | [ChatExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/websocket/chat/ChatExample.java>)  
+websocket speech synthesis | [WebsocketAudioSpeechExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/websocket/audio/speech/WebsocketAudioSpeechExample.java>)  
+websocket transcription | [WebsocketTranscriptionsExample.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/websocket/audio/transcriptions/WebsocketTranscriptionsExample.java>)  
+  
+### Initialize the Coze Client
+
+[](<https://github.com/coze-dev/coze-java#initialize-the-coze-client>)
+
+To get started, visit <https://www.coze.com/open/oauth/pats> (or <https://www.coze.cn/open/oauth/pats> for the CN environment).
+
+Create a new token by clicking "Add Token". Configure the token name, expiration time, and required permissions. Click OK to generate your personal access token.
+
+Important: Store your personal access token securely to prevent unauthorized access.
+    
+    
+    public void example() {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        /*
+         * The default access is api.coze.com, but if you need to access api.coze.cn
+         * please use baseUrl to configure the API endpoint to access
+         */
+        String baseUrl = System.getenv("COZE_API_BASE");
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(baseUrl)
+                .auth(authCli)
+                .client(new OkHttpClient.Builder().build()) 
+                .build();
+    }
+
+### Chat
+
+[](<https://github.com/coze-dev/coze-java#chat>)
+
+First, create a bot instance in Coze. The bot ID is the last number in the web link URL.
+
+#### Non-Stream Chat
+
+[](<https://github.com/coze-dev/coze-java#non-stream-chat>)
+
+The SDK provides a convenient wrapper function for non-streaming chat operations. It handles polling and message retrieval automatically. Use createAndPoll to simplify the process:
+    
+    
+    public void example() throws Exception {
+        String token = System.getenv("COZE_API_TOKEN");
+        String botID = System.getenv("PUBLISHED_BOT_ID");
+        String uid = System.getenv("USER_ID");
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(new TokenAuth(token))
+                .readTimeout(10000)
+                .build();
+        ChatReq req = ChatReq.builder()
+                             .botID(botID)
+                             .userID(uid)
+                             .messages(Collections.singletonList(Message.buildUserQuestionText("What can you do?")))
+                             .build();
+        ChatPoll chat = coze.chat().createAndPoll(req);
+        for (Message message : chat.messages) {
+            System.out.println(message.content);
+        }
+        if (chat.chat.status == ChatStatus.COMPLETED) {
+            System.out.println("token usage:" + chat.chat.usage.tokenCount);
+        }
+    }
+
+#### Stream Chat
+
+[](<https://github.com/coze-dev/coze-java#stream-chat>)
+
+Use coze.chat.stream() to create a streaming chat session. This returns a Chat Iterator that you can use to process chat events as they arrive:
+    
+    
+    public void example() {
+        String token = System.getenv("COZE_API_TOKEN");
+        String botID = System.getenv("PUBLISHED_BOT_ID");
+        String userID = System.getenv("USER_ID");
+        TokenAuth authCli = new TokenAuth(token);
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .build();
+        ChatReq req = ChatReq.builder()
+                .botID(botID)
+                .userID(userID)
+                .messages(Collections.singletonList(Message.buildUserQuestionText("What can you do?")))
+                .build();
+        Flowable<ChatEvent> resp = coze.chat().stream(req);
+        resp.blockingForEach(event -> {
+            if (ChatEventType.CONVERSATION_MESSAGE_DELTA.equals(event.getEvent())) {
+                System.out.print(event.getMessage().getContent());
+            }
+            if (ChatEventType.CONVERSATION_CHAT_COMPLETED.equals(event.getEvent())) {
+                System.out.println("Token usage:" + event.getChat().getUsage().getTokenCount());
+            }
+        });
+    }
+
+### Bots
+
+[](<https://github.com/coze-dev/coze-java#bots>)
+
+The SDK enables you to programmatically create, update, publish and list bots:
+    
+    
+    public void example() {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .build();
+        /*
+        * step one, create a bot
+        * */
+        String workspaceID = System.getenv("WORKSPACE_ID");
+        // set the prompt of your bot
+        BotPromptInfo promptInfo = new BotPromptInfo("your prompt");
+        // set the onboarding info of your bot
+        BotOnboardingInfo onboardingInfo = BotOnboardingInfo.builder()
+                .prologue("the prologue of your bot")
+                .suggestedQuestions(Arrays.asList("question 1", "question 2"))
+                .build();
+        // Call the upload file interface to get the avatar id.
+        String avatarPath = "/path/avatar.jpg";
+        FileInfo avatarInfo = coze.files().upload(avatarPath);
+        // build the request
+        CreateBotReq createReq = CreateBotReq.builder()
+                .spaceID(workspaceID)
+                .description("the description of your bot")
+                .name("the name of your bot")
+                .promptInfo(promptInfo)
+                .onboardingInfo(onboardingInfo)
+                .iconFileID(avatarInfo.getID())
+                .build();
+        // Invoke the creation interface to create a bot in the draft status, and you can get the bot id.
+        String botID = coze.bots().create(createReq).getBotID();
+        /*
+         * step two, update the bot, you can update the bot after being created
+         * in this example, we will update the avatar of the bot
+         */
+        // Call the publishing interface to publish the bot on the api channel.
+        PublishBotResult updateResp = coze.bots().publish(PublishBotReq.of(botID));
+        /*
+         * step three, you can also modify the bot configuration and republish it.
+         * in this example, we will update the avatar of the bot
+         */
+        // set the onboarding info of your bot
+        // Call the upload file interface to get the avatar id.
+        String newAvatarPath = "/path/new_avatar.jpg";
+        FileInfo newAvatarInfo = coze.files().upload(newAvatarPath);
+        // build the request
+        UpdateBotReq updateReq = UpdateBotReq.builder()
+                .botID(botID)
+                .iconFileID(newAvatarInfo.getID())
+                .build();
+        // Invoke the update interface to update a bot, It means success that no exception has been thrown.
+        coze.bots().update(updateReq);
+        updateResp = coze.bots().publish(PublishBotReq.of(botID));
+    }
+
+### Conversations
+
+[](<https://github.com/coze-dev/coze-java#conversations>)
+
+The SDK provides comprehensive conversation management capabilities, including:
+
+  * Creating new conversations
+  * Conducting chat sessions
+  * Retrieving message history
+  * Managing conversation state
+
+    
+    
+    public void example() {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .readTimeout(10000)
+                .build();
+        // create conversation
+        Conversation resp = coze.conversations().create(new CreateConversationReq());
+        System.out.println("create conversations" + resp);
+        // retrieve conversation
+        String conversationID = resp.getId();
+        Conversation getResp = coze.conversations().retrieve(RetrieveConversationReq.of(conversationID));
+        System.out.println("retrieve conversations:" + getResp);
+        // append message to conversation
+        Message msgs = coze.conversations().messages().create(CreateMessageReq
+                .builder()
+                .conversationID(conversationID)
+                // if you want to create object content, you can use followed method to simplify your code
+                .objectContent(
+                        Arrays.asList(MessageObjectString.buildText("hello"),
+                                MessageObjectString.buildImageByURL(System.getenv("PICTURE_URL")),
+                                MessageObjectString.buildFileByURL(System.getenv("FILE_URL"))))
+                .build());
+        System.out.println(msgs);
+        /*
+        * retrieve message
+        * */
+        Message retrievedMsg = coze.conversations().messages().retrieve(RetrieveMessageReq.builder()
+                .conversationID(conversationID)
+                .messageID(message.getId())
+                .build());
+        System.out.println(retrievedMsg);
+        /*
+        * update message
+        * */
+        UpdateMessageReq updateReq = UpdateMessageReq.builder()
+                .conversationID(conversationID).messageID(message.getId())
+                .content(String.format("modified message content:%s", message.getContent()))
+                .contentType(MessageContentType.TEXT).build();
+        Message resp = coze.conversations().messages().update(updateReq);
+        System.out.println(resp);
+        /*
+        * delete message
+        * */
+        Message deletedMsg = coze.conversations().messages().delete(DeleteMessageReq.builder()
+                .conversationID(conversationID)
+                .messageID(message.getId())
+                .build());
+        System.out.println(deletedMsg);
+        // list messages
+        ListMessageReq req = ListMessageReq.builder()
+                .conversationID(conversationID)
+                .limit(limit)
+                .build();
+        PageResult<Message> messages = coze.conversations().messages().list(req);
+        Iterator<Message> iter = messages.getIterator();
+        iter.forEachRemaining(System.out::println);
+        // clear conversation
+        ClearConversationResult clearResp = coze.conversations().clear(ClearConversationReq.of(conversationID));
+        System.out.println(clearResp);
+    }
+
+### Files
+
+[](<https://github.com/coze-dev/coze-java#files>)
+
+The SDK supports file and image uploads. You can use uploaded files for:
+
+  * Bot avatars
+  * Multimodal conversations
+
+    
+    
+    public void example() {
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .readTimeout(10000)
+                .build();
+        String filePath = System.getenv("FILE_PATH");
+        //*** upload file ***//
+        FileInfo fileInfo = coze.files().upload(filePath);
+        // you can also upload file in byte array
+        FileInfo fileInfo = coze.files().upload(new byte[1024]);
+        //*** retrive file ***//
+        FileInfo retrievedInfo = coze.files().retrieve(fileInfo.getID());
+        System.out.println(retrievedInfo);
+    }
+
+### Workflows
+
+[](<https://github.com/coze-dev/coze-java#workflows>)
+
+Coze also enables users to directly invoke the workflow.
+
+#### Non-stream workflow run
+
+[](<https://github.com/coze-dev/coze-java#non-stream-workflow-run>)
+    
+    
+    public static void main(String[] args) {
+    // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+            .baseURL(System.getenv("COZE_API_BASE"))
+            .auth(authCli)
+            .readTimeout(10000)
+            .build();
+        String workflowID = System.getenv("WORKSPACE_ID");
+        // if your workflow need input params, you can send them by map
+        Map<String, Object> data = new HashMap<>();
+        data.put("param name", "param values");
+        RunWorkflowReq.RunWorkflowReqBuilder builder = RunWorkflowReq.builder();
+        builder.workflowID(workflowID).parameters(data);
+        RunWorkflowResp resp = coze.workflows().runs().run(builder.build());
+        System.out.println(resp);
+    }
+
+#### Stream workflow run
+
+[](<https://github.com/coze-dev/coze-java#stream-workflow-run>)
+
+The returned result of the streaming interface is an iterator and can be directly iterated.
+
+When the workflow incorporates question-and-answer nodes, the streaming interface will return the INTERRUPT event.
+
+Users should call the resume interface to submit the results of the question-and-answer.
+
+The return value of resume remains an iterator, so recursive processing might be necessary here.
+    
+    
+    public static void main(String[] args) {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .readTimeout(10000)
+                .build();
+        String workflowID = System.getenv("WORKSPACE_ID");
+        // if your workflow need input params, you can send them by map
+        Map<String, Object> data = new HashMap<>();
+        data.put("param name", "param values");
+        RunWorkflowReq.RunWorkflowReqBuilder builder = RunWorkflowReq.builder();
+        builder.workflowID(workflowID).parameters(data);
+        Flowable<WorkflowEvent> flowable = coze.workflows().runs().stream(builder.build());
+        handleEvent(flowable, coze, workflowID);
+    }
+
+### Dataset
+
+[](<https://github.com/coze-dev/coze-java#dataset>)
+    
+    
+    public static void main(String[] args) {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .readTimeout(10000)
+                .build();
+        Long datasetID = Long.parseLong(System.getenv("DATASET_ID"));
+        /*
+         * create document in to specific dataset
+         * */
+        CreateDocumentReq createReq = CreateDocumentReq.builder()
+                .datasetID(datasetID)
+                .documentBases(Arrays.asList(
+                        DocumentBase.buildWebPage("web doc example", "https://your-website.com"), //create datasets documents by web page
+                        DocumentBase.buildLocalFile("file doc example", "your file content", "txt"))) //create datasets documents by local file
+                .build();
+        CreateDocumentResp creatResp = coze.datasets().documents().create(createReq);
+        List<Long> documentIDs = new ArrayList<>();
+        for (Document documentBase : creatResp.getDocumentInfos()) {
+            documentIDs.add(Long.parseLong(documentBase.getDocumentID()));
+        }
+        /*
+         * update document. It means success that no exception has been thrown
+         * */
+        UpdateDocumentReq updateReq = UpdateDocumentReq.builder()
+                .documentID(documentIDs.get(0))
+                .documentName("new name")
+                .build();
+        coze.datasets().documents().update(updateReq);
+        /*
+         * delete document. It means success that no exception has been thrown
+         * */
+        coze.datasets().documents().delete(DeleteDocumentReq.builder().documentIDs(Collections.singletonList(documentIDs.get(0))).build());
+    
+        /*
+         * list documents
+         * */
+        ListDocumentReq req = ListDocumentReq.builder()
+                    .size(2)
+                    .datasetID(datasetID)
+                    .page(1)
+                    .build();
+    
+        // you can use iterator to automatically retrieve next page
+        PageResult<Document> documents = coze.datasets().documents().list(req);
+        Iterator<Document> iter = documents.getIterator();
+        iter.forEachRemaining(System.out::println);
+    }
+
+### OAuth App
+
+[](<https://github.com/coze-dev/coze-java#oauth-app>)
+
+#### Web OAuth App
+
+[](<https://github.com/coze-dev/coze-java#web-oauth-app>)
+
+To create a Web OAuth application:
+
+  1. Visit <https://www.coze.com/open/oauth/apps> (or <https://www.coze.cn/open/oauth/apps> for CN environment)
+  2. Create a new OAuth App of type "Web application"
+  3. Follow the setup guide at <https://www.coze.com/docs/developer_guides/oauth_code>
+
+Upon completion, you'll receive three critical parameters:
+
+  * Client ID
+  * Client secret (store securely)
+  * Redirect URI
+
+    
+    
+    public void initOAuthClient() {
+        String clientSecret = System.getenv("COZE_WEB_OAUTH_CLIENT_SECRET");
+        String clientID = System.getenv("COZE_WEB_OAUTH_CLIENT_ID");
+        
+        String cozeAPIBase = System.getenv("COZE_API_BASE");
+        if (cozeAPIBase == null || cozeAPIBase.isEmpty()) {
+            cozeAPIBase = Consts.COZE_COM_BASE_URL;
+        }
+        
+        WebOAuthClient oauth = new WebOAuthClient.WebOAuthBuilder()
+                .clientID(clientID)
+                .clientSecret(clientSecret)
+                .baseURL(cozeAPIBase)
+                .build();
+    }
+
+The WebOAuth authorization process is to first generate a coze authorization link and send it to the coze user requiring authorization.
+
+Once the coze user opens the link, they can see the authorization consent button.
+    
+    
+    public void genAuthLink() {
+        String redirectURI = System.getenv("COZE_WEB_OAUTH_REDIRECT_URI");
+        // Generate the authorization link and direct the user to open it.
+        String oauthURL = oauth.getOAuthURL(redirectURI, null);
+    }
+
+After the user clicks the authorization consent button, the coze web page will redirect to the redirect address configured in the authorization link and carry the authorization code and state parameters in the address via the query string.
+    
+    
+    public void getAccessToken() {
+        /*
+        After the user clicks the authorization consent button, the Coze web page will redirect
+        to the redirect address configured in the authorization link and carry the authorization
+        code and state parameters in the address via the query string.
+        Get from the query of the redirect interface: query.get('code')
+        */
+        String code = "mock code";
+    
+        /*
+        After obtaining the code after redirection, the interface to exchange the code for a
+        token can be invoked to generate the Coze access_token of the authorized user.
+        */
+        OAuthToken resp = oauth.getAccessToken(code, redirectURI);
+        System.out.println(resp);
+    
+        // Use the access token to init Coze client
+        CozeAPI coze = new CozeAPI.Builder().auth(new TokenAuth(resp.getAccessToken())).baseURL(cozeAPIBase).build();
+    
+        // When the token expires, you can also refresh and re-obtain the token
+        resp = oauth.refreshToken(resp.getRefreshToken());
+    }
+
+#### JWT OAuth App
+
+[](<https://github.com/coze-dev/coze-java#jwt-oauth-app>)
+
+**Note** : The SDK uses jjwt version 0.11.5. If you are using jjwt version 0.12.x or above:
+
+  1. You need to exclude jjwt dependencies when importing the SDK:
+
+for Maven:
+    
+    
+    <dependency>
+        <groupId>com.coze</groupId>
+        <artifactId>coze-api</artifactId>
+        <version>0.1.0</version>
+        <exclusions>
+            <exclusion>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+for Gradle:
+    
+    
+    implementation('com.coze:coze-api:0.1.0') {
+        exclude group: 'io.jsonwebtoken'
+    }
+    
+
+  2. Please refer to [ExampleJWTBuilder.java](<https://github.com/coze-dev/coze-java/blob/main/example/src/main/java/example/auth/ExampleJWTBuilder.java>) to implement your own JWT builder.
+
+  3. Set your jwt builder to JWTOAuthClient when initialize it
+
+    
+    
+    JWTOAuthClient oauth = (new JWTOAuthClient.JWTOAuthBuilder())
+                  .privateKey(config.getPrivateKey())
+                  .publicKey(config.getPublicKeyId())
+                  .clientID(config.getClientId())
+                  .baseURL(config.getCozeApiBase())
+                  .jwtBuilder(new ExampleJWTBuilder()) // set your jwt builder
+                  .build();
+
+Firstly, users need to access <https://www.coze.com/open/oauth/apps>. For the cn environment, users need to access <https://www.coze.cn/open/oauth/apps> to create an OAuth App of the type of Service application.
+
+The specific creation process can be referred to in the document: <https://www.coze.com/docs/developer_guides/oauth_jwt>. For the cn environment, it can be accessed at <https://www.coze.cn/docs/developer_guides/oauth_jwt>.
+
+After the creation is completed, three parameters, namely the client ID, private key, and public key id, can be obtained. For the client secret and public key id, users need to keep it securely to avoid leakage.
+    
+    
+    public void initOAuthClient() {
+        String cozeAPIBase = System.getenv("COZE_API_BASE");
+        if (cozeAPIBase == null || cozeAPIBase.isEmpty()) {
+            cozeAPIBase = "api.coze.cn";
+        }
+        String jwtOauthClientID = System.getenv("COZE_JWT_OAUTH_CLIENT_ID");
+        String jwtOauthPrivateKey = System.getenv("COZE_JWT_OAUTH_PRIVATE_KEY");
+        String jwtOauthPrivateKeyFilePath = System.getenv("COZE_JWT_OAUTH_PRIVATE_KEY_FILE_PATH");
+        String jwtOauthPublicKeyID = System.getenv("COZE_JWT_OAUTH_PUBLIC_KEY_ID");
+        JWTOAuthClient oauth = null;
+        try {
+            jwtOauthPrivateKey = new String(Files.readAllBytes(Paths.get(jwtOauthPrivateKeyFilePath)), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*
+        The jwt oauth type requires using private to be able to issue a jwt token, and through
+        the jwt token, apply for an access_token from the coze service. The sdk encapsulates
+        this procedure, and only needs to use get_access_token to obtain the access_token under
+        the jwt oauth process.
+        Generate the authorization token
+        The default ttl is 900s, and developers can customize the expiration time, which can be
+        set up to 24 hours at most.
+        */
+        try {
+            oauth = new JWTOAuthClient.JWTOAuthBuilder()
+                    .clientID(jwtOauthClientID)
+                    .privateKey(jwtOauthPrivateKey)
+                    .publicKey(jwtOauthPublicKeyID)
+                    .baseURL(cozeAPIBase)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+The jwt oauth type requires using private to be able to issue a jwt token, and through the jwt token, apply for an access_token from the coze service.
+
+The sdk encapsulates this procedure, and only needs to use get_access_token to obtain the access_token under the jwt oauth process.
+    
+    
+    # The jwt process does not require any other operations, you can directly apply for a token
+    oauth_token = jwt_oauth_app.get_access_token(ttl=3600)
+    
+    public void getAccessToken() {
+        // The jwt process does not require any other operations, you can directly apply for a token
+        OAuthToken resp = oauth.getAccessToken(3600);
+    
+        // Use the access token to init Coze client
+        CozeAPI coze = new CozeAPI.Builder().auth(new TokenAuth(resp.getAccessToken())).baseURL(cozeAPIBase).build();
+    
+    }
+
+#### PKCE OAuth App
+
+[](<https://github.com/coze-dev/coze-java#pkce-oauth-app>)
+
+PKCE stands for Proof Key for Code Exchange, and it's an extension to the OAuth 2.0 authorization code flow designed to enhance security for public clients, such as mobile and single-page applications.
+
+Firstly, users need to access <https://www.coze.com/open/oauth/apps>. For the cn environment, users need to access <https://www.coze.cn/open/oauth/apps> to create an OAuth App of the type of Mobile/PC/Single-page application.
+
+The specific creation process can be referred to in the document: <https://www.coze.com/docs/developer_guides/oauth_pkce>. For the cn environment, it can be accessed at <https://www.coze.cn/docs/developer_guides/oauth_pkce>.
+
+After the creation is completed, three parameters, namely the client ID can be obtained.
+    
+    
+    public void initOAuthClient() {
+        String clientID = System.getenv("COZE_PKCE_OAUTH_CLIENT_ID");
+        /*
+         * The default access is api.coze.com, but if you need to access api.coze.cn,
+         * please use base_url to configure the api endpoint to access
+         */
+        String cozeAPIBase = System.getenv("COZE_API_BASE");
+        if (cozeAPIBase == null || cozeAPIBase.isEmpty()) {
+            cozeAPIBase = Consts.COZE_COM_BASE_URL;
+        }
+        PKCEOAuthClient oauth = new PKCEOAuthClient.PKCEOAuthBuilder()
+                .clientID(clientID)
+                .baseURL(cozeAPIBase)
+                .build();
+    }
+
+In the pkce oauth process, first, need to select a suitable code_challenge_method. Coze supports two types: plain and s256.
+
+Then, based on the selected code_challenge_method type, hash the code_verifier into the code_challenge. Finally, based on the callback address, code_challenge, and code_challenge_method, an authorization link can be generated.
+
+The sdk will automatically handle the code_challenge process, and return the code verifier.
+    
+    
+    public void genAuthLink() {
+        String redirectURI = System.getenv("COZE_WEB_OAUTH_REDIRECT_URI");
+        PKCEAuthParam oauthURL = oauth.genOAuthURL(redirectURI, "state", PKCEOAuthClient.CodeChallengeMethod.S256);
+        System.out.println(oauthURL);
+    }
+
+Developers should lead users to open up this authorization link.
+
+When the user consents to the authorization, Coze will redirect with the code to the callback address configured by the developer, and the developer can obtain this code.
+    
+    
+    public void getAccessToken() {
+        /*
+        Open the authorization link in your browser and authorize this OAuth App
+        After authorization, you can exchange code_verifier for access token
+        */
+        String code = "mock code";
+        /*
+        After obtaining the code after redirection, the interface to exchange the code for a
+        token can be invoked to generate the Coze access_token of the authorized user.
+        */
+        OAuthToken resp = oauth.getAccessToken(code, redirectURI, "");
+        System.out.println(resp);
+        // Use the access token to init Coze client
+        CozeAPI coze = new CozeAPI.Builder().auth(new TokenAuth(resp.getAccessToken())).baseURL(cozeAPIBase).build();
+        // When the token expires, you can also refresh and re-obtain the token
+        resp = oauth.refreshToken(resp.getRefreshToken());
+    }
+
+#### Device OAuth App
+
+[](<https://github.com/coze-dev/coze-java#device-oauth-app>)
+
+The Device Flow is designed for devices with limited input capabilities or no browser access. This OAuth 2.0 extension enables secure authorization for IoT devices, CLI tools, and other limited-input scenarios.
+
+Firstly, users need to access <https://www.coze.com/open/oauth/apps>. For the cn environment, users need to access <https://www.coze.cn/open/oauth/apps> to create an OAuth App of the type of TVs/Limited Input devices/Command line programs.
+
+The specific creation process can be referred to in the document: <https://www.coze.com/docs/developer_guides/oauth_device_code>. For the cn environment, it can be accessed at <https://www.coze.cn/docs/developer_guides/oauth_device_code>.
+
+After the creation is completed, three parameters, namely the client ID can be obtained.
+    
+    
+    public void initOAuthClient() {
+        String clientID = System.getenv("COZE_PKCE_OAUTH_CLIENT_ID");
+        /*
+         * The default access is api.coze.com, but if you need to access api.coze.cn,
+         * please use base_url to configure the api endpoint to access
+         */
+        String cozeAPIBase = System.getenv("COZE_API_BASE");
+        if (cozeAPIBase == null || cozeAPIBase.isEmpty()) {
+            cozeAPIBase = Consts.COZE_COM_BASE_URL;
+        }
+        DeviceOAuthClient oauth = new DeviceOAuthClient.DeviceOAuthBuilder()
+            .clientID(clientID)
+            .baseURL(cozeAPIBase)
+            .build();
+    }
+
+In the device oauth authorization process, developers need to first call the interface of Coze to generate the device code to obtain the user_code and device_code.
+
+Then generate the authorization link through the user_code, guide the user to open the link, fill in the user_code, and consent to the authorization.
+
+Developers need to call the interface of Coze to generate the token through the device_code.
+
+When the user has not authorized or rejected the authorization, the interface will throw an error and return a specific error code.
+
+After the user consents to the authorization, the interface will succeed and return the access_token.
+    
+    
+    // First, you need to request the server to obtain the device code required in the device auth flow
+    DeviceAuthCode codeResp = oauth.getDeviceCode();
+    
+    // The returned device_code contains an authorization link. Developers need to guide users
+    // to open up this link.
+    // open device_code.verification_url
+
+The developers then need to use the device_code to poll Coze's interface to obtain the token.
+
+The SDK has encapsulated this part of the code in and handled the different returned error codes. The developers only need to invoke get_access_token.
+    
+    
+    try {
+        OAuthToken resp = oauth.getAccessToken(codeResp.getDeviceCode());
+        System.out.println(resp);
+    
+        // Use the access token to init Coze client
+        CozeAPI coze = new CozeAPI.Builder().auth(new TokenAuth(resp.getAccessToken())).baseURL(cozeAPIBase).build();
+        // When the token expires, you can also refresh and re-obtain the token
+        resp = oauth.refreshToken(resp.getRefreshToken());
+    } catch (CozeAuthException e) {
+        switch (e.getCode()) {
+            case AccessDenied:
+                /*
+                The user rejected the authorization.
+                Developers need to guide the user to open the authorization link again.
+                */
+                break;
+            case ExpiredToken:
+                /*
+                The token has expired. Developers need to guide the user to open
+                the authorization link again.
+                */
+            default:
+                e.printStackTrace();
+                break;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+### Streaming usage
+
+[](<https://github.com/coze-dev/coze-java#streaming-usage>)
+
+Bot chat and workflow run support running in streaming mode.
+
+chat streaming example:
+    
+    
+    String token = System.getenv("COZE_API_TOKEN");
+    String botID = System.getenv("PUBLISHED_BOT_ID");
+    String userID = System.getenv("USER_ID");
+    
+    TokenAuth authCli = new TokenAuth(token);
+    
+    // Init the Coze client through the access_token.
+    CozeAPI coze = new CozeAPI.Builder()
+            .baseURL(System.getenv("COZE_API_BASE"))
+            .auth(authCli)
+            .readTimeout(10000)
+            .build();;
+    
+    /*
+     * Step one, create chat
+     * Call the coze.chat().stream() method to create a chat. The create method is a streaming
+     * chat and will return a Flowable ChatEvent. Developers should iterate the iterator to get
+     * chat event and handle them.
+     * */
+    ChatReq req = ChatReq.builder()
+            .botID(botID)
+            .userID(userID)
+            .messages(Collections.singletonList(Message.buildUserQuestionText("What can you do?")))
+            .build();
+    
+    Flowable<ChatEvent> resp = coze.chat().stream(req);
+    resp.blockingForEach(event -> {
+        if (ChatEventType.CONVERSATION_MESSAGE_DELTA.equals(event.getEvent())) {
+            System.out.print(event.getMessage().getContent());
+        }
+        if (ChatEventType.CONVERSATION_CHAT_COMPLETED.equals(event.getEvent())) {
+            System.out.println("Token usage:" + event.getChat().getUsage().getTokenCount());
+        }
+    });
+
+workflow streaming example:
+    
+    
+    public void streamRun() {
+        // Get an access_token through personal access token or oauth.
+        String token = System.getenv("COZE_API_TOKEN");
+        TokenAuth authCli = new TokenAuth(token);
+    
+        // Init the Coze client through the access_token.
+        CozeAPI coze = new CozeAPI.Builder()
+                .baseURL(System.getenv("COZE_API_BASE"))
+                .auth(authCli)
+                .readTimeout(10000)
+                .build();
+    
+        String workflowID = System.getenv("WORKSPACE_ID");
+    
+        // if your workflow need input params, you can send them by map
+        Map<String, Object> data = new HashMap<>();
+        data.put("param name", "param values");
+    
+        RunWorkflowReq.RunWorkflowReqBuilder builder = RunWorkflowReq.builder();
+        builder.workflowID(workflowID).parameters(data);
+    
+        Flowable<WorkflowEvent> flowable = coze.workflows().runs().stream(builder.build());
+        handleEvent(flowable, coze, workflowID);
+    }
+    
+    private void handleEvent(Flowable<WorkflowEvent> events, CozeAPI coze, String workflowID) {
+        events.subscribe(event -> {
+            switch (event.getEvent()) {
+                case MESSAGE:
+                    System.out.println("Got message" + event.getMessage());
+                    break;
+                case ERROR:
+                    System.out.println("Got error" + event.getError());
+                    break;
+                case INTERRUPT:
+                    handleEvent(coze.workflows().runs().resume(
+                            ResumeRunReq.builder()
+                                    .workflowID(workflowID)
+                                    .eventID(event.getInterrupt().getInterruptData().getEventID())
+                                    .resumeData("your data")
+                                    .interruptType(event.getInterrupt().getInterruptData().getType())
+                                    .build()), coze, workflowID);
+                    break;
+                default:
+                    break;
+            }
+        }, Throwable::printStackTrace);
+    }
+
+### Paginator Iterator
+
+[](<https://github.com/coze-dev/coze-java#paginator-iterator>)
+
+The result returned by all list interfaces is a paginator, which supports iteration.
+
+Take the example of listing the bots in a space to explain the three ways to use the paginator iterator:
+
+#### 1\. Not using iterators
+
+[](<https://github.com/coze-dev/coze-java#1-not-using-iterators>)
+    
+    
+    String token = System.getenv("COZE_API_TOKEN");
+    TokenAuth authCli = new TokenAuth(token);
+    
+    // Init the Coze client through the access_token.
+    CozeAPI coze = new CozeAPI.Builder()
+            .baseURL(System.getenv("COZE_API_BASE"))
+            .auth(authCli)
+            .readTimeout(10000)
+            .build();;
+    
+    Integer pageNum = 1;
+    String workspaceID = System.getenv("WORKSPACE_ID");
+    ListBotReq listBotReq = ListBotReq.builder()
+            .spaceID(workspaceID)
+            .pageNum(pageNum)
+            .pageSize(10)
+            .build();
+    PageResult<SimpleBot> botList = coze.bots().list(listBotReq);
+    
+    // the api provides two ways for developers to turn pages for all paging interfaces.
+    // 1. The first way is to let developers manually call the API to request the next page.
+    while (botList.getHasMore()) {
+        pageNum++;
+        listBotReq.setPageNum(pageNum);
+        botList = coze.bots().list(listBotReq);
+    }
+    
+    // 2. The SDK encapsulates an iterator, which can be used to turn pages backward automatically.
+
+#### 2\. Iterate over the paginator, getting T
+
+[](<https://github.com/coze-dev/coze-java#2-iterate-over-the-paginator-getting-t>)
+    
+    
+    String token = System.getenv("COZE_API_TOKEN");
+    TokenAuth authCli = new TokenAuth(token);
+    
+    // Init the Coze client through the access_token.
+    CozeAPI coze = new CozeAPI.Builder()
+            .baseURL(System.getenv("COZE_API_BASE"))
+            .auth(authCli)
+            .readTimeout(10000)
+            .build();;
+    
+    Integer pageNum = 1;
+    String workspaceID = System.getenv("WORKSPACE_ID");
+    ListBotReq listBotReq = ListBotReq.builder()
+            .spaceID(workspaceID)
+            .pageNum(pageNum)
+            .pageSize(10)
+            .build();
+    PageResult<SimpleBot> botList = coze.bots().list(listBotReq);
+    
+    // the api provides two ways for developers to turn pages for all paging interfaces.
+    // 1. The first way is to let developers manually call the API to request the next page.
+    Iterator<SimpleBot> iterator = botList.getIterator();
+    while (iterator.hasNext()) {
+        iterator.forEachRemaining(System.out::println);
+    }
+
+### WebSocket
+
+[](<https://github.com/coze-dev/coze-java#websocket>)
+
+The SDK provides WebSocket interfaces for real-time chat, speech synthesis and speech transcription.
+
+You can check the official documentation for more information: <https://www.coze.cn/open/docs/guides/websocket_openapi>
+
+#### WebSocket Chat
+
+[](<https://github.com/coze-dev/coze-java#websocket-chat>)
+
+WebSocket chat allows real-time communication with bots, including text and audio interactions:
+    
+    
+    WebsocketChatClient client = coze.websocket()
+        .chat()
+        .create(new WebsocketChatCreateReq(botID, new CallbackHandler()));
+    
+    // Send audio data
+    String audioData = "..."; // Base64 encoded audio data
+    client.inputAudioBufferAppend(audioData);
+    client.inputAudioBufferComplete();
+    
+    // Handle responses in callback
+    class CallbackHandler extends WebsocketChatCallbackHandler {
+        // Handle text responses
+        @Override
+        public void onConversationMessageDelta(WebsocketChatClient client, ConversationMessageDeltaEvent event) {
+            System.out.printf("Received: %s\n", event.getData().getContent());
+        }
+    
+        // Handle audio responses  
+        @Override
+        public void onConversationAudioDelta(WebsocketChatClient client, ConversationAudioDeltaEvent event) {
+            byte[] audioData = event.getData().getAudio();
+            // Process audio data...
+        }
+    }
+
+#### Speech Synthesis
+
+[](<https://github.com/coze-dev/coze-java#speech-synthesis>)
+
+WebSocket speech synthesis allows real-time text-to-speech conversion:
+    
+    
+    WebsocketAudioSpeechClient client = coze.websocket()
+        .audio()
+        .speech()
+        .create(new WebsocketAudioSpeechCreateReq(new CallbackHandler()));
+    
+    // Configure audio output
+    OutputAudio outputAudio = OutputAudio.builder()
+        .voiceId(voiceID)
+        .codec("pcm")
+        .speechRate(50)
+        .pcmConfig(PCMConfig.builder().sampleRate(24000).build())
+        .build();
+    client.speechUpdate(new SpeechUpdateEventData(outputAudio));
+    
+    // Send text for synthesis
+    client.inputTextBufferAppend("Hello world!");
+    client.inputTextBufferComplete();
+    
+    // Handle synthesized audio in callback
+    class CallbackHandler extends WebsocketAudioSpeechCallbackHandler {
+        @Override
+        public void onSpeechAudioUpdate(WebsocketAudioSpeechClient client, SpeechAudioUpdateEvent event) {
+            byte[] audioData = event.getDelta();
+            // Process audio data...
+        }
+    }
+
+#### Speech Transcription
+
+[](<https://github.com/coze-dev/coze-java#speech-transcription>)
+
+WebSocket speech transcription provides real-time speech-to-text conversion:
+    
+    
+    WebsocketAudioTranscriptionsClient client = coze.websocket()
+        .audio()
+        .transcriptions()
+        .create(new WebsocketAudioTranscriptionsCreateReq(new CallbackHandler()));
+    
+    // Configure audio input
+    InputAudio inputAudio = InputAudio.builder()
+        .sampleRate(24000)
+        .codec("pcm")
+        .format("wav")
+        .channel(2)
+        .build();
+    client.transcriptionsUpdate(new TranscriptionsUpdateEventData(inputAudio));
+    
+    // Send audio for transcription
+    String audioData = "..."; // Base64 encoded audio data
+    client.inputAudioBufferAppend(audioData);
+    client.inputAudioBufferComplete();
+    
+    // Handle transcription results in callback
+    class CallbackHandler extends WebsocketAudioTranscriptionsCallbackHandler {
+        @Override
+        public void onTranscriptionsMessageUpdate(
+            WebsocketAudioTranscriptionsClient client, 
+            TranscriptionsMessageUpdateEvent event) {
+            System.out.println(event.getData().getContent());
+        }
+    }
+
+All WebSocket clients support proper resource cleanup:
+    
+    
+    try {
+        // Use the client...
+    } finally {
+        if (client != null) {
+            client.close();
+        }
+        coze.shutdownExecutor();
+    }
+
+## About
+
+The Java SDK for the Coze API 
+
+### Resources
+
+[ Readme ](<https://github.com/coze-dev/coze-java#readme-ov-file>)
+
+### License
+
+[ MIT license ](<https://github.com/coze-dev/coze-java#MIT-1-ov-file>)
+
+### Contributing
+
+[ Contributing ](<https://github.com/coze-dev/coze-java#contributing-ov-file>)
+
+###  Uh oh! 
+
+There was an error while loading. [Please reload this page](<https://github.com/coze-dev/coze-java>).
+
+[ Activity](<https://github.com/coze-dev/coze-java/activity>)
+
+[ Custom properties](<https://github.com/coze-dev/coze-java/custom-properties>)
+
+### Stars
+
+[ **208** stars](<https://github.com/coze-dev/coze-java/stargazers>)
+
+### Watchers
+
+[ **3** watching](<https://github.com/coze-dev/coze-java/watchers>)
+
+### Forks
+
+[ **96** forks](<https://github.com/coze-dev/coze-java/forks>)
+
+[ Report repository ](<https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Fcoze-dev%2Fcoze-java&report=coze-dev+%28user%29>)
+
+##  [Releases 20](<https://github.com/coze-dev/coze-java/releases>)
+
+[ v0.4.2 Latest  Aug 23, 2025 ](<https://github.com/coze-dev/coze-java/releases/tag/v0.4.2>)
+
+[\+ 19 releases](<https://github.com/coze-dev/coze-java/releases>)
+
+##  [Packages 0](<https://github.com/orgs/coze-dev/packages?repo_name=coze-java>)
+
+###  Uh oh! 
+
+There was an error while loading. [Please reload this page](<https://github.com/coze-dev/coze-java>).
+
+###  Uh oh! 
+
+There was an error while loading. [Please reload this page](<https://github.com/coze-dev/coze-java>).
+
+##  [Contributors](<https://github.com/coze-dev/coze-java/graphs/contributors>)
+
+  *   *   * 
+
+###  Uh oh! 
+
+There was an error while loading. [Please reload this page](<https://github.com/coze-dev/coze-java>).
+
+## Languages
+
+  * [ Java 100.0% ](<https://github.com/coze-dev/coze-java/search?l=java>)
