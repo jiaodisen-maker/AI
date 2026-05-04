@@ -36,24 +36,49 @@ from playwright.async_api import async_playwright
 SITES = {
     "coze_cn": {
         "seeds": [
+            # cozespace（用户给的 9 条 + billing）
             "https://docs.coze.cn/cozespace",
+            "https://docs.coze.cn/cozespace/overview",
+            "https://docs.coze.cn/cozespace/session",
+            "https://docs.coze.cn/cozespace/job",
+            "https://docs.coze.cn/cozespace/files",
+            "https://docs.coze.cn/cozespace/collaction",
+            "https://docs.coze.cn/cozespace/memory",
+            "https://docs.coze.cn/cozespace/mail",
+            "https://docs.coze.cn/cozespace/device",
             "https://docs.coze.cn/cozespace/coze_billing_overview",
-            "https://docs.coze.cn/guides",
+            # developer_guides（截图确认）
+            "https://docs.coze.cn/developer_guides/coze_cli",
+            "https://docs.coze.cn/developer_guides/coze_cli_quickstart",
+            "https://docs.coze.cn/developer_guides/changelog",
+            # 兜底入口（让 BFS 从根扩散）
+            "https://docs.coze.cn/",
             "https://docs.coze.cn/api",
-            "https://docs.coze.cn/developer_guides",
             "https://docs.coze.cn/customers",
         ],
-        "allowed_hosts": ["docs.coze.cn", "www.coze.cn", "coze.cn"],
-        "path_prefix_filter": [
-            "/cozespace", "/guides", "/api", "/developer_guides",
-            "/customers", "/docs", "/open/docs",
-        ],
-        "wait_selector": "main, article, .doc-content, .markdown-body, "
-                          "#content, [class*='content']",
-        "sitemap_urls": [
-            "https://docs.coze.cn/sitemap.xml",
-            "https://docs.coze.cn/sitemap-0.xml",
-        ],
+        "allowed_hosts": ["docs.coze.cn"],
+        # 完全放开 path filter——docs.coze.cn 整站都是文档，不挑路径
+        "path_prefix_filter": ["/"],
+        "wait_selector": "[class*='sidebar'], [class*='nav'], [class*='menu'], "
+                          "[class*='catalog'], [class*='toc']",
+        "expand_sidebar_js": """
+            // 反复点开所有折叠的侧边栏项，直到没有新项出现
+            const wait = ms => new Promise(r => setTimeout(r, ms));
+            for (let i = 0; i < 8; i++) {
+                const before = document.querySelectorAll('a[href]').length;
+                document.querySelectorAll(
+                    '[class*="arrow"], [class*="caret"], [class*="chevron"], '
+                    + '[class*="expand"], [aria-expanded="false"], '
+                    + '[class*="catalog"] svg, [class*="sidebar"] svg, '
+                    + '[class*="menu"] svg'
+                ).forEach(el => { try { el.click(); } catch(e){} });
+                await wait(400);
+                const after = document.querySelectorAll('a[href]').length;
+                if (after === before) break;
+            }
+            return document.querySelectorAll('a[href]').length;
+        """,
+        "sitemap_urls": [],   # docs.coze.cn 的 sitemap.xml 是 SPA 假的
     },
     "volcengine_coze": {
         "seeds": [
@@ -64,6 +89,7 @@ SITES = {
         "path_prefix_filter": ["/docs/84458", "/product/coze", "/articles"],
         "wait_selector": "main, article, .markdown-body, .doc-content, "
                           ".content, [class*='content']",
+        "expand_sidebar_js": "",
         "sitemap_urls": [],
     },
 }
@@ -178,9 +204,10 @@ async def try_sitemap(urls: list[str]) -> list[str]:
 
 # ---- Playwright 渲染抓取 -----------------------------------------
 
-async def render_one(page, url: str, wait_selector: str | None) -> str | None:
+async def render_one(page, url: str, wait_selector: str | None,
+                     expand_js: str | None) -> str | None:
     try:
-        await page.goto(url, wait_until="domcontentloaded",
+        await page.goto(url, wait_until="networkidle",
                         timeout=PAGE_TIMEOUT_MS)
         if wait_selector:
             try:
@@ -188,8 +215,16 @@ async def render_one(page, url: str, wait_selector: str | None) -> str | None:
                                              timeout=PAGE_TIMEOUT_MS // 3)
             except Exception:
                 pass
-        # 给 React 多一点时间渲染
+        # React 多一点时间渲染
         await page.wait_for_timeout(WAIT_AFTER_LOAD_MS)
+        # 展开侧边栏，让所有 <a href> 都出现
+        if expand_js:
+            try:
+                count = await page.evaluate(f"async () => {{ {expand_js} }}")
+                # 静默 — 不打印，避免日志噪音
+            except Exception:
+                pass
+            await page.wait_for_timeout(500)
         return await page.content()
     except Exception as e:
         print(f"    render fail {url}: {e}", flush=True)
@@ -218,7 +253,8 @@ async def worker(name: str, queue: asyncio.Queue, browser, cfg: dict,
             queue.task_done()
             continue
 
-        html = await render_one(page, url, cfg.get("wait_selector"))
+        html = await render_one(page, url, cfg.get("wait_selector"),
+                                cfg.get("expand_sidebar_js"))
         if html is None:
             failures[url] = "render timeout / network"
             queue.task_done()
