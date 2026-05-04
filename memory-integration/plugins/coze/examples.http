@@ -1,0 +1,75 @@
+# 调试用：HTTPie / VS Code REST Client / IntelliJ HTTP Client 都能直接跑
+# 把 @url 和 @key 换成你的实际值
+
+@url = http://localhost:8810
+@key = REPLACE_WITH_YOUR_PLUGIN_API_KEY
+
+### 健康检查（不需要鉴权）
+GET {{url}}/healthz
+
+### recall —— 跨双层记忆检索
+POST {{url}}/memory/recall
+Authorization: Bearer {{key}}
+Content-Type: application/json
+X-Coze-Bot-Id: bot_test_001
+
+{
+  "query": "张三上次提的续约",
+  "k": 5
+}
+
+### write —— 写入记忆（路由到 Hindsight）
+POST {{url}}/memory/write
+Authorization: Bearer {{key}}
+Content-Type: application/json
+X-Coze-Bot-Id: bot_test_001
+
+{
+  "content": "张三不喜欢周一早会",
+  "hints": {
+    "source": "coze:bot_test_001",
+    "type": "preference",
+    "subject_ref": "brain/people/zhangsan.md"
+  }
+}
+
+### write —— 写入记忆（路由到 GBrain）
+POST {{url}}/memory/write
+Authorization: Bearer {{key}}
+Content-Type: application/json
+
+{
+  "content": "# 项目 X\n负责人：King\n截止：2026-09-30",
+  "hints": {
+    "source": "coze:bot_pm_001",
+    "type": "plan"
+  }
+}
+
+### reflect —— 触发凝固（dry-run）
+POST {{url}}/memory/reflect
+Authorization: Bearer {{key}}
+Content-Type: application/json
+X-Coze-Bot-Id: bot_test_001
+
+{
+  "scope": "recent",
+  "dry_run": true
+}
+
+### lookup_person
+GET {{url}}/memory/person/brain/people/zhangsan.md
+Authorization: Bearer {{key}}
+X-Coze-Bot-Id: bot_test_001
+
+### lookup_person —— 用关键词
+GET {{url}}/memory/person/张三
+Authorization: Bearer {{key}}
+X-Coze-Bot-Id: bot_test_001
+
+### 鉴权失败示例（应该 401）
+POST {{url}}/memory/recall
+Authorization: Bearer wrong_key
+Content-Type: application/json
+
+{ "query": "test" }

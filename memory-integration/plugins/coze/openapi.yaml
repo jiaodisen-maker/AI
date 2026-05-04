@@ -1,0 +1,155 @@
+openapi: 3.0.3
+
+info:
+  title: memory-integration
+  description: |
+    双层记忆系统（GBrain 长期 / Hindsight 工作记忆）的 Coze 插件接入。
+    所有调用必须带 `Authorization: Bearer <PLUGIN_API_KEY>`。
+    返回结果中 `[KB]` 表示客观档案，`[MEM]` 表示过往观察印象，请区分对待。
+  version: "1.0.0"
+
+servers:
+  - url: https://memory-plugin.your-domain.com    # ← 部署后改成你的真实公网 URL
+    description: 生产环境
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    RecallHit:
+      type: object
+      properties:
+        id:     { type: string, description: "记忆 ID 或 markdown 路径" }
+        text:   { type: string, description: "命中片段原文" }
+        score:  { type: number, description: "相关度 0-1" }
+        source:
+          type: string
+          enum: [KB, MEM]
+          description: "KB=客观档案；MEM=过往观察印象（不要当事实）"
+        ref:    { type: string, description: "原始引用（路径或 ID）" }
+        ts:     { type: string, description: "ISO 时间戳" }
+      required: [id, text, score, source, ref]
+    WriteResult:
+      type: object
+      properties:
+        target:
+          type: string
+          enum: [gbrain, hindsight, both]
+        gbrain_path:  { type: string, nullable: true }
+        hindsight_id: { type: string, nullable: true }
+      required: [target]
+
+security:
+  - bearerAuth: []
+
+paths:
+  /memory/recall:
+    post:
+      operationId: memory_recall
+      summary: 跨双层记忆检索
+      description: |
+        在回答任何关于具体人/事/历史的问题前，**先调这个**。
+        会同时查 GBrain 长期档案和 Hindsight 工作记忆，做 RRF 融合。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string, description: "自然语言问题或关键词" }
+                k:     { type: integer, default: 5, minimum: 1, maximum: 50 }
+      responses:
+        "200":
+          description: 命中列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RecallHit" }
+        "401": { description: "鉴权失败" }
+        "503": { description: "速率限制" }
+
+  /memory/write:
+    post:
+      operationId: memory_write
+      summary: 写入记忆
+      description: |
+        当用户说"记一下/帮我记/以后我..."时调。
+        系统按 hints 自动决定存到 GBrain（长期档案）还是 Hindsight（工作记忆）。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, description: "要记的内容原文" }
+                hints:
+                  type: object
+                  description: "提示路由的元数据"
+                  properties:
+                    source:      { type: string, example: coze:bot_xxx }
+                    type:
+                      type: string
+                      example: preference
+                      description: "preference/experience/belief/person_profile/document/..."
+                    subject_ref: { type: string, example: brain/people/zhangsan.md }
+      responses:
+        "200":
+          description: 写入位置
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WriteResult" }
+        "401": { description: "鉴权失败" }
+
+  /memory/reflect:
+    post:
+      operationId: memory_reflect
+      summary: 触发反思与凝固（一般无需 bot 主动调）
+      description: |
+        把 Hindsight 中稳定的 belief 凝固到 GBrain 档案。
+        通常由后端定时任务跑；这里暴露给 bot 是给"整理记忆/总结最近"这类显式指令用。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:   { type: string, enum: [recent, all], default: recent }
+                dry_run: { type: boolean, default: false }
+      responses:
+        "200": { description: 整合报告 }
+        "401": { description: "鉴权失败" }
+
+  /memory/person/{ref}:
+    get:
+      operationId: memory_lookup_person
+      summary: 查一个具体人的档案 + 近期观察
+      description: |
+        ref 可以是 markdown 路径（如 `brain/people/zhangsan.md`），也可以是
+        姓名、邮箱、手机号、飞书 open_id 等任意可识别串。
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          schema: { type: string }
+          description: 人员标识
+      responses:
+        "200":
+          description: 档案 + 近期观察
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ref:     { type: string }
+                  matches:
+                    type: array
+                    items: { $ref: "#/components/schemas/RecallHit" }
+        "401": { description: "鉴权失败" }

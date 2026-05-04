@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  plugin:
+    build:
+      context: ../../..               # 把 memory-integration 当作 build context
+      dockerfile: memory-integration/plugins/coze/Dockerfile
+    env_file: [.env]
+    ports:
+      - "127.0.0.1:8810:8810"          # 不直接暴露公网，前面套 tunnel/反代
+    volumes:
+      - audit:/var/log/coze-plugin
+      - ../../brain:/app/memory-integration/brain   # 挂 GBrain repo
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    volumes: [redis_data:/data]
+    restart: unless-stopped
+
+  # 公网入口示例：cloudflared tunnel
+  # 取消下面两个服务的注释、填好 token 即可获得 https://*.trycloudflare.com
+  #
+  # tunnel:
+  #   image: cloudflare/cloudflared:latest
+  #   command: tunnel --no-autoupdate run
+  #   environment:
+  #     - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+  #   restart: unless-stopped
+  #   depends_on: [plugin]
+
+volumes:
+  audit:
+  redis_data:
