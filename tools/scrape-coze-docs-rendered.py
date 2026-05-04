@@ -388,8 +388,10 @@ async def main_async():
             print("\n中断，存当前状态")
             break
 
-        idx_file.write_text(json.dumps(index, ensure_ascii=False, indent=2))
-        fail_file.write_text(json.dumps(failures, ensure_ascii=False, indent=2))
+        idx_file.write_text(json.dumps(index, ensure_ascii=False, indent=2),
+                            encoding="utf-8")
+        fail_file.write_text(json.dumps(failures, ensure_ascii=False, indent=2),
+                             encoding="utf-8")
 
     print(f"\n全部完成。共 {len(index)} 页成功，{len(failures)} 页失败。")
     print(f"  index:    {idx_file}")
