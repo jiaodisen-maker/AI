@@ -15,6 +15,7 @@
 | **`AI-GATEWAY-SETUP.md`** | LiteLLM Proxy 完整部署：Docker Compose + Caddy + Postgres + KMS + PII + 双实例 + 飞书告警 + 验收清单 | **工程师 2 主，工程师 1 review** |
 | **`DATA-SECURITY.md`** | 外部数据进来全栈数据安全：12 类威胁 / 4 级分级 / 7 层防御 / 应急预案 / PIPL+保健品合规清单 | **DPO + 法务 + 你 + 工程师 1+6** |
 | **`MEMORY-COMPARISON.md`** | Coze 5 种记忆机制 vs GBrain vs Hindsight：决策树 + Reflect 缺口 + 800 人公司具体决策 | **架构师 + 你** |
+| **`FEISHU-SYNC-BRIDGE.md`** | 飞书全量数据实时同步到 Coze 的 Bridge 服务工程方案：13 类事件映射 + Coze OpenAPI 客户端 + 4 周交付 | **工程师 5 + 7** |
 | `raw/_index.json` | 951 页 URL → 文件映射，按主题导航文档 | 任何人想查原文 |
 | `raw/coze_cn/` | 951 页扣子官方文档原文，按板块（coze_pro / cozespace / guides 等）| 工程师查证 |
 | `raw/github_coze/` | 73 页 Coze Studio + Coze Loop GitHub wiki | 工程师 1（涉及自部署/扩展时）|
