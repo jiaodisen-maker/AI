@@ -1,0 +1,46 @@
+# memory-integration 配置
+
+gbrain:
+  brain_repo: ./brain
+  postgres_url: postgresql://localhost:5432/gbrain
+  mcp_endpoint: stdio  # 或 http://localhost:7801
+
+hindsight:
+  mode: embedded       # embedded | docker
+  storage_path: ./hindsight_data
+  reflect_model: claude-sonnet-4-6
+
+# 写入路由规则（router.py 按顺序匹配）
+routing_rules:
+  - match: { source: [gmail, calendar, wiki, gdocs, notion] }
+    target: gbrain
+  - match: { type: [person_profile, company, plan, contract, sop] }
+    target: gbrain
+  - match: { source: [feishu_dm, chat, voice] }
+    target: hindsight
+  - match: { type: [preference, experience, belief, observation] }
+    target: hindsight
+  - match: { type: [meeting_notes, patrol_finding] }
+    target: both
+  - match: {}                      # 兜底
+    target: llm_classify           # 让 LLM 判
+
+# 凝固阈值（autoDream 守护进程用）
+consolidation:
+  min_confidence: 0.80     # 信念置信度阈值
+  min_age_hours: 24        # 至少存在 24 小时才考虑凝固
+  min_observation_count: 3 # 至少被 3 次观察印证
+  conflict_strategy: human_review   # auto_overwrite | human_review | latest_wins
+
+# 检索融合
+recall:
+  parallel_timeout_ms: 800
+  fallback_on_timeout: gbrain      # 超时时只返回 KB
+  rrf_k: 60
+  default_k: 5
+  source_tags: true                # 返回时打 [KB] / [MEM] 标签
+
+# 跨引用
+cross_ref:
+  gbrain_frontmatter_key: hindsight_ids
+  hindsight_meta_key: gbrain_ref
