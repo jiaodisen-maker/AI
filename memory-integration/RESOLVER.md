@@ -10,6 +10,7 @@ OpenClaw 在处理任何带"记/查/想/反思/学习"语义的请求时，先�
 | "之前 X 是什么 / 我跟他聊过什么 / 翻一下记录" | 找、查、回忆、recall、之前、上次 | `skills/memory-recall.md` |
 | "整理一下记忆 / 你怎么看 X / 总结最近" | 整理、反思、总结、凝固、reflect、dream | `skills/memory-reflect.md` |
 | "重新初始化 / 第一次部署" | bootstrap、init、初始化、部署 | `skills/memory-bootstrap.md` |
+| "接入飞书 / 飞书数据通 / 实时同步" | 飞书、feishu、lark、实时、订阅 | `skills/feishu-realtime-setup.md` |
 
 ## 兜底规则
 

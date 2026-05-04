@@ -20,6 +20,8 @@ memory-integration/
 │   ├── router.py          # MemoryRouter（写入路由 + 检索融合）
 │   ├── auto_dream.py      # 守护进程（Hindsight → GBrain 凝固）
 │   └── mcp_server.py      # 对外的统一 MCP（3 个工具）
+├── sources/               # 实时数据源接入
+│   └── feishu/            # 飞书 → 记忆系统全套（webhook / 长连接 / queue / worker / backfill / token）
 └── brain/                 # GBrain Brain Repo 入口（软链或子模块）
 ```
 

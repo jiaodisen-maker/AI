@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+
+  webhook:
+    build: .
+    command: python -m sources.feishu.server
+    env_file: [.env]
+    ports: ["8801:8801"]
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  worker-1: &worker
+    build: .
+    command: python -m sources.feishu.worker --consumer w1
+    env_file: [.env]
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      restart_policy: { condition: on-failure }
+
+  worker-2:
+    <<: *worker
+    command: python -m sources.feishu.worker --consumer w2
+
+  token-refresher:
+    build: .
+    command: python -m sources.feishu.token_refresher --cron
+    env_file: [.env]
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      restart_policy: { condition: any }
+
+  backfill:
+    build: .
+    command: python -m sources.feishu.backfill --cron
+    env_file: [.env]
+    depends_on:
+      redis:
+        condition: service_healthy
+      token-refresher:
+        condition: service_started
+
+volumes:
+  redis_data:

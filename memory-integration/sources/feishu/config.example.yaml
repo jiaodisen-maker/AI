@@ -1,0 +1,67 @@
+# 飞书接入配置
+
+feishu:
+  app_id: cli_xxxxxxxxxxxx
+  app_secret: ${FEISHU_APP_SECRET}      # 用环境变量，禁止直接写
+
+  # 事件订阅安全（在飞书开放平台后台配置）
+  encrypt_key: ${FEISHU_ENCRYPT_KEY}
+  verification_token: ${FEISHU_VERIFICATION_TOKEN}
+
+  # 事件订阅模式（webhook | long_connection）
+  delivery_mode: webhook
+
+  webhook:
+    bind: 0.0.0.0:8801
+    path: /webhook/feishu
+    public_url: https://memory.your-domain.com  # 飞书后台填这个 + path
+
+  long_connection:
+    enable_auto_reconnect: true
+    heartbeat_interval_s: 30
+
+  # 订阅哪些事件（飞书后台必须勾选对应权限）
+  subscribed_events:
+    - im.message.receive_v1
+    - drive.file.edit_v1
+    - drive.file.title_updated_v1
+    - calendar.calendar.event.changed_v4
+    - bitable.app.updated_v1
+    - approval.instance.approved_v4
+    - approval.instance.rejected_v4
+    - vc.meeting.recording_ready_v1
+    - contact.user.updated_v3
+
+# 队列
+queue:
+  backend: redis_streams
+  url: redis://localhost:6379/0
+  stream_key: feishu:events
+  consumer_group: memory-workers
+  max_retries: 5
+  backoff_base_ms: 1000
+  dlq_stream: feishu:events:dlq
+
+# 幂等
+idempotency:
+  backend: redis
+  url: redis://localhost:6379/1
+  ttl_seconds: 3600     # event_id 1 小时内不重复处理
+
+# 回填
+backfill:
+  on_startup: true
+  daily_cron: "0 3 * * *"     # 每天凌晨 3 点对账
+  lookback_hours: 24
+  cursor_file: ./.feishu_backfill_cursor
+
+# memory-integration 主入口
+memory:
+  mcp_endpoint: stdio        # 或 http://localhost:7900
+  timeout_ms: 5000
+
+# 日志 & 可观测
+observability:
+  log_level: INFO
+  metrics_port: 9100         # Prometheus
+  trace_endpoint: ""         # OTel，可选
