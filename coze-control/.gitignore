@@ -1,0 +1,20 @@
+# 任何 secret 都不能进 git
+.env
+.env.*
+!.env.example
+*.token
+*.pat
+secrets/
+**/credentials.json
+
+# 缓存
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# pull 时的临时文件
+*.tmp
+*.partial
+
+# 拉下来的对话原文（默认只存哈希；带 --include-content 时落地，不入 git）
+analyze/raw/
