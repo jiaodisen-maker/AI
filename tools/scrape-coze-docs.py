@@ -60,13 +60,16 @@ SITES = {
         "path_prefix_filter": ["/docs/eino"],
     },
     "github_coze": {
-        # 这俩 repo 的 wiki / README / docs。GitHub 不需要 JS 渲染。
+        # 这俩 repo 的 wiki。只留 /wiki 路径避免抓 issues / PRs / 源码 viewer。
         "seeds": [
             "https://github.com/coze-dev/coze-studio/wiki",
             "https://github.com/coze-dev/coze-loop/wiki",
         ],
         "allowed_hosts": ["github.com", "raw.githubusercontent.com"],
-        "path_prefix_filter": ["/coze-dev"],
+        "path_prefix_filter": [
+            "/coze-dev/coze-studio/wiki",
+            "/coze-dev/coze-loop/wiki",
+        ],
     },
 }
 
@@ -154,8 +157,8 @@ def extract_links(html: str, base_url: str, allowed_hosts: list[str],
 # ---- 主爬虫逻辑 ---------------------------------------------------
 
 def crawl_site(site: str, cfg: dict, index: dict, failures: dict,
-               resume: bool) -> None:
-    seen: set[str] = set(index.keys()) if resume else set()
+               resume: bool, seen_init: set | None = None) -> None:
+    seen: set[str] = set(seen_init or [])
     queue: deque[str] = deque()
 
     for s in cfg["seeds"]:
@@ -240,8 +243,16 @@ def main():
     idx_file = OUTPUT_ROOT / "_index.json"
     fail_file = OUTPUT_ROOT / "_failures.json"
 
-    index = json.loads(idx_file.read_text()) if (args.resume and idx_file.exists()) else {}
-    failures = json.loads(fail_file.read_text()) if (args.resume and fail_file.exists()) else {}
+    # 总是合并已有 index/failures，避免不同站点之间的运行互相覆盖。
+    # --resume 只决定"是否把已抓的 URL 加入 seen 集合（跳过重抓）"。
+    existing_idx = json.loads(idx_file.read_text()) if idx_file.exists() else {}
+    existing_fail = json.loads(fail_file.read_text()) if fail_file.exists() else {}
+    index = dict(existing_idx)
+    failures = dict(existing_fail)
+    if args.resume:
+        seen_seed = set(existing_idx.keys())
+    else:
+        seen_seed = set()
 
     print(f"将爬取站点: {targets}")
     print(f"输出目录: {OUTPUT_ROOT}")
@@ -249,7 +260,8 @@ def main():
 
     for site in targets:
         try:
-            crawl_site(site, SITES[site], index, failures, args.resume)
+            crawl_site(site, SITES[site], index, failures, args.resume,
+                       seen_init=seen_seed)
         except KeyboardInterrupt:
             print("\n中断，已存当前状态")
             break
