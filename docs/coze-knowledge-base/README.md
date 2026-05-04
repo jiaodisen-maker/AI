@@ -12,6 +12,7 @@
 | **`SALES-BOT.md`** | 销售助手详细方案：架构/数据/工作流/合规/4 周 sprint | **工程师 4-7** |
 | **`FEISHU-INTEGRATION.md`** | 飞书 ⇄ 扣子 8 层深度结合：身份/入口/数据/流程/触达/合规/沉淀/治理 | **全员必读** |
 | **`MODELS.md`** | 给扣子加第三方大模型让所有人用：3 种方式 + AI Gateway 最佳实践 + 部门授权 + 合规 | **工程师 1+2+你** |
+| **`AI-GATEWAY-SETUP.md`** | LiteLLM Proxy 完整部署：Docker Compose + Caddy + Postgres + KMS + PII + 双实例 + 飞书告警 + 验收清单 | **工程师 2 主，工程师 1 review** |
 | `raw/_index.json` | 951 页 URL → 文件映射，按主题导航文档 | 任何人想查原文 |
 | `raw/coze_cn/` | 951 页扣子官方文档原文，按板块（coze_pro / cozespace / guides 等）| 工程师查证 |
 | `raw/github_coze/` | 73 页 Coze Studio + Coze Loop GitHub wiki | 工程师 1（涉及自部署/扩展时）|
