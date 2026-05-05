@@ -17,6 +17,7 @@
 | **`MEMORY-COMPARISON.md`** | Coze 5 种记忆机制 vs GBrain vs Hindsight：决策树 + Reflect 缺口 + 800 人公司具体决策 | **架构师 + 你** |
 | **`FEISHU-SYNC-BRIDGE.md`** | 飞书全量数据实时同步到 Coze 的 Bridge 服务工程方案：13 类事件映射 + Coze OpenAPI 客户端 + 4 周交付 | **工程师 5 + 7** |
 | **`SAAS-VS-SELFBUILD.md`** | SaaS 边界 + 自建扩展架构清晰说明：5 个扩展接入点 / 部署什么在哪 / 端到端流程 / 极简起步 vs 全自建 | **你 + 高层 + 工程师 1** |
+| **`COZE-VS-AGENTSCOPE.md`** | Coze（字节）vs AgentScope+HiClaw+HiMarket（阿里）：12 维对比 / 多 Agent 哲学差异 / 三层混用方案 / 切换风险 | **架构师 + 你 + 高层** |
 | `raw/_index.json` | 951 页 URL → 文件映射，按主题导航文档 | 任何人想查原文 |
 | `raw/coze_cn/` | 951 页扣子官方文档原文，按板块（coze_pro / cozespace / guides 等）| 工程师查证 |
 | `raw/github_coze/` | 73 页 Coze Studio + Coze Loop GitHub wiki | 工程师 1（涉及自部署/扩展时）|
